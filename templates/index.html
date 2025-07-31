@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Orbit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #232f3e;
+            color: #fff;
+            padding: 1rem;
+        }
+        .container {
+            margin-top: 2rem;
+        }
+        img {
+            width: 200px;
+        }
+        .start-btn {
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            background-color: #ff9900;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to AWS Orbit</h1>
+    </header>
+    <div class="container">
+        <img src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+        <h2>Your companion on the journey to AWS SysOps mastery!</h2>
+        <p>This simple prototype serves as a starting point for the full AWS Orbit learning platform.</p>
+        <button class="start-btn" onclick="alert('Lessons will come soon!')">Start Learning</button>
+    </div>
+</body>
+</html>
