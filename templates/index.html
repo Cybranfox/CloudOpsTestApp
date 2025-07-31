@@ -4,46 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AWS Orbit</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; text-align: center; }
-        header { background-color: #232f3e; color: #fff; padding: 1rem; }
-        img { width: 200px; }
-        .container { margin-top: 2rem; }
-        .btn { display: inline-block; margin: 0.5rem; padding: 0.75rem 1.5rem; font-size: 1rem; background-color: #ff9900; border: none; border-radius: 4px; color: #fff; cursor: pointer; text-decoration: none; }
-        .stats { margin-top: 1rem; font-size: 1.1rem; }
-        .badges { margin-top: 1rem; }
-        .badge { display: inline-block; background-color: #23a55b; color: #fff; padding: 0.3rem 0.6rem; border-radius: 4px; margin: 0.2rem; }
-        .shields { margin-top: 1rem; font-size: 1.2rem; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <header>
         <h1>Welcome to AWS Orbit</h1>
     </header>
-    <div class="container">
-        <img src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
-        <h2>Your companion on the journey to AWS SysOps mastery!</h2>
-        <p>This version introduces energy shields and badges. Stay motivated!</p>
-        <div class="stats">
-            <p>XP: {{ progress['xp'] }}</p>
-            <p>Streak: {{ progress['streak'] }}</p>
+    <main>
+        <div class="card">
+            <img class="zap" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+            <h2>Your companion on the journey to AWS SysOps mastery!</h2>
+            <p>Stay motivated with energy shields, badges and adaptive quizzes.</p>
+            <div class="stats">
+                <strong>XP:</strong> {{ progress['xp'] }}<br>
+                <strong>Streak:</strong> {{ progress['streak'] }} days
+            </div>
+            <div class="shields">
+                <strong>Shields:</strong> {{ progress['energy'] }} / 3
+            </div>
+            <div class="badges">
+                {% if progress['badges'] %}
+                    <strong>Badges:</strong><br>
+                    {% for badge in progress['badges'] %}
+                        <span class="badge">{{ badge }}</span>
+                    {% endfor %}
+                {% else %}
+                    <em>No badges earned yet.</em>
+                {% endif %}
+            </div>
+            <div>
+                <a class="btn" href="/lesson/1">Start Lessons</a>
+                <a class="btn" href="/quiz/1">Take Quiz 1</a>
+                <a class="btn" href="/lessons">View Lessons (JSON)</a>
+            </div>
         </div>
-        <div class="shields">
-            <p>Shields: {{ progress['energy'] }} / 3</p>
-        </div>
-        <div class="badges">
-            {% if progress['badges'] %}
-                <p>Badges:</p>
-                {% for badge in progress['badges'] %}
-                    <span class="badge">{{ badge }}</span>
-                {% endfor %}
-            {% else %}
-                <p>No badges earned yet.</p>
-            {% endif %}
-        </div>
-        <a class="btn" href="/lesson/1">Start Lessons</a>
-        <a class="btn" href="/quiz/1">Take Quiz 1</a>
-        <a class="btn" href="/lessons">View All Lessons (JSON)</a>
-    </div>
+    </main>
 </body>
 </html>

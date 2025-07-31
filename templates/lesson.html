@@ -4,24 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ lesson.title }} | AWS Orbit</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        header { background-color: #232f3e; color: #fff; padding: 1rem; text-align: center; }
-        .content { padding: 2rem; text-align: center; }
-        .btn { display: inline-block; margin: 0.5rem; padding: 0.75rem 1.5rem; font-size: 1rem; background-color: #ff9900; border: none; border-radius: 4px; color: #fff; cursor: pointer; text-decoration: none; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <header>
         <h1>{{ lesson.title }}</h1>
     </header>
-    <div class="content">
-        <h2>{{ lesson.description }}</h2>
-        <p>{{ lesson.content }}</p>
-        <a class="btn" href="/complete/{{ lesson.id }}">Complete Lesson</a>
-        <a class="btn" href="/quiz/{{ lesson.id }}">Take Quiz</a>
-        <br><br>
-        <a href="/">← Back to Home</a>
-    </div>
+    <main>
+        <div class="card">
+            <h2>{{ lesson.description }}</h2>
+            <p>{{ lesson.content }}</p>
+            <div>
+                <a class="btn" href="/complete/{{ lesson.id }}">Complete Lesson</a>
+                <a class="btn" href="/quiz/{{ lesson.id }}">Take Quiz</a>
+            </div>
+            <p style="margin-top: 1rem;"><a href="/">← Back to Home</a></p>
+        </div>
+    </main>
 </body>
 </html>

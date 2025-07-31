@@ -1,0 +1,85 @@
+/* Global styling for AWS Orbit v5 */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f6f7f9;
+    color: #333;
+}
+
+header {
+    background-color: #232f3e;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.zap {
+    width: 200px;
+    margin: auto;
+    display: block;
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+.stats, .shields, .badges {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+}
+
+.badges .badge {
+    display: inline-block;
+    background-color: #23a55b;
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    margin: 0.2rem;
+    font-size: 0.9rem;
+}
+
+.btn {
+    display: inline-block;
+    margin: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background-color: #ff9900;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #cc7a00;
+}
+
+.question-form div {
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.question-form label {
+    margin-left: 0.5rem;
+}
