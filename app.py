@@ -68,14 +68,20 @@ def quiz(lesson_id):
     if not lesson:
         return "Lesson not found", 404
     if request.method == 'POST':
-        selected = request.form.get('option')
-        correct = selected == lesson['answer']
+        # Handle single and multi‑select questions
+        if lesson.get('multi_select'):
+            selected = request.form.getlist('option')  # list of selected options
+            correct_answers = set(lesson.get('answers', []))
+            correct = set(selected) == correct_answers
+        else:
+            selected = request.form.get('option')
+            correct = selected == lesson.get('answer')
         progress, message, next_lesson_id = register_quiz_result(lesson_id, correct)
         if progress['energy'] <= 0:
             # When energy depleted, prompt to review the current lesson
             return render_template('quiz.html', lesson=lesson, message=message + "\nYou have lost all your shields! Please review the lesson before trying again.", repeat=True)
         elif correct:
-            # Redirect to next lesson's quiz or lesson page based on progress
+            # Redirect to next lesson's lesson page
             return redirect(url_for('lesson_page', lesson_id=next_lesson_id))
         else:
             # incorrect answer but shields remain: repeat quiz

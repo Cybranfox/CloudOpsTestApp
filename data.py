@@ -94,5 +94,107 @@ def get_lessons():
             "options": ["AWS Auto Scaling", "AWS Cost Explorer", "Amazon S3", "AWS IAM"],
             "answer": "AWS Cost Explorer",
             "badge": "Cost Controller"
+        },
+        {
+            "id": 7,
+            "title": "Configuration Management",
+            "description": "Track and evaluate changes to your AWS resources.",
+            "content": (
+                "AWS Config provides resource inventory, configuration history and change notifications to help with security and governance. "
+                "It records configuration changes and evaluates your resources against compliance rules."
+            ),
+            "question": "Which AWS service automatically records configuration changes and evaluates compliance?",
+            "options": ["AWS Config", "AWS CloudTrail", "Amazon S3", "AWS Shield"],
+            "answer": "AWS Config",
+            "badge": "Config Pro"
+        },
+        {
+            "id": 8,
+            "title": "Systems Manager",
+            "description": "Operate your hybrid and AWS environments from a single place.",
+            "content": (
+                "AWS Systems Manager lets you manage EC2 and on‑premises servers with an agent and IAM role. "
+                "State Manager documents define the desired state and help keep instances in a predefined configuration."
+            ),
+            "question": "Which Systems Manager document defines actions to keep managed instances in a desired state?",
+            "options": ["State Manager Command Document", "AWS Config Rule", "CloudFormation Template", "Inspector Assessment Template"],
+            "answer": "State Manager Command Document",
+            "badge": "SSM Specialist"
+        },
+        {
+            "id": 9,
+            "title": "Amazon Inspector",
+            "description": "Automated security assessments for EC2 workloads.",
+            "content": (
+                "Amazon Inspector automatically assesses applications for vulnerabilities. "
+                "Amazon Linux AMIs with Inspector include the Inspector agent by default for seamless installation."
+            ),
+            "question": "Which Amazon Machine Image includes the Amazon Inspector agent by default?",
+            "options": ["Amazon Linux AMI with Amazon Inspector", "Amazon Linux 2", "Ubuntu with Inspector", "Red Hat Enterprise Linux"],
+            "answer": "Amazon Linux AMI with Amazon Inspector",
+            "badge": "Inspector Agent"
+        },
+        {
+            "id": 10,
+            "title": "CloudFormation Helpers",
+            "description": "Handle deployment success and clean‑up in CloudFormation.",
+            "content": (
+                "CloudFormation helper scripts signal the status of instance configuration. "
+                "Use the cfn-signal helper script to notify CloudFormation when software installation or configuration completes successfully."
+            ),
+            "question": "Which CloudFormation helper script signals that software configuration is complete?",
+            "options": ["cfn-init", "cfn-signal", "cfn-get-metadata", "cfn-hup"],
+            "answer": "cfn-signal",
+            "badge": "CloudFormation Guru"
+        },
+        {
+            "id": 11,
+            "title": "CloudWatch Monitoring",
+            "description": "Advanced monitoring and dashboards in CloudWatch.",
+            "content": (
+                "To view metrics at one‑minute granularity and build dashboards across regions, enable Detailed Monitoring. "
+                "Metric math lets you combine multiple metrics into custom expressions."
+            ),
+            "question": "To view metrics at one‑minute intervals and build cross‑region dashboards, what must you enable?",
+            "options": ["Detailed Monitoring", "Basic Monitoring", "X-Ray Tracing", "Config Aggregator"],
+            "answer": "Detailed Monitoring",
+            "badge": "Monitoring Maven"
+        },
+        {
+            "id": 12,
+            "title": "Service Catalog",
+            "description": "Centrally manage and distribute approved IT services.",
+            "content": (
+                "AWS Service Catalog enables administrators to create catalogues of approved products. "
+                "It proactively ensures resources are tagged correctly during creation, whereas AWS Config is reactive and checks resources after creation."
+            ),
+            "question": "Why use AWS Service Catalog instead of AWS Config for tag enforcement during resource creation?",
+            "options": [
+                "Service Catalog ensures resources are tagged at creation while AWS Config is reactive",
+                "Service Catalog provides resource inventory and history",
+                "Service Catalog enforces encryption keys for data at rest",
+                "Service Catalog monitors metrics across regions"
+            ],
+            "answer": "Service Catalog ensures resources are tagged at creation while AWS Config is reactive",
+            "badge": "Service Catalog Champion"
+        },
+        {
+            "id": 13,
+            "title": "Capacity Reservations",
+            "description": "Understand On‑Demand Capacity Reservations and billing.",
+            "content": (
+                "On‑Demand Capacity Reservations let you reserve EC2 capacity in a specific Availability Zone for any duration. "
+                "These reservations do not provide billing discounts by themselves; you can combine them with Savings Plans or Reserved Instances to get discounts."
+            ),
+            "question": "Which statements are true about On‑Demand Capacity Reservations? (Select two)",
+            "options": [
+                "Capacity Reservations do not offer billing discounts",
+                "Capacity Reservations are transferable between AWS accounts",
+                "On‑Demand Capacity Reservations require a one‑year or three‑year commitment",
+                "On‑Demand Capacity Reservations enable you to reserve capacity for any duration"
+            ],
+            "answers": ["Capacity Reservations do not offer billing discounts", "On‑Demand Capacity Reservations enable you to reserve capacity for any duration"],
+            "multi_select": true,
+            "badge": "Capacity Analyst"
         }
     ]

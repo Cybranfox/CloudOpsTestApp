@@ -31,7 +31,11 @@
                 <form method="post" class="question-form">
                     {% for option in lesson.options %}
                         <div>
-                            <input type="radio" name="option" value="{{ option }}" id="{{ option }}" required>
+                            {% if lesson.multi_select %}
+                                <input type="checkbox" name="option" value="{{ option }}" id="{{ option }}">
+                            {% else %}
+                                <input type="radio" name="option" value="{{ option }}" id="{{ option }}" required>
+                            {% endif %}
                             <label for="{{ option }}">{{ option }}</label>
                         </div>
                     {% endfor %}
