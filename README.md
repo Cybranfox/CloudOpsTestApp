@@ -7,11 +7,11 @@ AWS Orbit is a gamified learning platform designed to take you from AWS beginn
 The curriculum is aligned with the AWS Certified SysOps Administrator (Associate) exam and covers domains such as:
 
 - **Monitoring, Logging & Remediation** – Learn to use CloudWatch, CloudTrail and EventBridge to monitor and automate remediation.
-- **Reliability & Business Continuity** – Explore auto scaling, high availability and backup strategies:contentReference[oaicite:2]{index=2}.
-- **Deployment, Provisioning & Automation** – Master infrastructure as code with CloudFormation:contentReference[oaicite:3]{index=3}.
-- **Security & Compliance** – Implement least‑privilege IAM, encryption and auditing practices:contentReference[oaicite:4]{index=4}.
-- **Networking & Content Delivery** – Configure VPCs, Route 53 and CloudFront:contentReference[oaicite:5]{index=5}.
-- **Cost & Performance Optimization** – Use Cost Explorer and right‑sizing to optimise spend:contentReference[oaicite:6]{index=6}.
+- **Reliability & Business Continuity** – Explore auto scaling, high availability and backup strategies.
+- **Deployment, Provisioning & Automation** – Master infrastructure as code with CloudFormation.
+- **Security & Compliance** – Implement least‑privilege IAM, encryption and auditing practices.
+- **Networking & Content Delivery** – Configure VPCs, Route 53 and CloudFront.
+- **Cost & Performance Optimization** – Use Cost Explorer and right‑sizing to optimise spend.
 
 Each lesson summarises key concepts from AWS Well‑Architected Framework pillars and official AWS sources, and ends with a quiz to test your knowledge.
 
