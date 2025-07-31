@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
+from data import get_lessons
 
 app = Flask(__name__)
 
@@ -6,13 +7,19 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/lesson')
-def lesson():
-    # Dummy lesson content; replace with actual content later
-    return {
-        "title": "Monitoring, Logging & Remediation",
-        "content": "In this lesson, you'll learn how to configure CloudWatch metrics, alarms and use CloudTrail logs for monitoring AWS workloads."
-    }
+@app.route('/lessons')
+def lessons():
+    # Return list of lessons as JSON
+    return jsonify(get_lessons())
+
+@app.route('/lesson/<int:lesson_id>')
+def lesson_page(lesson_id):
+    # Find lesson by ID
+    lessons_list = get_lessons()
+    lesson = next((l for l in lessons_list if l['id'] == lesson_id), None)
+    if lesson:
+        return render_template('lesson.html', lesson=lesson)
+    return "Lesson not found", 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
