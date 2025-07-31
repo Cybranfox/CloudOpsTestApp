@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: {{ lesson.title }} | AWS Orbit</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        header { background-color: #232f3e; color: #fff; padding: 1rem; text-align: center; }
+        .content { padding: 2rem; text-align: center; }
+        .btn { display: inline-block; margin-top: 1rem; padding: 0.5rem 1rem; font-size: 1rem; background-color: #ff9900; border: none; border-radius: 4px; color: #fff; cursor: pointer; }
+        .shields { margin-bottom: 1rem; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Quiz: {{ lesson.title }}</h1>
+    </header>
+    <div class="content">
+        {% if message %}
+            <p><strong>{{ message }}</strong></p>
+            {% if repeat %}
+                <a class="btn" href="/quiz/{{ lesson.id }}">Try Again</a>
+            {% else %}
+                <a class="btn" href="/">← Back to Home</a>
+            {% endif %}
+        {% else %}
+            <div class="shields">
+                {% with prog = progress or {} %}
+                {% if prog.energy is defined %}
+                    Shields: {{ prog.energy }} / 3
+                {% endif %}
+                {% endwith %}
+            </div>
+            <p>{{ lesson.question }}</p>
+            <form method="post">
+                {% for option in lesson.options %}
+                    <div>
+                        <input type="radio" name="option" value="{{ option }}" id="{{ option }}" required>
+                        <label for="{{ option }}">{{ option }}</label>
+                    </div>
+                {% endfor %}
+                <button class="btn" type="submit">Submit Answer</button>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>
