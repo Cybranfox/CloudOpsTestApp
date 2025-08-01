@@ -83,3 +83,51 @@ main {
 .question-form label {
     margin-left: 0.5rem;
 }
+
+/* Mascot speech bubble styling */
+.mascot-container {
+    position: relative;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.speech-bubble {
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    max-width: 80%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 10;
+}
+
+.speech-bubble.visible {
+    display: block;
+}
+
+/* Zap reaction states: basic visual cues (can be replaced with Lottie animations) */
+.zap-celebrate {
+    animation: celebrate 1s ease-in-out;
+}
+
+.zap-sad {
+    animation: sad 1s ease-in-out;
+}
+
+@keyframes celebrate {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(10deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes sad {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+    100% { transform: translateY(0); }
+}

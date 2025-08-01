@@ -78,14 +78,14 @@ def quiz(lesson_id):
             correct = selected == lesson.get('answer')
         progress, message, next_lesson_id = register_quiz_result(lesson_id, correct)
         if progress['energy'] <= 0:
-            # When energy depleted, prompt to review the current lesson
+            # When energy is depleted, prompt to review the current lesson
             return render_template('quiz.html', lesson=lesson, message=message + "\nYou have lost all your shields! Please review the lesson before trying again.", repeat=True)
         elif correct:
-            # Redirect to next lesson's lesson page
-            return redirect(url_for('lesson_page', lesson_id=next_lesson_id))
+            # On correct answer show explanation and provide link to continue
+            return render_template('quiz.html', lesson=lesson, message=message, repeat=False, next_lesson_id=next_lesson_id, correct=True)
         else:
-            # incorrect answer but shields remain: repeat quiz
-            return render_template('quiz.html', lesson=lesson, message=message, repeat=True)
+            # Incorrect answer but shields remain: repeat quiz
+            return render_template('quiz.html', lesson=lesson, message=message, repeat=True, correct=False)
     # GET request
     # GET request: show quiz form and current progress (energy)
     from progress import load_progress

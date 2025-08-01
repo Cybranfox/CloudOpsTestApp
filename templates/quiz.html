@@ -12,12 +12,21 @@
     </header>
     <main>
         <div class="card">
+            <!-- Mascot and speech bubble -->
+            <div class="mascot-container">
+                <img id="zap-mascot" class="zap" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+                <div id="zap-speech" class="speech-bubble"></div>
+            </div>
             {% if message %}
-                <p><strong>{{ message }}</strong></p>
+                <p><strong>{{ message|safe }}</strong></p>
                 {% if repeat %}
                     <a class="btn" href="/quiz/{{ lesson.id }}">Try Again</a>
                 {% else %}
-                    <a class="btn" href="/">← Back to Home</a>
+                    {% if next_lesson_id %}
+                        <a class="btn" href="/lesson/{{ next_lesson_id }}">Continue to Next Lesson →</a>
+                    {% else %}
+                        <a class="btn" href="/">← Back to Home</a>
+                    {% endif %}
                 {% endif %}
             {% else %}
                 <div class="shields">
@@ -44,5 +53,20 @@
             {% endif %}
         </div>
     </main>
+    <!-- Import the Zap animator as an ES module -->
+    <script type="module">
+      import ZapAnimator from "{{ url_for('static', filename='zap_animator.js') }}";
+      const mascot = document.getElementById('zap-mascot');
+      const speech = document.getElementById('zap-speech');
+      const animator = new ZapAnimator(mascot, speech);
+      // Determine reaction based on quiz outcome
+      {% if message %}
+        {% if correct %}
+          animator.play('correct');
+        {% else %}
+          animator.play('wrong');
+        {% endif %}
+      {% endif %}
+    </script>
 </body>
 </html>

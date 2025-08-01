@@ -100,7 +100,13 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
         progress['xp'] += xp_gain_correct
         # Restore one shield up to max
         progress['energy'] = min(3, progress.get('energy', 3) + 1)
+        # Build base success message and append the lesson explanation so the
+        # mascot can elaborate on the concept for the user. Including the
+        # explanation here ensures it travels back to the client and can be
+        # displayed alongside the celebration animation.
         message = f"Correct! You've earned {xp_gain_correct} XP."
+        if lesson.get('explanation'):
+            message += f"\nExplanation: {lesson['explanation']}"
         # Record completion if not already done
         if lesson_id not in progress.get('completed_lessons', []):
             progress['completed_lessons'].append(lesson_id)
