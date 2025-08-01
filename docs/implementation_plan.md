@@ -1,4 +1,4 @@
-# AWS Orbit RPG Edition – Implementation Plan
+# Cloud Orbit RPG Edition – Implementation Plan
 
 ## Overview
 This document outlines a LONG ASS roadmap to transform what has so far being an interesting experence, into an RPG‑style learning experience, incorporating new animations, adaptive progression and minigame prototypes. The plan assumes an agile iteration cycle with daily deliverables and testing.
