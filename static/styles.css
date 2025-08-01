@@ -1,30 +1,70 @@
 body {
-  font-family: sans-serif;
-  padding: 1rem;
-  background: #f5f7fa;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  /* Apply a sleek gradient background image */
+  background: url('/static/background.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
 }
-.minigame-container {
-  background: #fff;
+header {
+  background-color: #232f3e;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+}
+nav {
+  background-color: #f0f1f2;
+  padding: 0.5rem;
+  text-align: center;
+}
+nav a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #0073bb;
+}
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+  /* Use a semi‑transparent white background so the gradient shows through */
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 8px;
-  padding: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  max-width: 600px;
-  margin: 0 auto;
 }
-textarea {
-  width: 100%;
-  margin-bottom: 0.5rem;
+.zap {
+  width: 150px;
+  margin: 1rem auto;
+  display: block;
+  transition: transform 0.3s ease;
 }
-button {
-  padding: 0.5rem 1rem;
-  background: #ff9900;
-  border: none;
-  color: white;
-  border-radius: 4px;
+.zap-idle {
+  animation: float 4s ease-in-out infinite;
 }
-.result {
-  margin-top: 0.5rem;
-  font-weight: bold;
+.zap-correct {
+  animation: celebrate 1s ease-in-out;
 }
-.success { color: green; }
-.error { color: red; }
+.zap-wrong {
+  animation: shake 0.5s ease-in-out;
+}
+.zap-battle {
+  animation: pulse 1s infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes celebrate {
+  0%,100% { transform: rotate(0deg); }
+  50% { transform: rotate(20deg); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

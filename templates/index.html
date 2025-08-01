@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Orbit RPG Edition</title>
-    <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Orbit RPG Edition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
+  <header>
     <h1>AWS Orbit RPG Edition</h1>
-    <p>Welcome to the next evolution of AWS Orbit! Use the API endpoints to explore the skill tree and minigames.</p>
-    <ul>
-      <li><a href="/api/skill_tree">Skill Tree JSON</a></li>
-    </ul>
+  </header>
+  <nav>
+    <a href="/skill_tree">Skill Tree</a>
+    <a href="/minigame/security_dungeon">Security Dungeon</a>
+  </nav>
+  <div class="container">
+    <p>Welcome to the next evolution of AWS Orbit! Navigate using the menu above to explore the skill tree and try the Security Dungeon minigame.</p>
+    <canvas id="zapCanvas"></canvas>
+  </div>
+  <script type="module">
+    import ZapCanvasAnimator from '/static/zap_canvas.js';
+    const canvas = document.getElementById('zapCanvas');
+    const animator = new ZapCanvasAnimator(canvas);
+    animator.play('idle');
+  </script>
 </body>
 </html>

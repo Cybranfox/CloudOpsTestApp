@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Tree</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Skill Tree</h1>
+  </header>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/minigame/security_dungeon">Security Dungeon</a>
+  </nav>
+  <div class="container">
+    <h2>Your Progression</h2>
+    <div class="skill-tree">
+      {% macro render_node(node_id, tree) -%}
+        <li class="{{ 'unlocked' if tree[node_id]['unlocked'] else 'locked' }}">
+          {{ tree[node_id]['label'] }}
+          {% if tree[node_id]['children'] %}
+            <ul>
+              {% for child in tree[node_id]['children'] %}
+                {{ render_node(child, tree) }}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {%- endmacro %}
+      <ul>
+        {{ render_node('cloud_foundations', tree) }}
+      </ul>
+    </div>
+    <canvas id="zapCanvas"></canvas>
+  </div>
+  <script type="module">
+    import ZapCanvasAnimator from '/static/zap_canvas.js';
+    const canvas = document.getElementById('zapCanvas');
+    const animator = new ZapCanvasAnimator(canvas);
+    animator.play('idle');
+  </script>
+</body>
+</html>

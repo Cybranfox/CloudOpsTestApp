@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>{{ node.label }}</h1>
+  </header>
+  <nav>
+    <a href="/adventure">Back to Map</a>
+  </nav>
+  <div class="container">
+    {% if question %}
+      <p>{{ question.prompt }}</p>
+      <form method="post">
+        {% for option in question.options %}
+          <div>
+            <input type="radio" name="answer" value="{{ option }}" id="{{ option }}" required>
+            <label for="{{ option }}">{{ option }}</label>
+          </div>
+        {% endfor %}
+        <button type="submit">Submit</button>
+      </form>
+    {% else %}
+      <p>This event is not yet implemented.</p>
+    {% endif %}
+    <img id="zap-img" class="zap zap-idle" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+  </div>
+  <script type="module">
+    import ZapController from '/static/zap_controller.js';
+    const zapImg = document.getElementById('zap-img');
+    const zap = new ZapController(zapImg);
+    // Zap stays idle until result
+  </script>
+</body>
+</html>
