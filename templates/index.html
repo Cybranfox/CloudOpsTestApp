@@ -3,41 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Orbit</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>AWS Orbit RPG Edition</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <header>
-        <h1>Welcome to AWS Orbit</h1>
-    </header>
-    <main>
-        <div class="card">
-            <img class="zap" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
-            <h2>Your companion on the journey to AWS SysOps mastery!</h2>
-            <p>Stay motivated with energy shields, badges and adaptive quizzes.</p>
-            <div class="stats">
-                <strong>XP:</strong> {{ progress['xp'] }}<br>
-                <strong>Streak:</strong> {{ progress['streak'] }} days
-            </div>
-            <div class="shields">
-                <strong>Shields:</strong> {{ progress['energy'] }} / 3
-            </div>
-            <div class="badges">
-                {% if progress['badges'] %}
-                    <strong>Badges:</strong><br>
-                    {% for badge in progress['badges'] %}
-                        <span class="badge">{{ badge }}</span>
-                    {% endfor %}
-                {% else %}
-                    <em>No badges earned yet.</em>
-                {% endif %}
-            </div>
-            <div>
-                <a class="btn" href="/lesson/1">Start Lessons</a>
-                <a class="btn" href="/quiz/1">Take Quiz 1</a>
-                <a class="btn" href="/lessons">View Lessons (JSON)</a>
-            </div>
-        </div>
-    </main>
+    <h1>AWS Orbit RPG Edition</h1>
+    <p>Welcome to the next evolution of AWS Orbit! Use the API endpoints to explore the skill tree and minigames.</p>
+    <ul>
+      <li><a href="/api/skill_tree">Skill Tree JSON</a></li>
+    </ul>
 </body>
 </html>

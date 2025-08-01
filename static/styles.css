@@ -1,133 +1,30 @@
-/* Global styling for AWS Orbit v5 */
-
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f6f7f9;
-    color: #333;
+  font-family: sans-serif;
+  padding: 1rem;
+  background: #f5f7fa;
 }
-
-header {
-    background-color: #232f3e;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.minigame-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin: 0 auto;
 }
-
-main {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
+textarea {
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
-
-.card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
-    margin-bottom: 2rem;
+button {
+  padding: 0.5rem 1rem;
+  background: #ff9900;
+  border: none;
+  color: white;
+  border-radius: 4px;
 }
-
-.zap {
-    width: 200px;
-    margin: auto;
-    display: block;
-    animation: float 4s ease-in-out infinite;
+.result {
+  margin-top: 0.5rem;
+  font-weight: bold;
 }
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
-.stats, .shields, .badges {
-    margin-top: 1rem;
-    font-size: 1.1rem;
-}
-
-.badges .badge {
-    display: inline-block;
-    background-color: #23a55b;
-    color: #fff;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    margin: 0.2rem;
-    font-size: 0.9rem;
-}
-
-.btn {
-    display: inline-block;
-    margin: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    background-color: #ff9900;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.btn:hover {
-    background-color: #cc7a00;
-}
-
-.question-form div {
-    margin-bottom: 0.5rem;
-    text-align: left;
-}
-
-.question-form label {
-    margin-left: 0.5rem;
-}
-
-/* Mascot speech bubble styling */
-.mascot-container {
-    position: relative;
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.speech-bubble {
-    position: absolute;
-    top: -1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    max-width: 80%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 10;
-}
-
-.speech-bubble.visible {
-    display: block;
-}
-
-/* Zap reaction states: basic visual cues (can be replaced with Lottie animations) */
-.zap-celebrate {
-    animation: celebrate 1s ease-in-out;
-}
-
-.zap-sad {
-    animation: sad 1s ease-in-out;
-}
-
-@keyframes celebrate {
-    0% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.1) rotate(10deg); }
-    100% { transform: scale(1) rotate(0deg); }
-}
-
-@keyframes sad {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(8px); }
-    100% { transform: translateY(0); }
-}
+.success { color: green; }
+.error { color: red; }
