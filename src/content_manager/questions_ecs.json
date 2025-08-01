@@ -1,0 +1,111 @@
+[
+  {
+    "id": "ecs-task-001",
+    "type": "multiple_choice",
+    "question": "In Amazon ECS, what are the smallest deployable units that define how containers run, including the Docker image, CPU, and memory requirements?",
+    "options": ["Tasks", "Services", "Clusters", "Container instances"],
+    "answer": 0,
+    "explanation": "Tasks are the most minor deployable units in ECS. They define how containers should run, including the Docker image, CPU, and memory requirements【805582491341585†L56-L58】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-launch-001",
+    "type": "multiple_choice",
+    "question": "Which ECS launch type runs your containers without managing EC2 instances and automatically provisions and scales resources based on your application's needs?",
+    "options": ["EC2", "Fargate", "ECS Anywhere", "Kubernetes"],
+    "answer": 1,
+    "explanation": "AWS Fargate is a serverless compute engine that runs your containers without managing EC2 instances and scales resources automatically【805582491341585†L109-L112】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-service-001",
+    "type": "multiple_choice",
+    "question": "What is the purpose of an Amazon ECS Service?",
+    "options": ["To manage container images", "To store container logs", "To ensure that the desired number of tasks are always running", "To group clusters"],
+    "answer": 2,
+    "explanation": "ECS services manage long‑running tasks on your cluster. They ensure that the desired number of tasks are always running and can replace failed tasks【805582491341585†L64-L67】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-cluster-001",
+    "type": "multiple_choice",
+    "question": "What does an Amazon ECS cluster represent?",
+    "options": ["A single container", "A logical grouping of EC2 instances or Fargate tasks", "A deployment pipeline", "An IAM role"],
+    "answer": 1,
+    "explanation": "Clusters are logical groupings of EC2 instances or Fargate tasks that serve as the execution environment for your tasks and services【805582491341585†L69-L72】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-capacity-001",
+    "type": "multiple_choice",
+    "question": "Which capacity provider allows you to run and manage ECS tasks on your on‑premises infrastructure, providing flexibility in deploying across hybrid environments?",
+    "options": ["EC2 Instances", "AWS Fargate", "ECS Anywhere", "AWS Copilot"],
+    "answer": 2,
+    "explanation": "ECS Anywhere lets you run and manage ECS tasks on your on‑premises infrastructure, enabling hybrid deployments【805582491341585†L114-L118】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-scheduler-001",
+    "type": "multiple_choice",
+    "question": "What is the primary role of the ECS scheduler?",
+    "options": ["To manage IAM roles", "To place tasks on container instances considering resource availability and constraints", "To scale clusters based on demand", "To register task definitions"],
+    "answer": 1,
+    "explanation": "The ECS scheduler is responsible for placing tasks on container instances within the cluster, considering resource availability and defined constraints【805582491341585†L129-L133】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-copilot-001",
+    "type": "multiple_choice",
+    "question": "Which command-line tool simplifies developing and deploying containerized applications on ECS using predefined templates and workflows?",
+    "options": ["AWS Copilot", "AWS CDK", "AWS CLI", "AWS Management Console"],
+    "answer": 0,
+    "explanation": "AWS Copilot is a command-line tool that simplifies containerized application development and deployment on ECS by providing predefined templates and workflows【805582491341585†L150-L155】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-taskdef-001",
+    "type": "multiple_choice",
+    "question": "What does an ECS task definition specify?",
+    "options": [
+      "Only the container image to run",
+      "Parameters such as container images, CPU and memory requirements, environment variables, and network configurations",
+      "IAM roles and VPC settings only",
+      "A list of EC2 instances in a cluster"
+    ],
+    "answer": 1,
+    "explanation": "Task definitions specify parameters such as container images, CPU and memory requirements, environment variables, and network configurations【805582491341585†L214-L215】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-controller-001",
+    "type": "multiple_choice",
+    "question": "What is the role of the ECS controller?",
+    "options": ["To define task placement strategies", "To manage the state of the ECS cluster and ensure the desired number of tasks are running", "To store container logs", "To allocate IAM policies to tasks"],
+    "answer": 1,
+    "explanation": "The ECS controller manages the state of your ECS cluster and ensures that the desired number of tasks are running【805582491341585†L123-L126】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-scheduler-strategy-001",
+    "type": "multiple_choice",
+    "question": "Which of the following is NOT one of the task placement strategies supported by the ECS scheduler?",
+    "options": ["binpack", "random", "spread", "round robin"],
+    "answer": 3,
+    "explanation": "The ECS scheduler supports binpack, random and spread strategies for task placement【805582491341585†L129-L134】. Round robin is not listed as a supported strategy in the documentation.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  },
+  {
+    "id": "ecs-service-scale-001",
+    "type": "multiple_choice",
+    "question": "Which statement best describes how an ECS Service manages tasks?",
+    "options": [
+      "It stores container logs in CloudWatch",
+      "It ensures the specified number of task instances are running and handles task placement and scaling",
+      "It deploys the ECS agent on EC2 instances",
+      "It defines container images and environment variables"
+    ],
+    "answer": 1,
+    "explanation": "An ECS service definition manages deployment and scaling of tasks. It ensures that the desired number of task instances are running and handles task placement and scaling【805582491341585†L228-L233】.",
+    "source": "https://openobserve.ai/articles/ecs-documentation-guide/"
+  }
+]
