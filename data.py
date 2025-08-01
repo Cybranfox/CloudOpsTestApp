@@ -194,7 +194,7 @@ def get_lessons():
                 "On‑Demand Capacity Reservations enable you to reserve capacity for any duration"
             ],
             "answers": ["Capacity Reservations do not offer billing discounts", "On‑Demand Capacity Reservations enable you to reserve capacity for any duration"],
-            "multi_select": true,
+            "multi_select": True,
             "badge": "Capacity Analyst"
         }
     ]
