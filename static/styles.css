@@ -1,133 +1,70 @@
-/* Global styling for AWS Orbit v5 */
-
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f6f7f9;
-    color: #333;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  /* Apply a sleek gradient background image */
+  background: url('/static/background.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
 }
-
 header {
-    background-color: #232f3e;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #232f3e;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
 }
-
-main {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
+nav {
+  background-color: #f0f1f2;
+  padding: 0.5rem;
+  text-align: center;
 }
-
-.card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
-    margin-bottom: 2rem;
+nav a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #0073bb;
 }
-
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+  /* Use a semi‑transparent white background so the gradient shows through */
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 .zap {
-    width: 200px;
-    margin: auto;
-    display: block;
-    animation: float 4s ease-in-out infinite;
+  width: 150px;
+  margin: 1rem auto;
+  display: block;
+  transition: transform 0.3s ease;
 }
-
+.zap-idle {
+  animation: float 4s ease-in-out infinite;
+}
+.zap-correct {
+  animation: celebrate 1s ease-in-out;
+}
+.zap-wrong {
+  animation: shake 0.5s ease-in-out;
+}
+.zap-battle {
+  animation: pulse 1s infinite;
+}
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
-
-.stats, .shields, .badges {
-    margin-top: 1rem;
-    font-size: 1.1rem;
-}
-
-.badges .badge {
-    display: inline-block;
-    background-color: #23a55b;
-    color: #fff;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    margin: 0.2rem;
-    font-size: 0.9rem;
-}
-
-.btn {
-    display: inline-block;
-    margin: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    background-color: #ff9900;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.btn:hover {
-    background-color: #cc7a00;
-}
-
-.question-form div {
-    margin-bottom: 0.5rem;
-    text-align: left;
-}
-
-.question-form label {
-    margin-left: 0.5rem;
-}
-
-/* Mascot speech bubble styling */
-.mascot-container {
-    position: relative;
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.speech-bubble {
-    position: absolute;
-    top: -1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(255, 255, 255, 0.95);
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    max-width: 80%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 10;
-}
-
-.speech-bubble.visible {
-    display: block;
-}
-
-/* Zap reaction states: basic visual cues (can be replaced with Lottie animations) */
-.zap-celebrate {
-    animation: celebrate 1s ease-in-out;
-}
-
-.zap-sad {
-    animation: sad 1s ease-in-out;
-}
-
 @keyframes celebrate {
-    0% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.1) rotate(10deg); }
-    100% { transform: scale(1) rotate(0deg); }
+  0%,100% { transform: rotate(0deg); }
+  50% { transform: rotate(20deg); }
 }
-
-@keyframes sad {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(8px); }
-    100% { transform: translateY(0); }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
