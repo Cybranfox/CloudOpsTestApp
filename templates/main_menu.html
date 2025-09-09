@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Orbit – Slay the Spire Edition</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Cloud Orbit – Slay the Spire Edition</h1>
+  </header>
+  <nav>
+    <a href="/adventure"><img src="{{ url_for('static', filename='compute_icon.png') }}" alt="Adventure" style="height:24px;vertical-align:middle;"> Adventure Mode</a>
+    <a href="/lessons"><img src="{{ url_for('static', filename='storage_icon.png') }}" alt="Lessons" style="height:24px;vertical-align:middle;"> Lessons</a>
+    <a href="/quizzes"><img src="{{ url_for('static', filename='cloud_icon.png') }}" alt="Quizzes" style="height:24px;vertical-align:middle;"> Quizzes</a>
+    <a href="/exams"><img src="{{ url_for('static', filename='compute_icon.png') }}" alt="Exams" style="height:24px;vertical-align:middle;"> Practice Exams</a>
+  </nav>
+  <div class="container">
+    <p>Choose your journey! Adventure Mode is the primary pathway, but you can still access lessons, quizzes, and exam simulations.</p>
+    <img id="zap-img" class="zap zap-idle" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+  </div>
+  <script type="module">
+    import ZapController from '/static/zap_controller.js';
+    const zapImg = document.getElementById('zap-img');
+    const zap = new ZapController(zapImg);
+    // Zap will stay idle on main menu
+  </script>
+</body>
+</html>

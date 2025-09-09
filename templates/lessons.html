@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Orbit Lessons</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+  <h1>Cloud Orbit Lessons</h1>
+  </header>
+  <nav>
+    <a href="/">Main Menu</a>
+  </nav>
+  <div class="container">
+    <p>Lessons are not implemented in this prototype but can link to existing AWS Orbit lesson modules.</p>
+    <img id="zap-img" class="zap zap-idle" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+  </div>
+  <script type="module">
+    import ZapController from '/static/zap_controller.js';
+    const zapImg = document.getElementById('zap-img');
+    const zap = new ZapController(zapImg);
+  </script>
+</body>
+</html>
