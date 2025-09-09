@@ -1,1 +1,68 @@
-{"xp": 140, "streak": 4, "last_completed_date": "2025-08-01", "energy": 3, "badges": ["Reliability Champion", "Security Sentinel", "Monitoring Master"], "completed_lessons": [2, 4, 1]}
+{
+  "xp": 460,
+  "streak": 5,
+  "last_completed_date": "2025-09-09",
+  "energy": 3,
+  "badges": [
+    "Reliability Champion",
+    "Security Sentinel",
+    "Monitoring Master",
+    "Automation Architect",
+    "Networking Navigator",
+    "DevOps Master"
+  ],
+  "completed_lessons": [
+    2,
+    4,
+    1,
+    3,
+    5,
+    7
+  ],
+  "max_energy": 3,
+  "current_lesson": 4,
+  "inventory": {
+    "relics": [
+      {
+        "type": "relic",
+        "name": "Deployment Automation Gem",
+        "description": "Grants mastery over continuous deployment patterns"
+      },
+      {
+        "type": "relic",
+        "name": "Guardian's Shield",
+        "description": "Provides enhanced protection against security vulnerabilities"
+      },
+      {
+        "type": "relic",
+        "name": "Deployment Automation Gem",
+        "description": "Grants mastery over continuous deployment patterns"
+      }
+    ],
+    "potions": [
+      {
+        "type": "potion",
+        "name": "High Availability Elixir",
+        "description": "Temporarily boosts understanding of fault-tolerant patterns"
+      }
+    ],
+    "gold": 50,
+    "cards": []
+  },
+  "stats": {
+    "battles_won": 7,
+    "elites_defeated": 2,
+    "bosses_defeated": 0,
+    "total_questions": 11,
+    "correct_answers": 9,
+    "streak_best": 5,
+    "runs_completed": 0
+  },
+  "achievements": [
+    "first_victory"
+  ],
+  "ascension_level": 0,
+  "character_unlocks": [
+    "zap"
+  ]
+}

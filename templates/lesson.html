@@ -3,23 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ lesson.title }} | AWS Orbit</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>{{ lesson.title }} - Cloud Orbit RPG</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <header>
-        <h1>{{ lesson.title }}</h1>
+        <h1>🌌 {{ lesson.title }}</h1>
+        <p>{{ lesson.description }}</p>
     </header>
+
     <main>
         <div class="card">
-            <h2>{{ lesson.description }}</h2>
-            <p>{{ lesson.content }}</p>
-            <div>
-                <a class="btn" href="/complete/{{ lesson.id }}">Complete Lesson</a>
-                <a class="btn" href="/quiz/{{ lesson.id }}">Take Quiz</a>
+            <div class="mascot-container">
+                <img id="zap-mascot" class="zap" src="/static/mascot/zap_explaining.png" alt="Zap - Your AWS Guide">
+                <div id="speech-bubble" class="speech-bubble">Let me explain this concept...</div>
             </div>
-            <p style="margin-top: 1rem;"><a href="/">← Back to Home</a></p>
+
+            <div class="lesson-content">
+                <div class="room-type-indicator">
+                    <span class="room-badge room-{{ lesson.room_type }}">
+                        {% if lesson.room_type == 'battle' %}⚔️ Battle
+                        {% elif lesson.room_type == 'elite' %}👑 Elite Challenge
+                        {% elif lesson.room_type == 'boss' %}🐉 Boss Battle
+                        {% elif lesson.room_type == 'shop' %}🛒 Knowledge Shop
+                        {% elif lesson.room_type == 'event' %}🎲 Special Event
+                        {% else %}📚 Lesson
+                        {% endif %}
+                    </span>
+                    <span class="difficulty-badge difficulty-{{ lesson.difficulty }}">
+                        {{ lesson.difficulty.title() }}
+                    </span>
+                </div>
+
+                {% if lesson.scenario %}
+                <div class="scenario-box">
+                    <h3>🎯 Scenario</h3>
+                    <p>{{ lesson.scenario }}</p>
+                </div>
+                {% endif %}
+
+                <div class="content-section">
+                    <h3>📋 Key Concepts</h3>
+                    <p>{{ lesson.content }}</p>
+                </div>
+
+                {% if lesson.loot %}
+                <div class="loot-preview">
+                    <h3>🎁 Potential Reward</h3>
+                    <div class="loot-item">
+                        <strong>{{ lesson.loot.name }}</strong>: {{ lesson.loot.description }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="lesson-actions">
+                    <a href="/quiz/{{ lesson.id }}" class="btn btn-primary">
+                        {% if lesson.room_type == 'boss' %}🐉 Face the Boss
+                        {% elif lesson.room_type == 'elite' %}👑 Take the Challenge
+                        {% else %}⚔️ Start Battle
+                        {% endif %}
+                    </a>
+                    <a href="/" class="btn btn-secondary">🗺️ Return to Map</a>
+                </div>
+            </div>
         </div>
     </main>
+
+    <script type="module">
+        import EnhancedZapAnimator from '/static/enhanced_zap_animator.js';
+
+        // Initialize mascot animation
+        const mascotImg = document.getElementById('zap-mascot');
+        const speechBubble = document.getElementById('speech-bubble');
+        const animator = new EnhancedZapAnimator(mascotImg, speechBubble);
+
+        // Show room entry animation
+        window.addEventListener('load', () => {
+            const roomType = '{{ lesson.room_type }}';
+            setTimeout(() => {
+                animator.playRoomEntry(roomType);
+            }, 500);
+        });
+
+        // Add interactive explanations
+        const contentSections = document.querySelectorAll('.content-section, .scenario-box');
+        contentSections.forEach(section => {
+            section.addEventListener('click', () => {
+                const messages = [
+                    'This is a crucial AWS concept!',
+                    'Understanding this will serve you well!',
+                    'Let me break this down for you...',
+                    'This knowledge will be valuable!'
+                ];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                animator.play('explaining', { 
+                    message: randomMessage,
+                    duration: 2500 
+                });
+            });
+        });
+
+        // Loot preview interaction
+        const lootPreview = document.querySelector('.loot-preview');
+        if (lootPreview) {
+            lootPreview.addEventListener('click', () => {
+                animator.play('curious', { 
+                    message: 'Complete this lesson to earn this reward!',
+                    duration: 2000 
+                });
+            });
+        }
+    </script>
+
+    <style>
+        .room-type-indicator {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .room-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .room-battle { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; }
+        .room-elite { background: linear-gradient(135deg, #9C27B0, #7B1FA2); color: white; }
+        .room-boss { background: linear-gradient(135deg, #F44336, #D32F2F); color: white; }
+        .room-shop { background: linear-gradient(135deg, #FF9800, #F57C00); color: white; }
+        .room-event { background: linear-gradient(135deg, #2196F3, #1976D2); color: white; }
+
+        .difficulty-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .difficulty-easy { background: #E8F5E8; color: #2E7D32; border: 2px solid #4CAF50; }
+        .difficulty-medium { background: #FFF3E0; color: #EF6C00; border: 2px solid #FF9800; }
+        .difficulty-hard { background: #FFEBEE; color: #C62828; border: 2px solid #F44336; }
+        .difficulty-elite { background: #F3E5F5; color: #7B1FA2; border: 2px solid #9C27B0; }
+        .difficulty-boss { background: #FCE4EC; color: #AD1457; border: 2px solid #E91E63; }
+
+        .scenario-box {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            border-left: 4px solid #2196F3;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+        }
+
+        .content-section {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .content-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .loot-preview {
+            background: linear-gradient(135deg, #FFF9C4, #FFF176);
+            border: 2px solid #FFD700;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .loot-preview:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .loot-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .lesson-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #757575, #616161);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        @media (max-width: 768px) {
+            .lesson-actions {
+                flex-direction: column;
+            }
+            
+            .btn-primary, .btn-secondary {
+                min-width: auto;
+            }
+            
+            .room-type-indicator {
+                justify-content: center;
+            }
+        }
+    </style>
 </body>
 </html>
