@@ -24,11 +24,11 @@
 
 | Metric | Value |
 |--------|-------|
-| 🐍 Python Files | 14 |
+| 🐍 Python Files | 3 |
 | 🌐 HTML Templates | 34 |
 | 🎨 CSS Files | 2 |
-| ⚡ JavaScript Files | 637 |
-| 📏 Lines of Python | 2453 |
+| ⚡ JavaScript Files | 635 |
+| 📏 Lines of Python | 1317 |
 | 📱 Mobile Ready | 🔄 In Progress |
 | 🤖 AI Enhanced | ⚙️ Setting Up |
 
