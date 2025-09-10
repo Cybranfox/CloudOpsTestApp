@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Orbit Exam Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Cloud Orbit Exam Result</h1>
+  </header>
+  <nav>
+    <a href="/">Main Menu</a>
+  </nav>
+  <div class="container">
+    <p>Your score: {{ score }}%</p>
+    {% if score >= 72 %}
+      <p>Congratulations! You passed the practice exam.</p>
+    {% else %}
+      <p>Keep studying! Zap believes in you.</p>
+    {% endif %}
+    <img id="zap-img" class="zap" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+  </div>
+  <script type="module">
+    import ZapController from '/static/zap_controller.js';
+    const zapImg = document.getElementById('zap-img');
+    const zap = new ZapController(zapImg);
+    {% if score >= 72 %}
+      zap.play('correct');
+    {% else %}
+      zap.play('wrong');
+    {% endif %}
+  </script>
+</body>
+</html>

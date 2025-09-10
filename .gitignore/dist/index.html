@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AWS Cloud Orbit</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Mobile-specific overrides */
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .mobile-header {
+            text-align: center;
+            padding: 20px 0;
+            background: #232f3e;
+            margin: -20px -20px 20px -20px;
+            border-radius: 0 0 15px 15px;
+        }
+        .mobile-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .mobile-btn:active {
+            background: #45a049;
+            transform: scale(0.95);
+        }
+        .mascot-mobile {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-header">
+        <h1>🌌 AWS Cloud Orbit</h1>
+        <p>Your Mobile Learning Adventure</p>
+    </div>
+    
+    <div style="text-align: center;">
+        <img class="mascot-mobile" src="mascot/zap_idle.png" alt="Zap" onerror="this.style.display='none'">
+        
+        <h2>Welcome to Cloud Orbit Mobile!</h2>
+        <p>Start your AWS learning journey</p>
+        
+        <button class="mobile-btn" onclick="startLearning()">🚀 Start Learning</button>
+        <button class="mobile-btn" onclick="viewProgress()">📊 View Progress</button>
+        
+        <div id="content" style="margin-top: 30px;"></div>
+    </div>
+
+    <script>
+        function startLearning() {
+            document.getElementById('content').innerHTML = `
+                <h3>📚 Available Lessons</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
+                    <button class="mobile-btn" onclick="openLesson(1)">⚔️ Monitoring & Logging</button>
+                    <button class="mobile-btn" onclick="openLesson(2)">🛡️ Reliability & Continuity</button>
+                    <button class="mobile-btn" onclick="openLesson(3)">🚀 Deployment & Automation</button>
+                    <button class="mobile-btn" onclick="openLesson(4)">🔒 Security & Compliance</button>
+                </div>
+                <button class="mobile-btn" onclick="showHome()" style="margin-top: 20px; background: #666;">← Back</button>
+            `;
+        }
+        
+        function viewProgress() {
+            document.getElementById('content').innerHTML = `
+                <h3>📈 Your Progress</h3>
+                <div style="background: #2d2d2d; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <p>🌟 XP: 340</p>
+                    <p>🔥 Streak: 5 days</p>
+                    <p>⚡ Energy: 3/3</p>
+                    <p>🏆 Badges: 6</p>
+                </div>
+                <button class="mobile-btn" onclick="showHome()" style="background: #666;">← Back</button>
+            `;
+        }
+        
+        function openLesson(id) {
+            document.getElementById('content').innerHTML = `
+                <h3>📖 Lesson ${id}</h3>
+                <div style="background: #2d4a66; padding: 20px; border-radius: 10px; margin: 20px 0; border: 2px solid #2196F3;">
+                    <p>This lesson would connect to your Flask backend API.</p>
+                    <p>In the full version, this would show:</p>
+                    <ul style="text-align: left; max-width: 250px; margin: 0 auto;">
+                        <li>Interactive content</li>
+                        <li>Quiz questions</li>
+                        <li>Zap animations</li>
+                        <li>Progress tracking</li>
+                    </ul>
+                </div>
+                <button class="mobile-btn" onclick="startLearning()">← Back to Lessons</button>
+            `;
+        }
+        
+        function showHome() {
+            document.getElementById('content').innerHTML = '';
+        }
+        
+        // Add touch feedback
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.classList.contains('mobile-btn')) {
+                e.target.style.transform = 'scale(0.95)';
+            }
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            if (e.target.classList.contains('mobile-btn')) {
+                setTimeout(() => {
+                    e.target.style.transform = 'scale(1)';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
