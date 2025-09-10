@@ -1,5 +1,5 @@
 {
-  "xp": 785,
+  "xp": 1240,
   "streak": 5,
   "last_completed_date": "2025-09-09",
   "energy": 3,
@@ -11,7 +11,16 @@
     "Networking Navigator",
     "DevOps Master",
     "Cost Controller",
-    "Serverless Architect"
+    "Serverless Architect",
+    "Database Architect",
+    "Container Master",
+    "Infrastructure Architect",
+    "Storage Optimizer",
+    "DNS Master",
+    "Caching Expert",
+    "Event Architect",
+    "Operations Master",
+    "Security Guardian"
   ],
   "completed_lessons": [
     2,
@@ -20,10 +29,19 @@
     3,
     5,
     7,
-    6
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
   ],
   "max_energy": 3,
-  "current_lesson": 8,
+  "current_lesson": 17,
   "inventory": {
     "relics": [
       {
@@ -45,6 +63,26 @@
         "type": "relic",
         "name": "Guardian's Shield",
         "description": "Provides enhanced protection against security vulnerabilities"
+      },
+      {
+        "type": "relic",
+        "name": "Data Optimization Orb",
+        "description": "Provides mastery over database performance tuning"
+      },
+      {
+        "type": "legendary_relic",
+        "name": "Orchestration Crown",
+        "description": "Ultimate mastery over container deployment patterns and microservices architecture"
+      },
+      {
+        "type": "relic",
+        "name": "Event Orchestration Crystal",
+        "description": "Grants mastery over event-driven architecture patterns"
+      },
+      {
+        "type": "relic",
+        "name": "Web Security Fortress",
+        "description": "Provides advanced protection against web application attacks"
       }
     ],
     "potions": [
@@ -58,11 +96,11 @@
     "cards": []
   },
   "stats": {
-    "battles_won": 9,
-    "elites_defeated": 3,
-    "bosses_defeated": 0,
-    "total_questions": 26,
-    "correct_answers": 13,
+    "battles_won": 14,
+    "elites_defeated": 6,
+    "bosses_defeated": 1,
+    "total_questions": 38,
+    "correct_answers": 22,
     "streak_best": 5,
     "runs_completed": 0
   },
@@ -70,16 +108,30 @@
     "first_victory",
     "elite_slayer",
     "guardian_saved",
-    "aws_master"
+    "aws_master",
+    "boss_hunter",
+    "relic_collector"
   ],
   "ascension_level": 0,
   "character_unlocks": [
     "zap"
   ],
   "relic_uses": {
-    "lesson_6": {},
     "lesson_7": {
       "guardian_shield_used": true
-    }
+    },
+    "lesson_8": {},
+    "lesson_9": {},
+    "lesson_10": {
+      "guardian_shield_used": true
+    },
+    "lesson_11": {},
+    "lesson_12": {
+      "guardian_shield_used": true
+    },
+    "lesson_13": {},
+    "lesson_14": {},
+    "lesson_15": {},
+    "lesson_16": {}
   }
 }
