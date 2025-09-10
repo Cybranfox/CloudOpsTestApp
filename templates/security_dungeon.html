@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Dungeon</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Security Dungeon</h1>
+  </header>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/skill_tree">Skill Tree</a>
+  </nav>
+  <div class="container">
+    <p>Fix the IAM policy to defeat the Vulnerability Goblins! Provide a least‑privilege policy JSON below.</p>
+    <form method="post">
+      <textarea name="policy" placeholder='{ "Version": "2012-10-17", "Statement": [...] }'>{{ policy_input }}</textarea>
+      <button type="submit">Submit</button>
+    </form>
+    {% if result %}
+      <div class="result {{ 'success' if result.success else 'error' }}">
+        {{ result.message }}
+      </div>
+    {% endif %}
+    <canvas id="zapCanvas"></canvas>
+  </div>
+  <script type="module">
+    import ZapCanvasAnimator from '/static/zap_canvas.js';
+    const canvas = document.getElementById('zapCanvas');
+    const animator = new ZapCanvasAnimator(canvas);
+    {% if result %}
+      {% if result.success %}
+        animator.play('correct');
+      {% else %}
+        animator.play('wrong');
+      {% endif %}
+    {% else %}
+      animator.play('idle');
+    {% endif %}
+  </script>
+</body>
+</html>
