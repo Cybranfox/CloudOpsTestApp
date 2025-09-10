@@ -25,10 +25,10 @@
 | Metric | Value |
 |--------|-------|
 | 🐍 Python Files | 3 |
-| 🌐 HTML Templates | 34 |
+| 🌐 HTML Templates | 37 |
 | 🎨 CSS Files | 2 |
-| ⚡ JavaScript Files | 635 |
-| 📏 Lines of Python | 1317 |
+| ⚡ JavaScript Files | 636 |
+| 📏 Lines of Python | 1229 |
 | 📱 Mobile Ready | 🔄 In Progress |
 | 🤖 AI Enhanced | ⚙️ Setting Up |
 
