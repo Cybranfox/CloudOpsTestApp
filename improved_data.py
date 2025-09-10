@@ -1,5 +1,6 @@
 # Enhanced AWS Orbit lessons with comprehensive exam questions based on official AWS documentation
 
+
 def get_lessons():
     """
     Return enhanced lesson dictionaries for AWS SysOps and Developer Associate preparation.
