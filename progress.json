@@ -1,5 +1,5 @@
 {
-  "xp": 460,
+  "xp": 550,
   "streak": 5,
   "last_completed_date": "2025-09-09",
   "energy": 3,
@@ -20,7 +20,7 @@
     7
   ],
   "max_energy": 3,
-  "current_lesson": 4,
+  "current_lesson": 5,
   "inventory": {
     "relics": [
       {
@@ -37,6 +37,11 @@
         "type": "relic",
         "name": "Deployment Automation Gem",
         "description": "Grants mastery over continuous deployment patterns"
+      },
+      {
+        "type": "relic",
+        "name": "Guardian's Shield",
+        "description": "Provides enhanced protection against security vulnerabilities"
       }
     ],
     "potions": [
@@ -51,15 +56,16 @@
   },
   "stats": {
     "battles_won": 7,
-    "elites_defeated": 2,
+    "elites_defeated": 3,
     "bosses_defeated": 0,
-    "total_questions": 11,
-    "correct_answers": 9,
+    "total_questions": 12,
+    "correct_answers": 10,
     "streak_best": 5,
     "runs_completed": 0
   },
   "achievements": [
-    "first_victory"
+    "first_victory",
+    "elite_slayer"
   ],
   "ascension_level": 0,
   "character_unlocks": [
