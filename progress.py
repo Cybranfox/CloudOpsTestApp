@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import date
+
 from improved_data import get_lessons
 
 # Path to progress file within this directory
@@ -37,29 +38,33 @@ DEFAULT_PROGRESS = {
     "relic_uses": {},  # Track per-question relic usage to prevent abuse
 }
 
+
 def _init_progress_file():
     """Create the progress file if it does not exist."""
     if not os.path.isfile(PROGRESS_FILE):
         with open(PROGRESS_FILE, "w") as f:
             json.dump(DEFAULT_PROGRESS, f, indent=2)
 
+
 def load_progress():
     """Load the user's progress from disk."""
     _init_progress_file()
     with open(PROGRESS_FILE, "r") as f:
         progress = json.load(f)
-    
+
     # Ensure all new fields exist (for backward compatibility)
     for key in DEFAULT_PROGRESS:
         if key not in progress:
             progress[key] = DEFAULT_PROGRESS[key]
-    
+
     return progress
+
 
 def save_progress(progress):
     """Persist the progress dictionary to disk."""
     with open(PROGRESS_FILE, "w") as f:
         json.dump(progress, f, indent=2)
+
 
 def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorrect=5):
     """
@@ -130,7 +135,9 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
         message = f"❌ Incorrect answer. You lost 1 shield (now {progress['energy']}/{progress['max_energy']}) but gained {xp_gain_incorrect} XP for trying."
 
         # Apply Guardian's Shield effect if available and not used for this question
-        progress, shield_message = apply_guardian_shield(progress, lesson_id, question_key)
+        progress, shield_message = apply_guardian_shield(
+            progress, lesson_id, question_key
+        )
         if shield_message:
             message += f"\n\n🛡️ {shield_message}"
 
@@ -140,7 +147,7 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
     # Apply other relic effects
     progress = apply_relic_effects(progress, lesson, correct)
 
-    # Check for new achievements  
+    # Check for new achievements
     progress = check_achievements(progress)
 
     # Clean up old relic usage tracking (keep only last 10 questions)
@@ -152,62 +159,72 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
     save_progress(progress)
     return progress, message, next_lesson_id
 
+
 def apply_guardian_shield(progress, lesson_id, question_key):
     """
     Apply Guardian's Shield effect with proper limitations.
     Returns updated progress and message about shield effect.
     """
     relics = progress.get("inventory", {}).get("relics", [])
-    
+
     # Check if player has Guardian's Shield
-    has_guardian_shield = any(relic.get("name") == "Guardian's Shield" for relic in relics)
-    
+    has_guardian_shield = any(
+        relic.get("name") == "Guardian's Shield" for relic in relics
+    )
+
     if not has_guardian_shield:
         return progress, ""
-    
+
     # Check if Guardian's Shield was already used for this question
-    shield_used = progress["relic_uses"][question_key].get("guardian_shield_used", False)
-    
+    shield_used = progress["relic_uses"][question_key].get(
+        "guardian_shield_used", False
+    )
+
     if shield_used:
         return progress, ""
-    
+
     # Check if player has energy to restore (not at 0)
     if progress["energy"] <= 0:
         return progress, ""
-    
+
     # Apply Guardian's Shield effect - prevent 1 damage (restore the lost shield)
     progress["energy"] = min(progress["max_energy"], progress["energy"] + 1)
     progress["relic_uses"][question_key]["guardian_shield_used"] = True
-    
+
     shield_message = f"Guardian's Shield activated! Damage prevented. Energy restored to {progress['energy']}/{progress['max_energy']}."
-    
+
     return progress, shield_message
+
 
 def apply_relic_effects(progress, lesson, correct):
     """Apply passive effects from collected relics (except Guardian's Shield)"""
     relics = progress.get("inventory", {}).get("relics", [])
-    
+
     for relic in relics:
         relic_name = relic.get("name", "")
-        
+
         # CloudWatch Lens: Bonus XP for monitoring questions
         if relic_name == "CloudWatch Lens" and correct:
             if "monitoring" in lesson.get("title", "").lower():
                 progress["xp"] += 5
-                
+
         # Deployment Automation Gem: Extra XP for elite battles
         elif (
             relic_name == "Deployment Automation Gem"
             and lesson.get("room_type") == "elite"
         ):
             progress["xp"] += 10
-            
+
         # Serverless Scaling Serum: Bonus XP for serverless questions
         elif relic_name == "Serverless Scaling Serum" and correct:
-            if "serverless" in lesson.get("title", "").lower() or "lambda" in lesson.get("content", "").lower():
+            if (
+                "serverless" in lesson.get("title", "").lower()
+                or "lambda" in lesson.get("content", "").lower()
+            ):
                 progress["xp"] += 8
 
     return progress
+
 
 def complete_lesson(lesson_id=None, xp_gain=10):
     """Mark a lesson as completed with enhanced Slay the Spire mechanics."""
@@ -245,6 +262,7 @@ def complete_lesson(lesson_id=None, xp_gain=10):
     save_progress(progress)
     return progress
 
+
 def check_achievements(progress):
     """Check and award achievements based on progress"""
     achievements = progress.get("achievements", [])
@@ -254,7 +272,7 @@ def check_achievements(progress):
     achievement_checks = [
         {
             "id": "first_victory",
-            "name": "First Victory", 
+            "name": "First Victory",
             "description": "Complete your first lesson",
             "condition": len(progress.get("completed_lessons", [])) >= 1,
         },
@@ -272,7 +290,7 @@ def check_achievements(progress):
         },
         {
             "id": "knowledge_seeker",
-            "name": "Knowledge Seeker", 
+            "name": "Knowledge Seeker",
             "description": "Answer 100 questions",
             "condition": progress.get("stats", {}).get("total_questions", 0) >= 100,
         },
@@ -298,7 +316,10 @@ def check_achievements(progress):
             "id": "guardian_saved",
             "name": "Protected by the Guardian",
             "description": "Guardian's Shield saves you from defeat",
-            "condition": any(relic.get("name") == "Guardian's Shield" for relic in progress.get("inventory", {}).get("relics", [])),
+            "condition": any(
+                relic.get("name") == "Guardian's Shield"
+                for relic in progress.get("inventory", {}).get("relics", [])
+            ),
         },
     ]
 
@@ -315,10 +336,11 @@ def check_achievements(progress):
 
     return progress
 
+
 def use_potion(progress, potion_name):
     """Use a potion from inventory for temporary effects"""
     potions = progress.get("inventory", {}).get("potions", [])
-    
+
     for i, potion in enumerate(potions):
         if potion.get("name") == potion_name:
             # Apply potion effect
@@ -326,13 +348,14 @@ def use_potion(progress, potion_name):
                 progress["energy"] = progress["max_energy"]  # Full heal
             elif "XP Boost" in potion_name:
                 progress["xp"] += 25  # Bonus XP
-            
+
             # Remove used potion
             potions.pop(i)
             break
 
     save_progress(progress)
     return progress
+
 
 def reset_run(progress):
     """Reset for new run (like dying in Slay the Spire)"""
@@ -346,6 +369,7 @@ def reset_run(progress):
     # Keep relics and badges (permanent upgrades)
     save_progress(progress)
     return progress
+
 
 def has_guardian_shield(progress):
     """Check if player has Guardian's Shield relic"""
