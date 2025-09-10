@@ -21,7 +21,7 @@
     - {{ lesson.difficulty.title() }}
 </div>
 
-<div class="energy-display">
+<div class="card energy-display">
     <strong>⚡ Energy Shields:</strong>
     <div class="shields">
         {% for i in range(progress.max_energy) %}
@@ -32,12 +32,12 @@
             {% endif %}
         {% endfor %}
     </div>
-    <p><small>You lose 1 shield for wrong answers, gain 1 for correct answers!</small></p>
+    <p class="shield-hint"><small>You lose 1 shield for wrong answers, gain 1 for correct answers!</small></p>
 </div>
 
 {% if correct is defined %}
     {% if correct %}
-        <div class="result-section success">
+        <div class="card result-section success">
             <h3>🎉 Victory Achieved!</h3>
             
             {% if lesson.explanation %}
@@ -62,47 +62,48 @@
             {% endif %}
         </div>
     {% else %}
-        <div class="result-section defeat">
+        <div class="card result-section defeat">
             <h3>💔 Defeat... But Don't Give Up!</h3>
             
             {% if lesson.explanation %}
                 <div class="explanation-box">
                     <h4>💡 Learn from this:</h4>
                     <p>{{ lesson.explanation }}</p>
-                    <p><em>The correct answer was: {{ lesson.answer }}</em></p>
+                    <p class="correct-answer"><em>The correct answer was: {{ lesson.answer }}</em></p>
                 </div>
             {% endif %}
         </div>
     {% endif %}
 {% else %}
     {% if lesson.scenario %}
-        <div class="scenario-box">
+        <div class="card scenario-box">
             <h3>🎯 Scenario</h3>
             <p>{{ lesson.scenario }}</p>
         </div>
     {% endif %}
 
-    <div class="content-section">
+    <div class="card content-section">
         <h3>📋 Key Concepts</h3>
         <p>{{ lesson.content }}</p>
     </div>
 
     {% if lesson.loot %}
-        <div class="loot-preview">
+        <div class="card loot-preview">
             <h4>🎁 Potential Reward</h4>
             <p><strong>{{ lesson.loot.name }}</strong>: {{ lesson.loot.description }}</p>
         </div>
     {% endif %}
 
-    <div class="question-container">
+    <div class="card question-container">
         <form method="POST" class="quiz-form">
-            <h3>{{ lesson.question }}</h3>
+            <h3 class="question-title">{{ lesson.question }}</h3>
             
             <div class="options-container">
                 {% if lesson.multi_select %}
                     {% for option in lesson.options %}
                         <label class="option-label multi-select">
                             <input type="checkbox" name="option" value="{{ option }}" class="option-input">
+                            <span class="option-checkmark"></span>
                             <span class="option-text">{{ option }}</span>
                         </label>
                     {% endfor %}
@@ -111,6 +112,7 @@
                     {% for option in lesson.options %}
                         <label class="option-label">
                             <input type="radio" name="option" value="{{ option }}" class="option-input" required>
+                            <span class="option-checkmark"></span>
                             <span class="option-text">{{ option }}</span>
                         </label>
                     {% endfor %}
@@ -142,67 +144,296 @@
 <style>
 .energy-display {
     text-align: center;
-    margin: 20px 0;
-    padding: 15px;
-    background: rgba(var(--color-info-rgb), 0.1);
-    border-radius: var(--radius-base);
-    border: 2px solid rgba(var(--color-info-rgb), 0.3);
+    background: linear-gradient(135deg, rgba(var(--color-info-rgb, 98, 108, 113), 0.1), rgba(var(--color-slate-500-rgb, 98, 108, 113), 0.15));
+    border-color: var(--color-info);
 }
 
 .shields {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin: 10px 0;
+    gap: var(--space-12);
+    margin: var(--space-16) 0;
 }
 
 .shield-full {
     color: #f7d51d;
     font-weight: bold;
-    font-size: 1.5em;
-    text-shadow: 0 0 5px rgba(247, 213, 29, 0.5);
-    filter: drop-shadow(0 0 3px rgba(247, 213, 29, 0.8));
+    font-size: 2em;
+    text-shadow: 0 0 8px rgba(247, 213, 29, 0.6);
+    filter: drop-shadow(0 0 4px rgba(247, 213, 29, 0.8));
+    animation: pulse 2s infinite;
 }
 
 .shield-empty {
     color: #444;
-    opacity: 0.4;
-    font-size: 1.5em;
+    opacity: 0.3;
+    font-size: 2em;
     filter: grayscale(100%);
 }
 
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.shield-hint {
+    margin-top: var(--space-12);
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+.room-type-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-12) var(--space-24);
+    background: linear-gradient(135deg, rgba(var(--color-warning-rgb, 168, 75, 47), 0.1), rgba(var(--color-orange-400-rgb, 230, 129, 97), 0.15));
+    border: 2px solid rgba(var(--color-warning-rgb, 168, 75, 47), 0.3);
+    border-radius: var(--radius-full);
+    margin: var(--space-24) 0;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
+    box-shadow: var(--shadow-sm);
+}
+
 .result-section {
-    margin: 20px 0;
-    padding: 20px;
-    border-radius: var(--radius-base);
     text-align: center;
 }
 
 .result-section.success {
-    background: rgba(var(--color-success-rgb), 0.1);
-    border: 2px solid var(--color-success);
-    color: var(--color-text);
+    background: linear-gradient(135deg, rgba(var(--color-success-rgb, 33, 128, 141), 0.1), rgba(var(--color-teal-300-rgb, 50, 184, 198), 0.1));
+    border-color: var(--color-success);
 }
 
 .result-section.defeat {
-    background: rgba(var(--color-error-rgb), 0.1);
-    border: 2px solid var(--color-error);
-    color: var(--color-text);
+    background: linear-gradient(135deg, rgba(var(--color-error-rgb, 192, 21, 47), 0.1), rgba(var(--color-red-400-rgb, 255, 84, 89), 0.1));
+    border-color: var(--color-error);
 }
 
 .explanation-box, .loot-box, .badge-box {
-    margin: 15px 0;
-    padding: 15px;
-    background: rgba(var(--color-info-rgb), 0.1);
-    border-radius: var(--radius-sm);
+    margin: var(--space-20) 0;
+    padding: var(--space-20);
+    background: rgba(var(--color-primary-rgb, 33, 128, 141), 0.1);
+    border-radius: var(--radius-base);
     border-left: 4px solid var(--color-primary);
+    text-align: left;
+}
+
+.correct-answer {
+    margin-top: var(--space-16);
+    padding: var(--space-12);
+    background: rgba(var(--color-warning-rgb, 168, 75, 47), 0.1);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(var(--color-warning-rgb, 168, 75, 47), 0.3);
+    font-weight: var(--font-weight-medium);
+}
+
+.scenario-box {
+    background: linear-gradient(135deg, rgba(var(--color-orange-500-rgb, 168, 75, 47), 0.1), rgba(var(--color-orange-400-rgb, 230, 129, 97), 0.1));
+    border-color: var(--color-orange-400);
+}
+
+.content-section {
+    background: linear-gradient(135deg, rgba(var(--color-primary-rgb, 33, 128, 141), 0.1), rgba(var(--color-teal-600-rgb, 29, 116, 128), 0.1));
+    border-color: var(--color-primary);
+}
+
+.loot-preview {
+    background: linear-gradient(135deg, rgba(var(--color-warning-rgb, 168, 75, 47), 0.1), rgba(var(--color-orange-400-rgb, 230, 129, 97), 0.1));
+    border-color: var(--color-warning);
+}
+
+.question-container {
+    background: linear-gradient(135deg, rgba(var(--color-slate-500-rgb, 98, 108, 113), 0.1), rgba(var(--color-slate-900-rgb, 19, 52, 59), 0.1));
+    border-color: var(--color-text);
+}
+
+.question-title {
+    margin-bottom: var(--space-24);
+    color: var(--color-text);
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-normal);
+}
+
+.options-container {
+    margin: var(--space-24) 0;
+}
+
+.option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-16);
+    padding: var(--space-16);
+    margin: var(--space-12) 0;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-base);
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-standard);
+    position: relative;
+}
+
+.option-label:hover {
+    background: rgba(var(--color-primary-rgb, 33, 128, 141), 0.1);
+    border-color: var(--color-primary);
+    transform: translateX(4px);
+}
+
+.option-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.option-checkmark {
+    width: 20px;
+    height: 20px;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.option-input[type="radio"] + .option-checkmark {
+    border-radius: var(--radius-full);
+}
+
+.option-input:checked + .option-checkmark {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.option-input:checked + .option-checkmark::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: var(--color-btn-primary-text);
+    border-radius: var(--radius-full);
+}
+
+.option-input[type="checkbox"]:checked + .option-checkmark::after {
+    content: '✓';
+    color: var(--color-btn-primary-text);
+    font-weight: bold;
+    font-size: 12px;
+    width: auto;
+    height: auto;
+    background: none;
+}
+
+.option-text {
+    flex: 1;
+    color: var(--color-text);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-normal);
 }
 
 .multi-select-hint {
-    font-style: italic;
-    color: var(--color-text-secondary);
-    margin-top: 10px;
     text-align: center;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin-top: var(--space-16);
+    padding: var(--space-12);
+    background: rgba(var(--color-info-rgb, 98, 108, 113), 0.1);
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--color-info);
+}
+
+.quiz-actions, .next-actions {
+    display: flex;
+    gap: var(--space-20);
+    margin: var(--space-32) 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: var(--space-12) var(--space-24);
+    border-radius: var(--radius-base);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-base);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    transition: all var(--duration-normal) var(--ease-standard);
+    border: none;
+    cursor: pointer;
+    min-width: 180px;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-success), var(--color-teal-600));
+    color: var(--color-btn-primary-text);
+    box-shadow: 0 4px 12px rgba(var(--color-success-rgb, 33, 128, 141), 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover), var(--color-teal-700));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(var(--color-success-rgb, 33, 128, 141), 0.4);
+}
+
+.btn-secondary {
+    background: var(--color-secondary);
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background: var(--color-secondary-hover);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .shields {
+        gap: var(--space-8);
+    }
+    
+    .shield-full, .shield-empty {
+        font-size: 1.5em;
+    }
+    
+    .quiz-actions, .next-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        min-width: auto;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .room-type-indicator {
+        font-size: var(--font-size-base);
+        padding: var(--space-10) var(--space-20);
+    }
+}
+
+@media (max-width: 480px) {
+    .option-label {
+        gap: var(--space-12);
+        padding: var(--space-12);
+    }
+    
+    .option-text {
+        font-size: var(--font-size-sm);
+    }
+    
+    .question-title {
+        font-size: var(--font-size-lg);
+    }
 }
 </style>
 
