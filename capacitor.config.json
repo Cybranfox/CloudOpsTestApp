@@ -2,22 +2,20 @@
   "appId": "com.cloudorbit.awsrpg",
   "appName": "AWS Cloud Orbit",
   "webDir": "dist",
-  "server": {
-    "url": "http://localhost:5001",
-    "cleartext": true
-  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000,
       "backgroundColor": "#232f3e",
       "showSpinner": false
-    },
-    "StatusBar": {
-      "style": "DARK",
-      "backgroundColor": "#232f3e"
-    },
-    "Keyboard": {
-      "resize": "body"
+    }
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "",
+      "keystorePassword": "",
+      "keystoreAlias": "",
+      "keystoreAliasPassword": "",
+      "releaseType": "APK"
     }
   }
 }

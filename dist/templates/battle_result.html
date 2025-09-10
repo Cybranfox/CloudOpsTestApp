@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle Result</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Battle Result</h1>
+  </header>
+  <nav>
+    <a href="/adventure">Back to Map</a>
+  </nav>
+  <div class="container">
+    <p>{{ result.message }}</p>
+    {% if result.success %}
+      <p>{{ explanation }}</p>
+    {% endif %}
+    <p>HP: {{ player.hp }} | XP: {{ player.xp }} | Mana: {{ player.mana }}</p>
+    <img id="zap-img" class="zap" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+  </div>
+  <script type="module">
+    import ZapController from '/static/zap_controller.js';
+    const zapImg = document.getElementById('zap-img');
+    const zap = new ZapController(zapImg);
+    {% if result.success %}
+      zap.play('correct');
+    {% else %}
+      zap.play('wrong');
+    {% endif %}
+  </script>
+</body>
+</html>
