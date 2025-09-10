@@ -1,5 +1,6 @@
 # Enhanced AWS Orbit lessons with Slay the Spire room mechanics and improved exam alignment
 
+
 def get_lessons():
     """
     Return enhanced lesson dictionaries for AWS SysOps and Developer Associate preparation.
@@ -29,7 +30,7 @@ def get_lessons():
                 "CloudWatch Metrics + CloudWatch Alarms + EventBridge + Systems Manager",
                 "CloudTrail + Config + Lambda + EC2",
                 "X-Ray + CloudWatch Logs + SNS + Auto Scaling",
-                "Inspector + GuardDuty + Security Hub + Lambda"
+                "Inspector + GuardDuty + Security Hub + Lambda",
             ],
             "answer": "CloudWatch Metrics + CloudWatch Alarms + EventBridge + Systems Manager",
             "explanation": "CloudWatch Metrics track CPU usage, CloudWatch Alarms trigger when thresholds are breached, EventBridge routes the alarm to Systems Manager, which can execute runbooks to restart instances automatically.",
@@ -37,8 +38,8 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "CloudWatch Lens",
-                "description": "Provides deeper insight into system performance patterns"
-            }
+                "description": "Provides deeper insight into system performance patterns",
+            },
         },
         {
             "id": 2,
@@ -58,7 +59,7 @@ def get_lessons():
                 "Single AZ with larger instance types",
                 "Multi-AZ deployment with Application Load Balancer and Auto Scaling",
                 "Single AZ with manual failover procedures",
-                "Multi-region deployment with Route 53 failover only"
+                "Multi-region deployment with Route 53 failover only",
             ],
             "answer": "Multi-AZ deployment with Application Load Balancer and Auto Scaling",
             "explanation": "Multi-AZ deployments with ALB automatically route traffic away from failed AZs, while Auto Scaling ensures new instances are launched in healthy AZs to maintain capacity.",
@@ -66,8 +67,8 @@ def get_lessons():
             "loot": {
                 "type": "potion",
                 "name": "High Availability Elixir",
-                "description": "Temporarily boosts understanding of fault-tolerant patterns"
-            }
+                "description": "Temporarily boosts understanding of fault-tolerant patterns",
+            },
         },
         {
             "id": 3,
@@ -87,7 +88,7 @@ def get_lessons():
                 "Rolling deployment with health checks",
                 "Blue/green deployment with health checks and automatic rollback",
                 "In-place deployment with manual verification",
-                "Canary deployment with 50% traffic split"
+                "Canary deployment with 50% traffic split",
             ],
             "answer": "Blue/green deployment with health checks and automatic rollback",
             "explanation": "Blue/green deployments create a complete duplicate environment, allowing instant traffic switching and automatic rollback if health checks fail, ensuring zero downtime.",
@@ -95,8 +96,8 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Deployment Automation Gem",
-                "description": "Grants mastery over continuous deployment patterns"
-            }
+                "description": "Grants mastery over continuous deployment patterns",
+            },
         },
         {
             "id": 4,
@@ -116,7 +117,7 @@ def get_lessons():
                 "S3 server-side encryption with S3-managed keys (SSE-S3)",
                 "S3 server-side encryption with KMS keys (SSE-KMS) and IAM policies",
                 "Client-side encryption with application-managed keys",
-                "S3 server-side encryption with customer-provided keys (SSE-C)"
+                "S3 server-side encryption with customer-provided keys (SSE-C)",
             ],
             "answer": "S3 server-side encryption with KMS keys (SSE-KMS) and IAM policies",
             "explanation": "SSE-KMS provides fine-grained access control through IAM policies, automatic key rotation, and detailed audit trails through CloudTrail, making it ideal for sensitive data.",
@@ -124,15 +125,15 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Guardian's Shield",
-                "description": "Provides enhanced protection against security vulnerabilities"
-            }
+                "description": "Provides enhanced protection against security vulnerabilities",
+            },
         },
         {
             "id": 5,
             "title": "Networking & Content Delivery",
             "description": "Design secure VPC architectures and optimize content delivery",
             "room_type": "battle",
-            "difficulty": "medium", 
+            "difficulty": "medium",
             "reward_type": "knowledge_card",
             "content": (
                 "Configure VPCs with public/private subnets, implement security groups and NACLs, "
@@ -145,7 +146,7 @@ def get_lessons():
                 "Single public subnet for both web and database tiers",
                 "Public subnet for web tier, private subnet for database tier with NAT Gateway",
                 "Private subnets for both tiers with Application Load Balancer in public subnet",
-                "Public subnets in multiple AZs with security group restrictions"
+                "Public subnets in multiple AZs with security group restrictions",
             ],
             "answer": "Public subnet for web tier, private subnet for database tier with NAT Gateway",
             "explanation": "This design keeps databases completely isolated in private subnets with no direct internet access, while allowing web servers in public subnets to receive traffic and access the internet through NAT Gateway for updates.",
@@ -153,8 +154,8 @@ def get_lessons():
             "loot": {
                 "type": "potion",
                 "name": "Network Clarity Potion",
-                "description": "Enhances understanding of complex network topologies"
-            }
+                "description": "Enhances understanding of complex network topologies",
+            },
         },
         {
             "id": 6,
@@ -174,7 +175,7 @@ def get_lessons():
                 "Switch to Spot Instances for all workloads",
                 "Purchase Reserved Instances for predictable workloads",
                 "Implement Auto Scaling to reduce instance count",
-                "Move all workloads to Lambda functions"
+                "Move all workloads to Lambda functions",
             ],
             "answer": "Purchase Reserved Instances for predictable workloads",
             "explanation": "Reserved Instances provide up to 75% cost savings for predictable, steady-state workloads compared to On-Demand pricing, making them ideal for 24/7 applications.",
@@ -182,8 +183,8 @@ def get_lessons():
             "loot": {
                 "type": "gold",
                 "name": "Savings Multiplier",
-                "description": "Doubles the value of cost optimization insights"
-            }
+                "description": "Doubles the value of cost optimization insights",
+            },
         },
         {
             "id": 7,
@@ -191,7 +192,7 @@ def get_lessons():
             "description": "Build automated deployment pipelines and manage application lifecycle",
             "room_type": "battle",
             "difficulty": "medium",
-            "reward_type": "knowledge_card", 
+            "reward_type": "knowledge_card",
             "content": (
                 "Create CI/CD pipelines with CodePipeline, build applications with CodeBuild, "
                 "deploy with CodeDeploy, manage infrastructure with CDK, and monitor deployments "
@@ -201,9 +202,9 @@ def get_lessons():
             "question": "A development team wants to automatically build, test, and deploy their application whenever code is pushed to the main branch. Which AWS services combination provides a complete CI/CD solution?",
             "options": [
                 "CodeCommit + CodeBuild + CodeDeploy + CodePipeline",
-                "GitHub + Lambda + S3 + CloudFormation", 
+                "GitHub + Lambda + S3 + CloudFormation",
                 "GitLab + EC2 + Elastic Beanstalk + CloudWatch",
-                "Bitbucket + CodeStar + ECS + Route 53"
+                "Bitbucket + CodeStar + ECS + Route 53",
             ],
             "answer": "CodeCommit + CodeBuild + CodeDeploy + CodePipeline",
             "explanation": "CodePipeline orchestrates the entire workflow, CodeCommit stores source code, CodeBuild compiles and tests, and CodeDeploy handles deployment automation across environments.",
@@ -211,8 +212,8 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Pipeline Automation Crystal",
-                "description": "Grants mastery over continuous integration patterns"
-            }
+                "description": "Grants mastery over continuous integration patterns",
+            },
         },
         {
             "id": 8,
@@ -232,16 +233,16 @@ def get_lessons():
                 "Lambda concurrent execution limit - Request limit increase",
                 "API Gateway timeout limit - Enable caching to reduce backend calls",
                 "DynamoDB throttling - Enable auto-scaling or use on-demand billing",
-                "All of the above could be potential causes requiring investigation"
+                "All of the above could be potential causes requiring investigation",
             ],
             "answer": "All of the above could be potential causes requiring investigation",
             "explanation": "Serverless timeouts can result from multiple bottlenecks: Lambda concurrency limits, API Gateway 29-second timeout, or DynamoDB throttling. Proper monitoring with CloudWatch and X-Ray helps identify the root cause.",
-            "badge": "Serverless Architect", 
+            "badge": "Serverless Architect",
             "loot": {
                 "type": "potion",
                 "name": "Serverless Scaling Serum",
-                "description": "Enhances understanding of auto-scaling serverless patterns"
-            }
+                "description": "Enhances understanding of auto-scaling serverless patterns",
+            },
         },
         {
             "id": 9,
@@ -261,16 +262,16 @@ def get_lessons():
                 "Single RDS instance with read replicas",
                 "DynamoDB with GSI for leaderboards + ElastiCache for user profiles",
                 "Aurora Serverless with auto-scaling enabled",
-                "Multiple DynamoDB tables with optimized partition keys for each access pattern"
+                "Multiple DynamoDB tables with optimized partition keys for each access pattern",
             ],
             "answer": "Multiple DynamoDB tables with optimized partition keys for each access pattern",
             "explanation": "DynamoDB excels at gaming workloads with predictable access patterns. Using separate tables optimized for user profiles and leaderboards allows for better partition key design and independent scaling.",
             "badge": "Database Architect",
             "loot": {
-                "type": "relic", 
+                "type": "relic",
                 "name": "Data Optimization Orb",
-                "description": "Provides mastery over database performance tuning"
-            }
+                "description": "Provides mastery over database performance tuning",
+            },
         },
         {
             "id": 10,
@@ -289,8 +290,8 @@ def get_lessons():
             "options": [
                 "EKS with Fargate for serverless Kubernetes",
                 "ECS with Fargate and Application Load Balancer",
-                "Self-managed Kubernetes on EC2 instances", 
-                "Docker Swarm on EC2 with manual load balancing"
+                "Self-managed Kubernetes on EC2 instances",
+                "Docker Swarm on EC2 with manual load balancing",
             ],
             "answer": "ECS with Fargate and Application Load Balancer",
             "explanation": "ECS with Fargate provides container orchestration without Kubernetes complexity, includes built-in service discovery, integrates with ALB for load balancing, and handles auto-scaling automatically - ideal for teams new to container orchestration.",
@@ -298,7 +299,7 @@ def get_lessons():
             "loot": {
                 "type": "legendary_relic",
                 "name": "Orchestration Crown",
-                "description": "Ultimate mastery over container deployment patterns and microservices architecture"
-            }
-        }
+                "description": "Ultimate mastery over container deployment patterns and microservices architecture",
+            },
+        },
     ]
