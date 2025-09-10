@@ -1,372 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz: {{ lesson.title }} - Cloud Orbit RPG</title>
-    <link rel="stylesheet" href="/static/styles.css">
-</head>
-<body>
-    <header>
-        <h1>⚔️ {{ lesson.title }} - Battle Quiz</h1>
-        <p>{{ lesson.description }}</p>
-    </header>
+{% extends "base.html" %}
 
-    <main>
-        <div class="card">
-            <div class="mascot-container">
-                <img id="zap-mascot" class="zap" 
-                     src="/static/mascot/{% if correct is defined %}{{ 'zap_victory.png' if correct else 'zap_defeat.png' }}{% else %}zap_curious.png{% endif %}" 
-                     alt="Zap - Your AWS Guide">
-                <div id="speech-bubble" class="speech-bubble">
-                    {% if message %}{{ message }}{% else %}Ready for the challenge?{% endif %}
-                </div>
-            </div>
+{% block title %}Quiz - {{ lesson.title }}{% endblock %}
 
-            <div class="energy-display">
-                <strong>⚡ Energy Shields:</strong>
-                <div class="energy-shields">
-                    {% for i in range(progress.max_energy) %}
-                        <div class="shield {{ 'depleted' if i >= progress.energy else '' }}">⚡</div>
-                    {% endfor %}
-                </div>
-                <p><small>You lose 1 shield for wrong answers, gain 1 for correct answers!</small></p>
-            </div>
+{% block content %}
+<div class="mascot-container">
+    <img src="{{ url_for('static', filename='zap.png') }}" alt="Zap" class="zap" id="zapMascot">
+    <div class="speech-bubble" id="zapSpeech">
+        {% if message %}{{ message }}{% else %}Ready for the challenge?{% endif %}
+    </div>
+</div>
 
-            {% if not message or repeat %}
-            <form method="POST" class="question-form" id="quiz-form">
-                <div class="question-container">
-                    <div class="room-type-indicator">
-                        <span class="room-badge room-{{ lesson.room_type }}">
-                            {% if lesson.room_type == 'battle' %}⚔️ Battle Question
-                            {% elif lesson.room_type == 'elite' %}👑 Elite Challenge
-                            {% elif lesson.room_type == 'boss' %}🐉 Boss Battle
-                            {% else %}📚 Knowledge Test
-                            {% endif %}
-                        </span>
-                        <span class="difficulty-badge difficulty-{{ lesson.difficulty }}">
-                            {{ lesson.difficulty.title() }} Difficulty
-                        </span>
-                    </div>
+<div class="room-type-indicator">
+    {% if lesson.room_type == 'battle' %}⚔️ Battle Challenge
+    {% elif lesson.room_type == 'elite' %}👑 Elite Challenge  
+    {% elif lesson.room_type == 'boss' %}🐉 Boss Battle
+    {% elif lesson.room_type == 'shop' %}🛒 Knowledge Shop
+    {% elif lesson.room_type == 'event' %}🎲 Special Event
+    {% else %}📚 Lesson
+    {% endif %}
+    - {{ lesson.difficulty.title() }}
+</div>
 
-                    <h3>{{ lesson.question }}</h3>
-
-                    {% if lesson.scenario %}
-                    <div class="scenario-reminder">
-                        <strong>💡 Scenario Context:</strong>
-                        <p>{{ lesson.scenario }}</p>
-                    </div>
-                    {% endif %}
-
-                    <div class="options-container">
-                        {% if lesson.multi_select %}
-                            <p><em>Select all correct answers:</em></p>
-                            {% for option in lesson.options %}
-                            <div class="option-item">
-                                <input type="checkbox" id="option{{ loop.index }}" name="option" value="{{ option }}">
-                                <label for="option{{ loop.index }}">{{ option }}</label>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            {% for option in lesson.options %}
-                            <div class="option-item">
-                                <input type="radio" id="option{{ loop.index }}" name="option" value="{{ option }}" required>
-                                <label for="option{{ loop.index }}">{{ option }}</label>
-                            </div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="quiz-actions">
-                    <button type="submit" class="btn btn-primary" id="submit-btn">
-                        {% if lesson.room_type == 'boss' %}🐉 Face the Boss!
-                        {% elif lesson.room_type == 'elite' %}👑 Accept Challenge!
-                        {% else %}⚔️ Submit Answer!
-                        {% endif %}
-                    </button>
-                    <a href="/lesson/{{ lesson.id }}" class="btn btn-secondary">📖 Review Lesson</a>
-                </div>
-            </form>
+<div class="energy-display">
+    <strong>⚡ Energy Shields:</strong>
+    <div class="shields">
+        {% for i in range(progress.max_energy) %}
+            {% if i < progress.energy %}
+                <span class="shield-full">⚡</span>
+            {% else %}
+                <span class="shield-empty">⚡</span>
             {% endif %}
+        {% endfor %}
+    </div>
+    <p><small>You lose 1 shield for wrong answers, gain 1 for correct answers!</small></p>
+</div>
 
-            {% if message and not repeat %}
-            <div class="result-container">
-                {% if correct %}
-                <div class="success-result">
-                    <h3>🎉 Victory Achieved!</h3>
-                    <div class="explanation-box">
-                        {% if lesson.explanation %}
-                        <h4>💡 Explanation:</h4>
-                        <p>{{ lesson.explanation }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    {% if lesson.loot and lesson.room_type in ['elite', 'boss'] %}
-                    <div class="loot-reward">
-                        <h4>🎁 Loot Acquired!</h4>
-                        <div class="loot-item earned">
-                            <strong>{{ lesson.loot.name }}</strong>: {{ lesson.loot.description }}
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {% if lesson.badge %}
-                    <div class="badge-earned">
-                        <h4>🏆 Badge Earned!</h4>
-                        <span class="badge">{{ lesson.badge }}</span>
-                    </div>
-                    {% endif %}
+{% if correct is defined %}
+    {% if correct %}
+        <div class="result-section success">
+            <h3>🎉 Victory Achieved!</h3>
+            
+            {% if lesson.explanation %}
+                <div class="explanation-box">
+                    <h4>💡 Explanation:</h4>
+                    <p>{{ lesson.explanation }}</p>
                 </div>
-                {% else %}
-                <div class="defeat-result">
-                    <h3>💔 Defeat... But Don't Give Up!</h3>
-                    {% if lesson.explanation %}
-                    <div class="explanation-box">
-                        <h4>💡 Learn from this:</h4>
-                        <p>{{ lesson.explanation }}</p>
-                        <p><em>The correct answer was: <strong>{{ lesson.answer }}</strong></em></p>
-                    </div>
-                    {% endif %}
+            {% endif %}
+            
+            {% if lesson.loot and lesson.room_type in ['elite', 'boss'] %}
+                <div class="loot-box">
+                    <h4>🎁 Loot Acquired!</h4>
+                    <p><strong>{{ lesson.loot.name }}</strong>: {{ lesson.loot.description }}</p>
                 </div>
-                {% endif %}
-
-                <div class="next-actions">
-                    {% if correct and next_lesson_id %}
-                        <a href="/lesson/{{ next_lesson_id }}" class="btn btn-primary">🚀 Next Adventure</a>
-                    {% elif not correct %}
-                        <a href="/quiz/{{ lesson.id }}" class="btn btn-primary">🔄 Try Again</a>
-                    {% endif %}
-                    <a href="/" class="btn btn-secondary">🗺️ Return to Map</a>
+            {% endif %}
+            
+            {% if lesson.badge %}
+                <div class="badge-box">
+                    <h4>🏆 Badge Earned!</h4>
+                    <p>{{ lesson.badge }}</p>
                 </div>
-            </div>
             {% endif %}
         </div>
-    </main>
-
-    <script type="module">
-        import EnhancedZapAnimator from '/static/enhanced_zap_animator.js';
-
-        // Initialize mascot animation
-        const mascotImg = document.getElementById('zap-mascot');
-        const speechBubble = document.getElementById('speech-bubble');
-        const animator = new EnhancedZapAnimator(mascotImg, speechBubble);
-
-        // Show result-based animation on load
-        window.addEventListener('load', () => {
-            const hasResult = '{{ message is defined }}' === 'True';
-            const correct = '{{ correct }}' === 'True';
-            const roomType = '{{ lesson.room_type }}';
-
-            if (hasResult) {
-                setTimeout(() => {
-                    animator.playBattleResult(correct, roomType);
-                }, 500);
-
-                // Show loot animation if earned
-                {% if correct and lesson.loot and lesson.room_type in ['elite', 'boss'] %}
-                setTimeout(() => {
-                    animator.play('loot_found', { 
-                        message: '🎁 Treasure acquired! ' + '{{ lesson.loot.name }}',
-                        duration: 3000 
-                    });
-                }, 3000);
-                {% endif %}
-            } else {
-                setTimeout(() => {
-                    animator.playRoomEntry(roomType);
-                }, 500);
-            }
-        });
-
-        // Interactive quiz form
-        const form = document.getElementById('quiz-form');
-        if (form) {
-            form.addEventListener('submit', (e) => {
-                const submitBtn = document.getElementById('submit-btn');
-                submitBtn.textContent = '🔄 Processing...';
-                submitBtn.disabled = true;
-                
-                // Show thinking animation
-                animator.play('curious', { 
-                    message: 'Let me check your answer...',
-                    duration: 2000 
-                });
-            });
-
-            // Option selection feedback
-            const options = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
-            options.forEach(option => {
-                option.addEventListener('change', () => {
-                    const messages = [
-                        'Interesting choice...',
-                        'Let me see...',
-                        'Good thinking!',
-                        'Hmm, that\'s one option...'
-                    ];
-                    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                    
-                    animator.play('curious', { 
-                        message: randomMessage,
-                        duration: 1500 
-                    });
-                });
-            });
-        }
-
-        // Mascot interaction
-        mascotImg.addEventListener('click', () => {
-            const hasResult = '{{ message is defined }}' === 'True';
+    {% else %}
+        <div class="result-section defeat">
+            <h3>💔 Defeat... But Don't Give Up!</h3>
             
-            if (!hasResult) {
-                const encouragements = [
-                    'Take your time to think it through!',
-                    'Remember the key concepts!',
-                    'You\'ve got this!',
-                    'Trust your AWS knowledge!'
-                ];
-                const randomEncouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
-                
-                animator.play('explaining', { 
-                    message: randomEncouragement,
-                    duration: 2500 
-                });
-            }
-        });
-    </script>
+            {% if lesson.explanation %}
+                <div class="explanation-box">
+                    <h4>💡 Learn from this:</h4>
+                    <p>{{ lesson.explanation }}</p>
+                    <p><em>The correct answer was: {{ lesson.answer }}</em></p>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    {% if lesson.scenario %}
+        <div class="scenario-box">
+            <h3>🎯 Scenario</h3>
+            <p>{{ lesson.scenario }}</p>
+        </div>
+    {% endif %}
 
-    <style>
-        .energy-display {
-            background: rgba(33, 150, 243, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
+    <div class="content-section">
+        <h3>📋 Key Concepts</h3>
+        <p>{{ lesson.content }}</p>
+    </div>
 
-        .question-container {
-            background: #f9f9f9;
-            padding: 2rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #2196F3;
-        }
+    {% if lesson.loot %}
+        <div class="loot-preview">
+            <h4>🎁 Potential Reward</h4>
+            <p><strong>{{ lesson.loot.name }}</strong>: {{ lesson.loot.description }}</p>
+        </div>
+    {% endif %}
 
-        .scenario-reminder {
-            background: rgba(255, 193, 7, 0.1);
-            padding: 1rem;
-            border-radius: 6px;
-            margin: 1rem 0;
-            border-left: 3px solid #FFC107;
-        }
+    <div class="question-container">
+        <form method="POST" class="quiz-form">
+            <h3>{{ lesson.question }}</h3>
+            
+            <div class="options-container">
+                {% if lesson.multi_select %}
+                    {% for option in lesson.options %}
+                        <label class="option-label multi-select">
+                            <input type="checkbox" name="option" value="{{ option }}" class="option-input">
+                            <span class="option-text">{{ option }}</span>
+                        </label>
+                    {% endfor %}
+                    <p class="multi-select-hint"><em>Select all that apply</em></p>
+                {% else %}
+                    {% for option in lesson.options %}
+                        <label class="option-label">
+                            <input type="radio" name="option" value="{{ option }}" class="option-input" required>
+                            <span class="option-text">{{ option }}</span>
+                        </label>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="quiz-actions">
+                <button type="submit" class="btn btn-primary">⚔️ Submit Answer</button>
+            </div>
+        </form>
+    </div>
+{% endif %}
 
-        .options-container {
-            margin: 1.5rem 0;
-        }
+<div class="next-actions">
+    {% if correct and next_lesson_id %}
+        <a href="{{ url_for('lesson_page', lesson_id=next_lesson_id) }}" class="btn btn-primary">
+            🚀 Next Adventure
+        </a>
+    {% elif not correct %}
+        <a href="{{ url_for('quiz', lesson_id=lesson.id) }}" class="btn btn-secondary">
+            🔄 Try Again
+        </a>
+    {% endif %}
+    <a href="{{ url_for('home') }}" class="btn btn-secondary">
+        🗺️ Return to Map
+    </a>
+</div>
 
-        .option-item {
-            margin: 0.75rem 0;
-            padding: 1rem;
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+<style>
+.energy-display {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(var(--color-info-rgb), 0.1);
+    border-radius: var(--radius-base);
+    border: 2px solid rgba(var(--color-info-rgb), 0.3);
+}
 
-        .option-item:hover {
-            border-color: #2196F3;
-            background: rgba(33, 150, 243, 0.05);
-        }
+.shields {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0;
+}
 
-        .option-item input {
-            margin-right: 0.75rem;
-            transform: scale(1.2);
-        }
+.shield-full {
+    color: #f7d51d;
+    font-weight: bold;
+    font-size: 1.5em;
+    text-shadow: 0 0 5px rgba(247, 213, 29, 0.5);
+    filter: drop-shadow(0 0 3px rgba(247, 213, 29, 0.8));
+}
 
-        .option-item label {
-            cursor: pointer;
-            font-weight: 500;
-        }
+.shield-empty {
+    color: #444;
+    opacity: 0.4;
+    font-size: 1.5em;
+    filter: grayscale(100%);
+}
 
-        .quiz-actions {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
+.result-section {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: var(--radius-base);
+    text-align: center;
+}
 
-        .result-container {
-            text-align: center;
-        }
+.result-section.success {
+    background: rgba(var(--color-success-rgb), 0.1);
+    border: 2px solid var(--color-success);
+    color: var(--color-text);
+}
 
-        .success-result {
-            background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 3px solid #4CAF50;
-            margin-bottom: 1rem;
-        }
+.result-section.defeat {
+    background: rgba(var(--color-error-rgb), 0.1);
+    border: 2px solid var(--color-error);
+    color: var(--color-text);
+}
 
-        .defeat-result {
-            background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 3px solid #F44336;
-            margin-bottom: 1rem;
-        }
+.explanation-box, .loot-box, .badge-box {
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(var(--color-info-rgb), 0.1);
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--color-primary);
+}
 
-        .explanation-box {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            text-align: left;
-        }
+.multi-select-hint {
+    font-style: italic;
+    color: var(--color-text-secondary);
+    margin-top: 10px;
+    text-align: center;
+}
+</style>
 
-        .loot-reward {
-            background: linear-gradient(135deg, #FFF9C4, #FFF176);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            border: 2px solid #FFD700;
-        }
-
-        .loot-item.earned {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1rem;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
-        }
-
-        .badge-earned {
-            background: rgba(255, 215, 0, 0.2);
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-
-        .next-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .question-container {
-                padding: 1.5rem;
-            }
-
-            .quiz-actions, .next-actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-    </style>
-</body>
-</html>
+{% endblock %}
