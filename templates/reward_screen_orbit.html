@@ -1,0 +1,682 @@
+{% extends "base.html" %}
+
+{% block title %}🎉 Milestone Achieved! - AWS Cloud Orbit{% endblock %}
+
+{% block content %}
+<div class="reward-screen-container">
+    <!-- Confetti Animation -->
+    <div class="confetti-container">
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+        <div class="confetti-piece"></div>
+    </div>
+
+    <!-- Zap Celebration -->
+    <div class="mascot-celebration">
+        <img src="{{ url_for('static', filename='mascot/zap_victory.png') }}" alt="Zap Victory" class="zap-celebrating">
+        <div class="celebration-bubble">
+            <h2>🎉 Incredible Work!</h2>
+            <p>You've mastered {{ milestone_count }} AWS concepts!</p>
+        </div>
+    </div>
+
+    <!-- Reward Content -->
+    <div class="reward-content">
+        <!-- XP Gained -->
+        <div class="xp-gained-section">
+            <div class="xp-icon">✨</div>
+            <div class="xp-details">
+                <span class="xp-amount">+{{ bonus_xp }}</span>
+                <span class="xp-label">Bonus XP</span>
+            </div>
+            <div class="xp-celebration">MILESTONE BONUS!</div>
+        </div>
+
+        <!-- Streak Information (if applicable) -->
+        {% if streak_days > 0 %}
+        <div class="streak-card">
+            <div class="streak-flame">🔥</div>
+            <div class="streak-info">
+                <h3>{{ streak_days }}-Day Streak!</h3>
+                <p>You're on fire! Keep the momentum going!</p>
+                <div class="streak-progress-bar">
+                    <div class="streak-fill" style="width: {{ (streak_days % 7) * 14.28 }}%"></div>
+                </div>
+                <span class="streak-next">{{ 7 - (streak_days % 7) }} more days for next streak milestone</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- New Badges Earned -->
+        {% if new_badges %}
+        <div class="badges-earned-section">
+            <h3>🏆 New Badges Unlocked!</h3>
+            <div class="badge-showcase">
+                {% for badge in new_badges %}
+                <div class="badge-earned">
+                    <div class="badge-icon">{{ badge.icon }}</div>
+                    <div class="badge-name">{{ badge.name }}</div>
+                    <div class="badge-description">{{ badge.description }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Progress Summary -->
+        <div class="progress-summary">
+            <h3>🌌 Your Journey Progress</h3>
+            <div class="stats-orbit">
+                <div class="stat-planet energy">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value">{{ current_energy }}</div>
+                    <div class="stat-label">Energy Shields</div>
+                </div>
+                
+                <div class="stat-planet xp">
+                    <div class="stat-icon">🌟</div>
+                    <div class="stat-value">{{ total_xp }}</div>
+                    <div class="stat-label">Total XP</div>
+                </div>
+                
+                <div class="stat-planet accuracy">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value">{{ accuracy }}%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                
+                <div class="stat-planet mastery">
+                    <div class="stat-icon">🚀</div>
+                    <div class="stat-value">{{ mastery_level }}</div>
+                    <div class="stat-label">Mastery Level</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Challenge Preview -->
+        <div class="next-challenge">
+            <h3>🎯 Next Adventure Awaits</h3>
+            <div class="challenge-preview">
+                <div class="challenge-icon">{{ next_challenge.icon }}</div>
+                <div class="challenge-info">
+                    <div class="challenge-name">{{ next_challenge.name }}</div>
+                    <div class="challenge-description">{{ next_challenge.description }}</div>
+                    <div class="challenge-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ next_challenge.progress }}%"></div>
+                        </div>
+                        <span class="progress-text">{{ next_challenge.current }}/{{ next_challenge.target }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="reward-actions">
+        <a href="{{ url_for('home') }}" class="btn btn-primary pulse-btn">
+            <span class="btn-icon">🚀</span>
+            Continue Adventure
+        </a>
+        <a href="{{ url_for('badges') }}" class="btn btn-secondary">
+            <span class="btn-icon">🏆</span>
+            View Badges
+        </a>
+    </div>
+</div>
+
+<style>
+/* Reward Screen Styles */
+.reward-screen-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Confetti Animation */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #f7d51d;
+    animation: confetti-fall 4s linear infinite;
+}
+
+.confetti-piece:nth-child(1) { left: 10%; animation-delay: 0s; background: #32b8c6; }
+.confetti-piece:nth-child(2) { left: 25%; animation-delay: 0.5s; background: #f7d51d; }
+.confetti-piece:nth-child(3) { left: 40%; animation-delay: 1s; background: #e68161; }
+.confetti-piece:nth-child(4) { left: 55%; animation-delay: 1.5s; background: #ff5459; }
+.confetti-piece:nth-child(5) { left: 70%; animation-delay: 2s; background: #32b8c6; }
+.confetti-piece:nth-child(6) { left: 85%; animation-delay: 2.5s; background: #f7d51d; }
+
+@keyframes confetti-fall {
+    0% { 
+        transform: translateY(-100vh) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    100% { 
+        transform: translateY(100vh) rotate(720deg) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Mascot Celebration */
+.mascot-celebration {
+    text-align: center;
+    margin-bottom: 40px;
+    z-index: 2;
+    position: relative;
+}
+
+.zap-celebrating {
+    width: 120px;
+    height: auto;
+    animation: celebration-bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(247, 213, 29, 0.7));
+}
+
+@keyframes celebration-bounce {
+    0%, 100% { 
+        transform: translateY(0px) scale(1) rotate(-3deg); 
+    }
+    50% { 
+        transform: translateY(-15px) scale(1.1) rotate(3deg); 
+    }
+}
+
+.celebration-bubble {
+    background: linear-gradient(135deg, rgba(50, 184, 198, 0.95), rgba(33, 128, 141, 0.95));
+    padding: 20px 30px;
+    border-radius: 25px;
+    margin-top: 20px;
+    border: 3px solid #f7d51d;
+    position: relative;
+    backdrop-filter: blur(10px);
+}
+
+.celebration-bubble::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid #f7d51d;
+}
+
+.celebration-bubble h2 {
+    color: white;
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.celebration-bubble p {
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    font-size: 16px;
+}
+
+/* Reward Content */
+.reward-content {
+    max-width: 600px;
+    width: 100%;
+    z-index: 2;
+    position: relative;
+}
+
+/* XP Gained Section */
+.xp-gained-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: linear-gradient(135deg, rgba(247, 213, 29, 0.2), rgba(230, 129, 97, 0.2));
+    padding: 30px;
+    border-radius: 20px;
+    border: 3px solid #f7d51d;
+    margin-bottom: 30px;
+    animation: xp-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes xp-glow {
+    0% { box-shadow: 0 0 20px rgba(247, 213, 29, 0.5); }
+    100% { box-shadow: 0 0 40px rgba(247, 213, 29, 0.8); }
+}
+
+.xp-icon {
+    font-size: 48px;
+    animation: sparkle-rotate 3s linear infinite;
+}
+
+@keyframes sparkle-rotate {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+.xp-details {
+    text-align: center;
+}
+
+.xp-amount {
+    display: block;
+    font-size: 36px;
+    font-weight: bold;
+    color: #f7d51d;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.xp-label {
+    display: block;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 5px;
+}
+
+.xp-celebration {
+    background: #ff5459;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Streak Card */
+.streak-card {
+    background: linear-gradient(135deg, rgba(255, 84, 89, 0.2), rgba(192, 21, 47, 0.1));
+    border: 2px solid #ff5459;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.streak-flame {
+    font-size: 48px;
+    animation: flame-flicker 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes flame-flicker {
+    0% { transform: scale(1) rotate(-2deg); filter: hue-rotate(0deg); }
+    100% { transform: scale(1.1) rotate(2deg); filter: hue-rotate(10deg); }
+}
+
+.streak-info {
+    flex: 1;
+}
+
+.streak-info h3 {
+    color: #ff5459;
+    margin: 0 0 10px 0;
+    font-size: 22px;
+}
+
+.streak-info p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 15px 0;
+}
+
+.streak-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 84, 89, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.streak-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff5459, #f7d51d);
+    border-radius: 4px;
+    animation: fill-progress 2s ease-out;
+}
+
+@keyframes fill-progress {
+    0% { width: 0%; }
+}
+
+.streak-next {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Badge Showcase */
+.badges-earned-section {
+    background: linear-gradient(135deg, rgba(230, 129, 97, 0.15), rgba(168, 75, 47, 0.1));
+    border: 2px solid #e68161;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.badges-earned-section h3 {
+    color: #e68161;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.badge-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.badge-earned {
+    background: rgba(230, 129, 97, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid rgba(230, 129, 97, 0.3);
+    animation: badge-appear 1s ease-out;
+}
+
+@keyframes badge-appear {
+    0% { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.8); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+    }
+}
+
+.badge-icon {
+    font-size: 36px;
+    margin-bottom: 10px;
+    animation: badge-shine 3s ease-in-out infinite;
+}
+
+@keyframes badge-shine {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 5px rgba(247,213,29,0.5)); }
+    50% { filter: brightness(1.3) drop-shadow(0 0 15px rgba(247,213,29,0.8)); }
+}
+
+.badge-name {
+    font-weight: bold;
+    color: #f7d51d;
+    margin-bottom: 5px;
+}
+
+.badge-description {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Progress Summary - Space Orbital Theme */
+.progress-summary {
+    background: linear-gradient(135deg, rgba(50, 184, 198, 0.15), rgba(33, 128, 141, 0.1));
+    border: 2px solid #32b8c6;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.progress-summary h3 {
+    color: #32b8c6;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.stats-orbit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 20px;
+}
+
+.stat-planet {
+    background: radial-gradient(circle, rgba(50, 184, 198, 0.2), rgba(50, 184, 198, 0.05));
+    border: 2px solid rgba(50, 184, 198, 0.4);
+    border-radius: 50%;
+    padding: 20px;
+    text-align: center;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    animation: planet-orbit 8s linear infinite;
+    position: relative;
+}
+
+@keyframes planet-orbit {
+    0% { transform: rotate(0deg); box-shadow: 0 0 20px rgba(50, 184, 198, 0.3); }
+    25% { box-shadow: 0 0 30px rgba(247, 213, 29, 0.3); }
+    50% { transform: rotate(180deg); box-shadow: 0 0 20px rgba(230, 129, 97, 0.3); }
+    75% { box-shadow: 0 0 30px rgba(255, 84, 89, 0.3); }
+    100% { transform: rotate(360deg); box-shadow: 0 0 20px rgba(50, 184, 198, 0.3); }
+}
+
+.stat-planet .stat-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    animation: counter-rotate 8s linear infinite reverse;
+}
+
+.stat-planet .stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #32b8c6;
+    margin-bottom: 4px;
+    animation: counter-rotate 8s linear infinite reverse;
+}
+
+.stat-planet .stat-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    animation: counter-rotate 8s linear infinite reverse;
+}
+
+@keyframes counter-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+/* Next Challenge */
+.next-challenge {
+    background: linear-gradient(135deg, rgba(94, 82, 64, 0.2), rgba(98, 108, 113, 0.1));
+    border: 2px solid rgba(98, 108, 113, 0.4);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.next-challenge h3 {
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.challenge-preview {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.challenge-icon {
+    font-size: 48px;
+    animation: challenge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes challenge-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+}
+
+.challenge-info {
+    flex: 1;
+}
+
+.challenge-name {
+    font-weight: bold;
+    color: #f7d51d;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.challenge-description {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(98, 108, 113, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #32b8c6, #f7d51d);
+    border-radius: 4px;
+    animation: fill-progress 2s ease-out;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Action Buttons */
+.reward-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.pulse-btn {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        box-shadow: 0 4px 20px rgba(50, 184, 198, 0.4);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 6px 30px rgba(50, 184, 198, 0.6);
+        transform: scale(1.05);
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .reward-screen-container {
+        padding: 15px;
+    }
+    
+    .zap-celebrating {
+        width: 80px;
+    }
+    
+    .celebration-bubble h2 {
+        font-size: 20px;
+    }
+    
+    .xp-gained-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .streak-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .challenge-preview {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stats-orbit {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .reward-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Play reward screen fanfare
+    if (window.awsOrbitAudio) {
+        setTimeout(() => {
+            window.awsOrbitAudio.playRewardScreen();
+        }, 500);
+        
+        // Play additional sounds for different elements
+        {% if new_badges %}
+        setTimeout(() => {
+            window.awsOrbitAudio.playBadgeEarned();
+        }, 2000);
+        {% endif %}
+        
+        {% if streak_days > 0 %}
+        setTimeout(() => {
+            window.awsOrbitAudio.playStreakBonus();
+        }, 1500);
+        {% endif %}
+    }
+    
+    // Add extra confetti animation
+    function createExtraConfetti() {
+        const container = document.querySelector('.confetti-container');
+        for (let i = 0; i < 10; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti-piece';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.backgroundColor = ['#f7d51d', '#32b8c6', '#e68161', '#ff5459'][Math.floor(Math.random() * 4)];
+            container.appendChild(confetti);
+            
+            // Remove after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, 4000);
+        }
+    }
+    
+    // Trigger extra confetti every 3 seconds
+    createExtraConfetti();
+    setInterval(createExtraConfetti, 3000);
+});
+</script>
+
+{% endblock %}

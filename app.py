@@ -1,350 +1,263 @@
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from datetime import datetime, date
 import random
-
-from flask import Flask, jsonify, redirect, render_template, request, url_for
-from flask_cors import CORS
-
 from improved_data import get_lessons
-from progress import complete_lesson, load_progress, register_quiz_result
-
-# Cloud Orbit - Slay the Spire Edition v5
-# Enhanced with room mechanics, loot system, and mobile APK preparation
+from progress import (
+    load_progress, save_progress, register_quiz_result, 
+    complete_lesson, check_achievements, has_guardian_shield
+)
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for mobile app integration
 
-
-@app.route("/")
+@app.route('/')
 def home():
-    """
-    Enhanced home page with Slay the Spire progression system
-    """
+    """Enhanced home page with space adventure map"""
     progress = load_progress()
-    return render_template("index.html", progress=progress)
+    lessons = get_lessons()
+    
+    # Use the fixed space adventure map
+    return render_template('space_adventure_map.html', 
+                         progress=progress, 
+                         lessons=lessons)
 
-
-@app.route("/api/lessons")
-def lessons_api():
-    """API endpoint for mobile app integration"""
-    return jsonify(get_lessons())
-
-
-@app.route("/lessons")
-def lessons():
-    """Web version lessons list"""
-    return jsonify(get_lessons())
-
-
-@app.route("/lesson/<int:lesson_id>")
+@app.route('/lesson/<int:lesson_id>')
 def lesson_page(lesson_id):
-    """
-    Enhanced lesson page with room mechanics
-    """
-    lessons_list = get_lessons()
-    lesson = next((l for l in lessons_list if l["id"] == lesson_id), None)
-    if lesson:
-        progress = load_progress()
-        return render_template("lesson.html", lesson=lesson, progress=progress)
-    return "Lesson not found", 404
-
-
-@app.route("/api/lesson/<int:lesson_id>")
-def lesson_api(lesson_id):
-    """API endpoint for lesson data (mobile)"""
-    lessons_list = get_lessons()
-    lesson = next((l for l in lessons_list if l["id"] == lesson_id), None)
-    if lesson:
-        progress = load_progress()
-        return jsonify({"lesson": lesson, "progress": progress})
-    return jsonify({"error": "Lesson not found"}), 404
-
-
-@app.route("/complete/<int:lesson_id>")
-def complete(lesson_id):
-    """
-    Enhanced completion with loot rewards
-    """
-    progress = complete_lesson(lesson_id)
-    lessons_list = get_lessons()
-    lesson = next((l for l in lessons_list if l["id"] == lesson_id), None)
-
-    # Award loot if lesson has it
-    if lesson and "loot" in lesson:
-        progress = award_loot(progress, lesson["loot"])
-
-    next_id = lesson_id + 1 if lesson_id < len(lessons_list) else 1
-    return redirect(url_for("lesson_page", lesson_id=next_id))
-
-
-@app.route("/api/complete/<int:lesson_id>", methods=["POST"])
-def complete_api(lesson_id):
-    """API endpoint for lesson completion (mobile)"""
-    progress = complete_lesson(lesson_id)
-    lessons_list = get_lessons()
-    lesson = next((l for l in lessons_list if l["id"] == lesson_id), None)
-
-    if lesson and "loot" in lesson:
-        progress = award_loot(progress, lesson["loot"])
-
-    return jsonify(
-        {
-            "success": True,
-            "progress": progress,
-            "loot_awarded": lesson.get("loot") if lesson else None,
-        }
-    )
-
-
-@app.route("/quiz/<int:lesson_id>", methods=["GET", "POST"])
-def quiz(lesson_id):
-    """
-    Enhanced quiz with room battle mechanics
-    """
-    lessons_list = get_lessons()
-    lesson = next((l for l in lessons_list if l["id"] == lesson_id), None)
-
+    """Display lesson content before quiz"""
+    lessons = get_lessons()
+    lesson = next((l for l in lessons if l["id"] == lesson_id), None)
+    
     if not lesson:
         return "Lesson not found", 404
-
-    # ALWAYS load progress first - this is crucial
+    
     progress = load_progress()
+    return render_template('lesson.html', 
+                         lesson=lesson, 
+                         progress=progress)
 
-    if request.method == "POST":
-        # Handle single and multi-select questions
-        if lesson.get("multi_select"):
-            selected = request.form.getlist("option")
-            correct_answers = set(lesson.get("answers", []))
-            correct = set(selected) == correct_answers
-        else:
-            selected = request.form.get("option")
-            correct = selected == lesson.get("answer")
-
-        progress, message, next_lesson_id = register_quiz_result(lesson_id, correct)
-
-        # Enhanced feedback based on room type and difficulty
-        room_feedback = generate_room_feedback(lesson, correct)
-        message += f"\n{room_feedback}"
-
-        # Award loot on correct answers for elite/boss rooms
-        if (
-            correct
-            and lesson.get("room_type") in ["elite", "boss"]
-            and "loot" in lesson
-        ):
-            progress = award_loot(progress, lesson["loot"])
-            message += f"\n🎁 You found loot: {lesson['loot']['name']}!"
-
-        if progress["energy"] <= 0:
-            return render_template(
-                "quiz.html",
-                lesson=lesson,
-                progress=progress,
-                message=message
-                + "\n⚡ Your shields are depleted! Rest at a campfire to recover.",
-                repeat=True,
-            )
-        elif correct:
-            return render_template(
-                "quiz.html",
-                lesson=lesson,
-                progress=progress,
-                message=message,
-                repeat=False,
-                next_lesson_id=next_lesson_id,
-                correct=True,
-            )
-        else:
-            return render_template(
-                "quiz.html",
-                lesson=lesson,
-                progress=progress,
-                message=message,
-                repeat=True,
-                correct=False,
-            )
-
-    # GET request: show quiz form - ALWAYS include progress
-    return render_template("quiz.html", lesson=lesson, progress=progress)
-
-
-@app.route("/api/quiz/<int:lesson_id>", methods=["GET", "POST"])
-def quiz_api(lesson_id):
-    """API endpoint for quiz interaction (mobile)"""
-    lessons_list = get_lessons()
-    lesson = next((l for l in lessons_list if l["id"] == lesson_id), None)
+@app.route('/quiz/<int:lesson_id>', methods=['GET', 'POST'])
+def quiz(lesson_id):
+    """Handle quiz questions and answers with audio feedback"""
+    lessons = get_lessons()
+    lesson = next((l for l in lessons if l["id"] == lesson_id), None)
+    
     if not lesson:
-        return jsonify({"error": "Lesson not found"}), 404
-
-    if request.method == "POST":
-        data = request.get_json()
-        selected = data.get("selected_answer")
-
-        if lesson.get("multi_select"):
-            correct_answers = set(lesson.get("answers", []))
-            correct = (
-                set(selected) == correct_answers
-                if isinstance(selected, list)
-                else False
-            )
-        else:
-            correct = selected == lesson.get("answer")
-
-        progress, message, next_lesson_id = register_quiz_result(lesson_id, correct)
-        room_feedback = generate_room_feedback(lesson, correct)
-
-        loot_awarded = None
-        if (
-            correct
-            and lesson.get("room_type") in ["elite", "boss"]
-            and "loot" in lesson
-        ):
-            progress = award_loot(progress, lesson["loot"])
-            loot_awarded = lesson["loot"]
-
-        return jsonify(
-            {
-                "correct": correct,
-                "progress": progress,
-                "message": message,
-                "room_feedback": room_feedback,
-                "next_lesson_id": next_lesson_id,
-                "loot_awarded": loot_awarded,
-                "explanation": lesson.get("explanation", ""),
-            }
-        )
-
-    # GET request
+        return "Lesson not found", 404
+    
     progress = load_progress()
-    return jsonify({"lesson": lesson, "progress": progress})
+    
+    if request.method == 'POST':
+        # Handle quiz answer submission
+        user_answer = request.form.get('option')
+        if not user_answer:
+            user_answer = request.form.getlist('option')  # For multi-select
+        
+        # Check if answer is correct
+        if isinstance(lesson.get('answer'), list):
+            # Multi-select question
+            correct = set(user_answer) == set(lesson['answer'])
+        else:
+            correct = user_answer == lesson.get('answer')
+        
+        # Process the result
+        progress, message, next_lesson_id = register_quiz_result(lesson_id, correct)
+        
+        # Check for milestone rewards (every 15 questions)
+        total_questions = progress.get('stats', {}).get('total_questions', 0)
+        if total_questions > 0 and total_questions % 15 == 0:
+            return redirect(url_for('reward_screen', 
+                                  milestone_count=total_questions,
+                                  lesson_id=lesson_id))
+        
+        return render_template('quiz.html', 
+                             lesson=lesson, 
+                             progress=progress,
+                             correct=correct,
+                             message=message,
+                             next_lesson_id=next_lesson_id,
+                             show_result=True)
+    
+    # GET request - show the quiz
+    return render_template('quiz.html', 
+                         lesson=lesson, 
+                         progress=progress,
+                         show_result=False)
 
+@app.route('/reward/<int:milestone_count>')
+def reward_screen(milestone_count):
+    """Duolingo-style reward screen every 15 questions"""
+    progress = load_progress()
+    
+    # Calculate bonus XP for milestone
+    bonus_xp = 50 + (milestone_count // 15) * 10
+    progress['xp'] += bonus_xp
+    
+    # Check for streak milestones
+    streak_milestone = progress.get('streak', 0) >= 3
+    streak_days = progress.get('streak', 0)
+    
+    # Get recent badges (simplified for now)
+    new_badges = get_recent_badges(progress)
+    
+    # Calculate accuracy
+    stats = progress.get('stats', {})
+    total_q = stats.get('total_questions', 1)
+    correct_q = stats.get('correct_answers', 0)
+    accuracy = round((correct_q / total_q) * 100) if total_q > 0 else 0
+    
+    # Calculate next challenge
+    next_challenge = {
+        'name': 'AWS Mastery Path',
+        'description': 'Continue your journey through the AWS galaxy',
+        'icon': '🚀',
+        'current': milestone_count,
+        'target': ((milestone_count // 15) + 1) * 15,
+        'progress': ((milestone_count % 15) / 15) * 100
+    }
+    
+    # Calculate mastery level
+    mastery_level = min(10, len(progress.get('badges', [])))
+    
+    save_progress(progress)
+    
+    return render_template('reward_screen_orbit.html',
+                         milestone_count=milestone_count,
+                         bonus_xp=bonus_xp,
+                         streak_milestone=streak_milestone,
+                         streak_days=streak_days,
+                         new_badges=new_badges,
+                         current_energy=progress.get('energy', 3),
+                         total_xp=progress.get('xp', 0),
+                         accuracy=accuracy,
+                         next_challenge=next_challenge,
+                         mastery_level=mastery_level)
 
-@app.route("/api/progress")
-def progress_api():
-    """API endpoint for progress data (mobile)"""
+@app.route('/badges')
+def badges():
+    """Enhanced cosmic badges page"""
+    progress = load_progress()
+    stats = progress.get('stats', {})
+    
+    # Calculate badge statuses
+    badges_data = {
+        'earned_count': len(progress.get('badges', [])),
+        'total_count': 15,  # Total available badges
+        'first_lesson_complete': stats.get('total_questions', 0) >= 1,
+        'knowledge_seeker': stats.get('correct_answers', 0) >= 25,
+        'perfectionist': (stats.get('correct_answers', 0) / max(1, stats.get('total_questions', 1))) >= 0.9 and stats.get('total_questions', 0) >= 20,
+        'streak_champion': progress.get('streak', 0) >= 7,
+        'aws_master': len(progress.get('badges', [])) >= 8,
+        'guardian_protected': has_guardian_shield(progress),
+        'correct_answers': stats.get('correct_answers', 0),
+        'total_questions': stats.get('total_questions', 0),
+        'current_accuracy': round((stats.get('correct_answers', 0) / max(1, stats.get('total_questions', 1))) * 100),
+        'current_streak': progress.get('streak', 0),
+        'domain_badges_earned': len([b for b in progress.get('badges', []) if 'Master' in b or 'Architect' in b]),
+        # Dates (simplified)
+        'first_lesson_date': '2025-09-11',
+        'knowledge_seeker_date': '2025-09-11',
+        'perfectionist_date': '2025-09-11',
+        'streak_champion_date': '2025-09-11',
+        'aws_master_date': '2025-09-11',
+        'guardian_protected_date': '2025-09-11'
+    }
+    
+    # AWS Domain badges (from your existing badges)
+    aws_domain_badges = []
+    existing_badges = progress.get('badges', [])
+    
+    domain_list = [
+        {'name': 'Monitoring Master', 'icon': '📊', 'description': 'Master CloudWatch and monitoring'},
+        {'name': 'Security Sentinel', 'icon': '🛡️', 'description': 'AWS security expert'},
+        {'name': 'DevOps Master', 'icon': '🚀', 'description': 'CI/CD and automation guru'},
+        {'name': 'Database Architect', 'icon': '🗄️', 'description': 'RDS and DynamoDB expert'},
+        {'name': 'Serverless Architect', 'icon': '⚡', 'description': 'Lambda and serverless master'},
+        {'name': 'Container Master', 'icon': '📦', 'description': 'ECS and EKS expert'}
+    ]
+    
+    for domain in domain_list:
+        aws_domain_badges.append({
+            'name': domain['name'],
+            'icon': domain['icon'],
+            'description': domain['description'],
+            'earned': domain['name'] in existing_badges,
+            'date': '2025-09-11' if domain['name'] in existing_badges else None,
+            'hint': f"Complete {domain['name'].lower()} lessons with high accuracy"
+        })
+    
+    badges_data['completion_percentage'] = round((badges_data['earned_count'] / badges_data['total_count']) * 100)
+    badges_data['aws_domain_badges'] = aws_domain_badges
+    
+    return render_template('badges_cosmic.html', **badges_data)
+
+@app.route('/api/progress')
+def api_progress():
+    """API endpoint for progress data"""
     return jsonify(load_progress())
 
-
-@app.route("/api/map")
-def adventure_map():
-    """
-    Generate Slay the Spire style adventure map
-    """
-    lessons = get_lessons()
+@app.route('/api/use-potion', methods=['POST'])
+def use_potion():
+    """Use a potion from inventory"""
+    data = request.get_json()
+    potion_name = data.get('potion')
+    
     progress = load_progress()
+    potions = progress.get('inventory', {}).get('potions', [])
+    
+    for i, potion in enumerate(potions):
+        if potion.get('name') == potion_name:
+            # Apply potion effect
+            effect = ""
+            if 'Shield' in potion_name or 'Health' in potion_name:
+                progress['energy'] = progress.get('max_energy', 3)
+                effect = "Energy shields fully restored!"
+            elif 'XP' in potion_name or 'Boost' in potion_name:
+                progress['xp'] += 25
+                effect = "Gained 25 bonus XP!"
+            
+            # Remove used potion
+            potions.pop(i)
+            save_progress(progress)
+            
+            return jsonify({'success': True, 'effect': effect})
+    
+    return jsonify({'success': False, 'error': 'Potion not found'})
 
-    # Create map nodes with connections
-    map_data = {
-        "nodes": [],
-        "current_position": progress.get("current_lesson", 1),
-        "completed_lessons": progress.get("completed_lessons", []),
-    }
+# Helper functions
+def get_recent_badges(progress):
+    """Get recently earned badges"""
+    badges = progress.get('badges', [])
+    recent_badges = []
+    
+    # Get last 2 badges as "recent"
+    for badge_name in badges[-2:]:
+        recent_badges.append({
+            'name': badge_name,
+            'description': f'Mastered {badge_name.lower().replace("master", "").replace("architect", "").strip()} concepts',
+            'icon': get_badge_icon(badge_name)
+        })
+    
+    return recent_badges
 
-    for lesson in lessons:
-        node = {
-            "id": lesson["id"],
-            "title": lesson["title"],
-            "room_type": lesson.get("room_type", "battle"),
-            "difficulty": lesson.get("difficulty", "easy"),
-            "completed": lesson["id"] in progress.get("completed_lessons", []),
-            "available": lesson["id"] <= progress.get("current_lesson", 1),
-            "connections": get_node_connections(lesson["id"], len(lessons)),
-        }
-        map_data["nodes"].append(node)
-
-    return jsonify(map_data)
-
-
-def generate_room_feedback(lesson, correct):
-    """Generate contextual feedback based on room type and result"""
-    room_type = lesson.get("room_type", "battle")
-    difficulty = lesson.get("difficulty", "easy")
-
-    if correct:
-        feedback_options = {
-            "battle": [
-                "💥 Victory! You've mastered this concept!",
-                "⚔️ Combat successful! Knowledge gained!",
-            ],
-            "elite": [
-                "👑 Elite defeated! You've proven your expertise!",
-                "🏆 Masterful performance against this challenge!",
-            ],
-            "boss": [
-                "🐉 BOSS DEFEATED! You are a true AWS champion!",
-                "👑 Legendary victory! You've conquered the ultimate test!",
-            ],
-            "shop": [
-                "💰 Wise purchase! This knowledge will serve you well!",
-                "🛒 Excellent choice! Your understanding grows!",
-            ],
-            "event": [
-                "✨ Fortunate outcome! Your intuition guides you well!",
-                "🎲 Lucky choice! Fortune favors the prepared!",
-            ],
-        }
+def get_badge_icon(badge_name):
+    """Get appropriate icon for badge"""
+    if 'Monitor' in badge_name:
+        return '📊'
+    elif 'Security' in badge_name:
+        return '🛡️'
+    elif 'DevOps' in badge_name or 'Automation' in badge_name:
+        return '🚀'
+    elif 'Database' in badge_name:
+        return '🗄️'
+    elif 'Serverless' in badge_name:
+        return '⚡'
+    elif 'Container' in badge_name:
+        return '📦'
+    elif 'Network' in badge_name:
+        return '🌐'
+    elif 'Cost' in badge_name:
+        return '💰'
     else:
-        feedback_options = {
-            "battle": [
-                "💔 Defeated... but you learn from every battle!",
-                "⚔️ This foe bests you today, but you'll return stronger!",
-            ],
-            "elite": [
-                "😵 Elite victory... their power was too great!",
-                "👹 The elite's knowledge exceeds yours... for now!",
-            ],
-            "boss": [
-                "💀 The boss remains undefeated... more preparation needed!",
-                "🐲 This ancient knowledge still eludes you!",
-            ],
-            "shop": [
-                "💸 Perhaps not the right choice... consider carefully!",
-                "🤔 Maybe reconsider this investment!",
-            ],
-            "event": [
-                "😓 Unfortunate outcome... but wisdom comes from experience!",
-                "🎲 Lady Luck was not with you this time!",
-            ],
-        }
+        return '🏆'
 
-    return random.choice(feedback_options.get(room_type, feedback_options["battle"]))
-
-
-def award_loot(progress, loot):
-    """Award loot to player inventory"""
-    if "inventory" not in progress:
-        progress["inventory"] = {"relics": [], "potions": [], "gold": 0}
-
-    loot_type = loot.get("type", "knowledge_card")
-
-    if loot_type == "relic":
-        progress["inventory"]["relics"].append(loot)
-    elif loot_type == "potion":
-        progress["inventory"]["potions"].append(loot)
-    elif loot_type == "gold":
-        progress["inventory"]["gold"] += loot.get("amount", 50)
-    elif loot_type == "legendary_relic":
-        progress["inventory"]["relics"].append(loot)
-        progress["xp"] += 100  # Bonus XP for legendary items
-
-    # Save progress with new loot
-    from progress import save_progress
-
-    save_progress(progress)
-    return progress
-
-
-def get_node_connections(node_id, total_nodes):
-    """Generate connections for map nodes (simplified linear progression)"""
-    connections = []
-    if node_id < total_nodes:
-        connections.append(node_id + 1)
-    return connections
-
-
-# Health check endpoint for deployment
-@app.route("/health")
-def health_check():
-    return jsonify({"status": "healthy", "version": "5.0"})
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5001, debug=True)
