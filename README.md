@@ -25,9 +25,9 @@
 | Metric | Value |
 |--------|-------|
 | 🐍 Python Files | 14 |
-| 🌐 HTML Templates | 29 |
-| 🎨 CSS Files | 2 |
-| ⚡ JavaScript Files | 8 |
+| 🌐 HTML Templates | 48 |
+| 🎨 CSS Files | 3 |
+| ⚡ JavaScript Files | 640 |
 | 📏 Lines of Python | 2136 |
 | 📱 Mobile Ready | ✅ Yes |
 | 🤖 AI Enhanced | ⚙️ Setting Up |
