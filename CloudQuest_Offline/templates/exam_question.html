@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Orbit Exam Question</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+  <h1>Cloud Orbit Exam Question</h1>
+  </header>
+  <nav>
+    <a href="/">Main Menu</a>
+  </nav>
+  <div class="container">
+    <p>Time left: {{ time_left|int }} seconds</p>
+    <p>{{ question.prompt }}</p>
+    <form method="post" action="/exam/answer">
+      {% for option in question.options %}
+        <div>
+          <input type="radio" name="answer" value="{{ option }}" id="{{ option }}" required>
+          <label for="{{ option }}">{{ option }}</label>
+        </div>
+      {% endfor %}
+      <button type="submit">Submit</button>
+    </form>
+    <img id="zap-img" class="zap zap-battle" src="{{ url_for('static', filename='zap.png') }}" alt="Zap Mascot">
+  </div>
+  <script type="module">
+    import ZapController from '/static/zap_controller.js';
+    const zapImg = document.getElementById('zap-img');
+    const zap = new ZapController(zapImg);
+    zap.play('battle');
+  </script>
+</body>
+</html>

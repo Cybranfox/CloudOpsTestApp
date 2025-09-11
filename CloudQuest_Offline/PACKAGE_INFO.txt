@@ -1,0 +1,14 @@
+CloudQuest RPG - Offline Package
+================================
+Created: Thu Sep 11 02:23:23 GMTST 2025
+Size: 19M
+Platform: Cross-platform (Windows/Linux/Mac/Mobile)
+Network: No internet required ✅
+
+Launch Commands:
+- Windows: CloudQuest.bat
+- Linux/Mac: ./run_cloudquest.sh  
+- Python: python run_cloudquest.py
+- Termux: ./mobile/install_termux.sh
+
+URL: http://localhost:5001

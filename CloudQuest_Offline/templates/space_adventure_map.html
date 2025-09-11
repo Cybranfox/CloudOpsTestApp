@@ -1,0 +1,1100 @@
+{% extends "base.html" %}
+
+{% block title %}🌌 AWS Cloud Orbit - Your Adventure{% endblock %}
+
+{% block content %}
+<div class="space-adventure-map">
+    <!-- Parallax Star Field Background -->
+    <div class="star-field">
+        <div class="stars stars1"></div>
+        <div class="stars stars2"></div>
+        <div class="stars stars3"></div>
+    </div>
+    
+    <!-- Zap Companion -->
+    <div class="zap-companion">
+        <img src="{{ url_for('static', filename='mascot/zap_curious.png') }}" alt="Zap" class="zap-floating">
+        <div class="companion-speech">
+            <p id="zapMessage">Ready for your next galactic adventure? 🌟</p>
+        </div>
+    </div>
+    
+    <!-- Progress Header -->
+    <div class="adventure-header">
+        <div class="progress-constellation">
+            <div class="energy-system">
+                <span class="energy-label">Energy Shields:</span>
+                <div class="shield-array">
+                    {% for i in range(progress.max_energy) %}
+                        {% if i < progress.energy %}
+                            <div class="shield-active">⚡</div>
+                        {% else %}
+                            <div class="shield-depleted">💫</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="cosmic-stats">
+                <div class="stat-orb">
+                    <span class="stat-value">{{ progress.xp }}</span>
+                    <span class="stat-label">XP</span>
+                </div>
+                <div class="stat-orb">
+                    <span class="stat-value">{{ progress.streak }}</span>
+                    <span class="stat-label">Streak</span>
+                </div>
+                <div class="stat-orb">
+                    <span class="stat-value">{{ progress.badges|length }}</span>
+                    <span class="stat-label">Badges</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lesson Cards instead of SVG for simplicity -->
+    <div class="lesson-galaxy">
+        <div class="galaxy-title">🌌 Your Learning Galaxy</div>
+        
+        <div class="lessons-grid">
+            {% for lesson in lessons %}
+                {% set is_available = lesson.id <= progress.current_lesson %}
+                {% set is_completed = lesson.id in progress.completed_lessons %}
+                
+                <div class="lesson-card {{ 'available' if is_available else 'locked' }} {{ 'completed' if is_completed else '' }}"
+                     data-lesson-id="{{ lesson.id }}"
+                     onclick="{% if is_available %}openLessonModal({{ lesson.id }}){% else %}showLockedMessage(){% endif %}">
+                     
+                    <div class="lesson-planet {{ lesson.room_type }}-planet">
+                        <div class="lesson-icon">
+                            {% if lesson.room_type == 'battle' %}⚔️
+                            {% elif lesson.room_type == 'elite' %}👑
+                            {% elif lesson.room_type == 'boss' %}🐉
+                            {% elif lesson.room_type == 'shop' %}🛒
+                            {% elif lesson.room_type == 'event' %}🎲
+                            {% else %}📚
+                            {% endif %}
+                        </div>
+                        
+                        {% if is_completed %}
+                            <div class="completion-ring">✨</div>
+                        {% endif %}
+                        
+                        {% if not is_available %}
+                            <div class="lock-overlay">🔒</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="lesson-info">
+                        <div class="lesson-title">{{ lesson.title }}</div>
+                        <div class="lesson-difficulty">
+                            {% if lesson.difficulty == 'easy' %}⭐
+                            {% elif lesson.difficulty == 'medium' %}⭐⭐
+                            {% elif lesson.difficulty == 'hard' %}⭐⭐⭐
+                            {% elif lesson.difficulty == 'boss' %}👑
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Map UI -->
+    <div class="map-ui">
+        <div class="progress-indicator">
+            <div class="progress-title">Mission Progress</div>
+            <div class="progress-bar-cosmic">
+                <div class="progress-fill-cosmic" style="width: {{ (progress.current_lesson / lessons|length) * 100 }}%"></div>
+            </div>
+            <div class="progress-text">{{ progress.current_lesson }}/{{ lessons|length }} Sectors Explored</div>
+        </div>
+        
+        <div class="quick-actions">
+            <button class="action-btn badges-btn" onclick="window.location.href='{{ url_for('badges') }}'">
+                <span class="btn-icon">🏆</span>
+                <span class="btn-label">Badges</span>
+            </button>
+            <button class="action-btn inventory-btn" onclick="toggleInventory()">
+                <span class="btn-icon">🎒</span>
+                <span class="btn-label">Inventory</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Lesson Details Modal -->
+<div class="lesson-modal" id="lessonModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Lesson Title</h2>
+            <button class="modal-close" onclick="closeLessonModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="lesson-preview">
+                <div class="lesson-type" id="modalType">Battle</div>
+                <div class="lesson-description" id="modalDescription">Description</div>
+                <div class="lesson-difficulty" id="modalDifficulty">Difficulty</div>
+            </div>
+            <div class="lesson-rewards">
+                <h4>Potential Rewards:</h4>
+                <div id="modalRewards"></div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cosmic primary" id="startLessonBtn">
+                <span class="btn-icon">🚀</span>
+                Begin Mission
+            </button>
+            <button class="btn-cosmic secondary" onclick="closeLessonModal()">
+                <span class="btn-icon">🌌</span>
+                Explore More
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Panel -->
+<div class="inventory-panel" id="inventoryPanel">
+    <div class="inventory-header">
+        <h3>🎒 Space Inventory</h3>
+        <button class="panel-close" onclick="toggleInventory()">&times;</button>
+    </div>
+    <div class="inventory-content">
+        <!-- Relics -->
+        <div class="inventory-section">
+            <h4>🛡️ Relics ({{ progress.inventory.relics|length }})</h4>
+            <div class="relics-grid">
+                {% for relic in progress.inventory.relics %}
+                <div class="relic-item">
+                    <div class="relic-icon">🛡️</div>
+                    <div class="relic-name">{{ relic.name }}</div>
+                    <div class="relic-description">{{ relic.description }}</div>
+                </div>
+                {% endfor %}
+                {% if progress.inventory.relics|length == 0 %}
+                <div class="empty-inventory">No relics found yet. Defeat elite enemies to discover powerful artifacts!</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Potions -->
+        <div class="inventory-section">
+            <h4>🧪 Potions ({{ progress.inventory.potions|length }})</h4>
+            <div class="potions-grid">
+                {% for potion in progress.inventory.potions %}
+                <div class="potion-item">
+                    <div class="potion-icon">🧪</div>
+                    <div class="potion-name">{{ potion.name }}</div>
+                    <button class="use-potion-btn" onclick="usePotion('{{ potion.name }}')">Use</button>
+                </div>
+                {% endfor %}
+                {% if progress.inventory.potions|length == 0 %}
+                <div class="empty-inventory">No potions in storage. Find them in shops and special events!</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Space Adventure Map Styles */
+.space-adventure-map {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #2d1b69 100%);
+    position: relative;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+/* Animated Star Field */
+.star-field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 40px 70px, white, transparent),
+        radial-gradient(1px 1px at 90px 40px, white, transparent),
+        radial-gradient(1px 1px at 130px 80px, white, transparent),
+        radial-gradient(2px 2px at 160px 30px, white, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+}
+
+.stars1 {
+    animation: move-stars 50s linear infinite;
+}
+
+.stars2 {
+    animation: move-stars 80s linear infinite;
+    background-size: 250px 120px;
+    opacity: 0.7;
+}
+
+.stars3 {
+    animation: move-stars 120s linear infinite;
+    background-size: 300px 150px;
+    opacity: 0.4;
+}
+
+@keyframes move-stars {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-2000px); }
+}
+
+/* Zap Companion */
+.zap-companion {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+}
+
+.zap-floating {
+    width: 80px;
+    height: auto;
+    animation: companion-float 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(247, 213, 29, 0.6));
+}
+
+@keyframes companion-float {
+    0%, 100% { transform: translateY(0px) rotate(-3deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+.companion-speech {
+    background: rgba(50, 184, 198, 0.9);
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-top: 10px;
+    border: 2px solid #f7d51d;
+    backdrop-filter: blur(5px);
+    position: relative;
+    min-width: 200px;
+}
+
+.companion-speech::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #f7d51d;
+}
+
+.companion-speech p {
+    margin: 0;
+    color: white;
+    font-size: 12px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Adventure Header */
+.adventure-header {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.progress-constellation {
+    background: rgba(26, 26, 46, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid rgba(50, 184, 198, 0.5);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.energy-system {
+    margin-bottom: 15px;
+}
+
+.energy-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.shield-array {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.shield-active {
+    font-size: 20px;
+    animation: shield-pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(247, 213, 29, 0.8));
+}
+
+.shield-depleted {
+    font-size: 20px;
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+@keyframes shield-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.cosmic-stats {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.stat-orb {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: radial-gradient(circle, rgba(50, 184, 198, 0.3), transparent);
+    padding: 10px;
+    border-radius: 50%;
+    min-width: 50px;
+    aspect-ratio: 1;
+    justify-content: center;
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #32b8c6;
+}
+
+.stat-label {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+}
+
+/* Lesson Galaxy */
+.lesson-galaxy {
+    position: relative;
+    z-index: 10;
+    max-width: 1200px;
+    margin: 150px auto 50px;
+}
+
+.galaxy-title {
+    text-align: center;
+    font-size: 32px;
+    color: #f7d51d;
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px rgba(247, 213, 29, 0.5);
+}
+
+.lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+/* Lesson Cards */
+.lesson-card {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(16, 33, 62, 0.8));
+    border: 2px solid rgba(50, 184, 198, 0.3);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+}
+
+.lesson-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: #32b8c6;
+    box-shadow: 0 10px 30px rgba(50, 184, 198, 0.4);
+}
+
+.lesson-card.available {
+    border-color: #32b8c6;
+}
+
+.lesson-card.completed {
+    border-color: #f7d51d;
+    background: linear-gradient(135deg, rgba(247, 213, 29, 0.1), rgba(230, 129, 97, 0.05));
+}
+
+.lesson-card.locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: rgba(98, 108, 113, 0.5);
+}
+
+.lesson-planet {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 32px;
+    background: radial-gradient(circle, rgba(50, 184, 198, 0.3), rgba(50, 184, 198, 0.1));
+    border: 3px solid #32b8c6;
+}
+
+.battle-planet {
+    background: radial-gradient(circle, rgba(50, 184, 198, 0.4), rgba(50, 184, 198, 0.1));
+    border-color: #32b8c6;
+}
+
+.elite-planet {
+    background: radial-gradient(circle, rgba(230, 129, 97, 0.4), rgba(230, 129, 97, 0.1));
+    border-color: #e68161;
+}
+
+.boss-planet {
+    background: radial-gradient(circle, rgba(255, 84, 89, 0.4), rgba(255, 84, 89, 0.1));
+    border-color: #ff5459;
+    animation: boss-pulse 2s ease-in-out infinite;
+}
+
+@keyframes boss-pulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(255, 84, 89, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(255, 84, 89, 0.8); }
+}
+
+.shop-planet {
+    background: radial-gradient(circle, rgba(247, 213, 29, 0.4), rgba(247, 213, 29, 0.1));
+    border-color: #f7d51d;
+}
+
+.completion-ring {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #f7d51d;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    animation: completion-glow 2s ease-in-out infinite;
+}
+
+@keyframes completion-glow {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(247, 213, 29, 0.5); }
+    50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(247, 213, 29, 0.8); }
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.lesson-info {
+    color: white;
+}
+
+.lesson-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #f7d51d;
+}
+
+.lesson-card.locked .lesson-title {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.lesson-difficulty {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Map UI */
+.map-ui {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    align-items: end;
+    z-index: 100;
+}
+
+.progress-indicator {
+    background: rgba(26, 26, 46, 0.9);
+    padding: 15px 20px;
+    border-radius: 15px;
+    border: 2px solid rgba(50, 184, 198, 0.5);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    min-width: 200px;
+}
+
+.progress-title {
+    color: #32b8c6;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.progress-bar-cosmic {
+    width: 100%;
+    height: 8px;
+    background: rgba(98, 108, 113, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill-cosmic {
+    height: 100%;
+    background: linear-gradient(90deg, #32b8c6, #f7d51d);
+    border-radius: 4px;
+    animation: cosmic-flow 3s ease-in-out infinite;
+}
+
+@keyframes cosmic-flow {
+    0%, 100% { box-shadow: 0 0 5px rgba(50, 184, 198, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(247, 213, 29, 0.8); }
+}
+
+.progress-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    background: rgba(26, 26, 46, 0.9);
+    border: 2px solid rgba(50, 184, 198, 0.5);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(10px);
+}
+
+.action-btn:hover {
+    border-color: #32b8c6;
+    background: rgba(50, 184, 198, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-icon {
+    font-size: 20px;
+}
+
+.btn-label {
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+/* Modal and Inventory styles same as before */
+.lesson-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(16, 33, 62, 0.95));
+    border: 3px solid #32b8c6;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    backdrop-filter: blur(10px);
+    animation: modal-appear 0.3s ease-out;
+}
+
+@keyframes modal-appear {
+    0% { opacity: 0; transform: scale(0.8) translateY(50px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(50, 184, 198, 0.3);
+    padding-bottom: 15px;
+}
+
+.modal-header h2 {
+    color: #f7d51d;
+    margin: 0;
+    font-size: 24px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 30px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #ff5459;
+}
+
+.lesson-type {
+    background: rgba(50, 184, 198, 0.2);
+    color: #32b8c6;
+    padding: 8px 15px;
+    border-radius: 15px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.lesson-description {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.lesson-difficulty {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.lesson-rewards h4 {
+    color: #e68161;
+    margin-bottom: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.btn-cosmic {
+    padding: 12px 25px;
+    border-radius: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-cosmic.primary {
+    background: linear-gradient(135deg, #32b8c6, #218085);
+    color: white;
+    box-shadow: 0 0 20px rgba(50, 184, 198, 0.4);
+}
+
+.btn-cosmic.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 25px rgba(50, 184, 198, 0.6);
+}
+
+.btn-cosmic.secondary {
+    background: rgba(94, 82, 64, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(94, 82, 64, 0.5);
+}
+
+.btn-cosmic.secondary:hover {
+    border-color: #32b8c6;
+    background: rgba(50, 184, 198, 0.1);
+}
+
+/* Inventory Panel */
+.inventory-panel {
+    position: fixed;
+    right: -400px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 350px;
+    height: 70vh;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(16, 33, 62, 0.95));
+    border: 2px solid #32b8c6;
+    border-radius: 15px 0 0 15px;
+    backdrop-filter: blur(10px);
+    transition: right 0.4s ease;
+    z-index: 200;
+    overflow-y: auto;
+}
+
+.inventory-panel.open {
+    right: 0;
+}
+
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid rgba(50, 184, 198, 0.3);
+}
+
+.inventory-header h3 {
+    color: #32b8c6;
+    margin: 0;
+}
+
+.panel-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.panel-close:hover {
+    color: #ff5459;
+}
+
+.inventory-content {
+    padding: 20px;
+}
+
+.inventory-section {
+    margin-bottom: 25px;
+}
+
+.inventory-section h4 {
+    color: #f7d51d;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.relics-grid, .potions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.relic-item, .potion-item {
+    background: rgba(50, 184, 198, 0.1);
+    border: 1px solid rgba(50, 184, 198, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.relic-icon, .potion-icon {
+    font-size: 24px;
+}
+
+.relic-name, .potion-name {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: bold;
+}
+
+.relic-description {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 5px;
+}
+
+.use-potion-btn {
+    background: linear-gradient(135deg, #e68161, #a84b2f);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.use-potion-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 10px rgba(230, 129, 97, 0.4);
+}
+
+.empty-inventory {
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    background: rgba(98, 108, 113, 0.1);
+    border-radius: 10px;
+    border: 1px dashed rgba(98, 108, 113, 0.3);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .zap-companion {
+        position: static;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .adventure-header {
+        position: static;
+        margin: 20px;
+    }
+    
+    .lessons-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        padding: 15px;
+    }
+    
+    .lesson-planet {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .map-ui {
+        position: static;
+        transform: none;
+        justify-content: center;
+        margin: 20px;
+    }
+    
+    .inventory-panel {
+        width: 100%;
+        height: 50vh;
+        right: -100%;
+        top: auto;
+        bottom: 0;
+        transform: none;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .inventory-panel.open {
+        right: 0;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+let selectedLessonId = null;
+
+// Static lesson data (simplified)
+const lessonsData = [
+    {% for lesson in lessons %}
+    {
+        id: {{ lesson.id }},
+        title: "{{ lesson.title }}",
+        description: "{{ lesson.description|default(lesson.content[:150]) }}",
+        room_type: "{{ lesson.room_type }}",
+        difficulty: "{{ lesson.difficulty }}",
+        {% if lesson.loot %}
+        loot: {
+            name: "{{ lesson.loot.name }}",
+            description: "{{ lesson.loot.description }}"
+        },
+        {% endif %}
+        {% if lesson.badge %}
+        badge: "{{ lesson.badge }}",
+        {% endif %}
+        answer: "{{ lesson.answer }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+const progressData = {
+    energy: {{ progress.energy }},
+    current_lesson: {{ progress.current_lesson }},
+    completed_lessons: {{ progress.completed_lessons }}
+};
+
+function openLessonModal(lessonId) {
+    selectedLessonId = lessonId;
+    const lesson = lessonsData.find(l => l.id === lessonId);
+    
+    if (lesson) {
+        document.getElementById('modalTitle').textContent = lesson.title;
+        document.getElementById('modalType').textContent = getRoomTypeDisplay(lesson.room_type);
+        document.getElementById('modalDescription').textContent = lesson.description;
+        document.getElementById('modalDifficulty').textContent = `Difficulty: ${lesson.difficulty.charAt(0).toUpperCase() + lesson.difficulty.slice(1)}`;
+        
+        // Show rewards
+        let rewardsHTML = '';
+        if (lesson.loot) {
+            rewardsHTML += `<div class="reward-item">🎁 ${lesson.loot.name}: ${lesson.loot.description}</div>`;
+        }
+        if (lesson.badge) {
+            rewardsHTML += `<div class="reward-item">🏆 Badge: ${lesson.badge}</div>`;
+        }
+        rewardsHTML += `<div class="reward-item">✨ XP: ${lesson.room_type === 'boss' ? '50+' : lesson.room_type === 'elite' ? '30+' : '20+'}</div>`;
+        
+        document.getElementById('modalRewards').innerHTML = rewardsHTML;
+        
+        // Update start button
+        document.getElementById('startLessonBtn').onclick = () => startLesson(lessonId);
+        
+        document.getElementById('lessonModal').style.display = 'flex';
+        
+        if (window.awsOrbitAudio) {
+            window.awsOrbitAudio.playClick();
+        }
+    }
+}
+
+function closeLessonModal() {
+    document.getElementById('lessonModal').style.display = 'none';
+    selectedLessonId = null;
+}
+
+function startLesson(lessonId) {
+    if (window.awsOrbitAudio) {
+        window.awsOrbitAudio.playWhoosh();
+    }
+    window.location.href = `/lesson/${lessonId}`;
+}
+
+function showLockedMessage() {
+    updateZapMessage("This sector is still locked! Complete previous missions first. 🔒");
+    if (window.awsOrbitAudio) {
+        window.awsOrbitAudio.playWrong();
+    }
+}
+
+function toggleInventory() {
+    const panel = document.getElementById('inventoryPanel');
+    panel.classList.toggle('open');
+    
+    if (window.awsOrbitAudio) {
+        window.awsOrbitAudio.playClick();
+    }
+}
+
+function usePotion(potionName) {
+    if (window.awsOrbitAudio) {
+        window.awsOrbitAudio.playNotification();
+    }
+    
+    fetch('/api/use-potion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ potion: potionName })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateZapMessage(`Used ${potionName}! ${data.effect}`);
+            setTimeout(() => location.reload(), 1000);
+        }
+    });
+}
+
+function getRoomTypeDisplay(roomType) {
+    const types = {
+        'battle': '⚔️ Standard Mission',
+        'elite': '👑 Elite Challenge',
+        'boss': '🐉 Boss Encounter',
+        'shop': '🛒 Supply Station',
+        'event': '🎲 Special Event'
+    };
+    return types[roomType] || '📚 Learning Mission';
+}
+
+function updateZapMessage(message) {
+    document.getElementById('zapMessage').textContent = message;
+}
+
+function getZapMessage() {
+    if (progressData.energy <= 0) {
+        return "Your shields are down! You'll need to rest before continuing. 💫";
+    } else if (progressData.energy === 1) {
+        return "Careful now! You're down to your last shield! ⚡";
+    } else {
+        const messages = [
+            "The cosmos awaits your next discovery! 🌌",
+            "Which sector will you explore next? 🚀",
+            "Your skills are growing stronger with each mission! ⭐",
+            "The AWS galaxy holds many secrets to unlock! 🔍"
+        ];
+        return messages[Math.floor(Math.random() * messages.length)];
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateZapMessage(getZapMessage());
+    
+    // Close modal when clicking outside
+    document.getElementById('lessonModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeLessonModal();
+        }
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeLessonModal();
+            const inventory = document.getElementById('inventoryPanel');
+            if (inventory.classList.contains('open')) {
+                toggleInventory();
+            }
+        }
+        
+        if (e.key === 'i' || e.key === 'I') {
+            toggleInventory();
+        }
+    });
+});
+</script>
+
+{% endblock %}

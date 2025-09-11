@@ -1,0 +1,477 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz - {{ lesson.title }}{% endblock %}
+
+{% block content %}
+<div class="mascot-container">
+    <img src="{{ url_for('static', filename='zap.png') }}" alt="Zap" class="zap" id="zapMascot">
+    <div class="speech-bubble" id="zapSpeech">
+        {% if message %}{{ message }}{% else %}Ready for the challenge?{% endif %}
+    </div>
+</div>
+
+<div class="room-type-indicator">
+    {% if lesson.room_type == 'battle' %}⚔️ Battle Challenge
+    {% elif lesson.room_type == 'elite' %}👑 Elite Challenge  
+    {% elif lesson.room_type == 'boss' %}🐉 Boss Battle
+    {% elif lesson.room_type == 'shop' %}🛒 Knowledge Shop
+    {% elif lesson.room_type == 'event' %}🎲 Special Event
+    {% else %}📚 Lesson
+    {% endif %}
+    - {{ lesson.difficulty.title() }}
+</div>
+
+<div class="card energy-display">
+    <strong>⚡ Energy Shields: {{ progress.energy }}/{{ progress.max_energy }}</strong>
+    <div class="shields">
+        {% for i in range(progress.max_energy) %}
+            {% if i < progress.energy %}
+                <span class="shield-full">⚡</span>
+            {% else %}
+                <span class="shield-empty">💔</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <p class="shield-hint"><small>You lose 1 shield for wrong answers, gain 1 for correct answers!</small></p>
+</div>
+
+{% if correct is defined %}
+    {% if correct %}
+        <div class="card result-section success">
+            <h3>🎉 Victory Achieved!</h3>
+            <p>Energy restored! You now have {{ progress.energy }}/{{ progress.max_energy }} shields.</p>
+            
+            {% if lesson.explanation %}
+                <div class="explanation-box">
+                    <h4>💡 Explanation:</h4>
+                    <p>{{ lesson.explanation }}</p>
+                </div>
+            {% endif %}
+            
+            {% if lesson.loot and lesson.room_type in ['elite', 'boss'] %}
+                <div class="loot-box">
+                    <h4>🎁 Loot Acquired!</h4>
+                    <p><strong>{{ lesson.loot.name }}</strong>: {{ lesson.loot.description }}</p>
+                </div>
+            {% endif %}
+            
+            {% if lesson.badge %}
+                <div class="badge-box">
+                    <h4>🏆 Badge Earned!</h4>
+                    <p>{{ lesson.badge }}</p>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="card result-section defeat">
+            <h3>💔 Defeat... But Don't Give Up!</h3>
+            <p>Shield lost! You now have {{ progress.energy }}/{{ progress.max_energy }} shields remaining.</p>
+            
+            {% if lesson.explanation %}
+                <div class="explanation-box">
+                    <h4>💡 Learn from this:</h4>
+                    <p>{{ lesson.explanation }}</p>
+                    <p class="correct-answer"><em>The correct answer was: <strong>{{ lesson.answer }}</strong></em></p>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% else %}
+    <!-- Show question form -->
+    {% if lesson.scenario %}
+        <div class="card scenario-box">
+            <h3>🎯 Scenario</h3>
+            <p>{{ lesson.scenario }}</p>
+        </div>
+    {% endif %}
+
+    <div class="card content-section">
+        <h3>📋 Key Concepts</h3>
+        <p>{{ lesson.content }}</p>
+    </div>
+
+    {% if lesson.loot %}
+        <div class="card loot-preview">
+            <h4>🎁 Potential Reward</h4>
+            <p><strong>{{ lesson.loot.name }}</strong>: {{ lesson.loot.description }}</p>
+        </div>
+    {% endif %}
+
+    <div class="card question-container">
+        <form method="POST" class="quiz-form">
+            <h3 class="question-title">{{ lesson.question }}</h3>
+            
+            <div class="options-container">
+                {% if lesson.multi_select %}
+                    {% for option in lesson.options %}
+                        <label class="option-label multi-select">
+                            <input type="checkbox" name="option" value="{{ option }}" class="option-input">
+                            <span class="option-checkmark"></span>
+                            <span class="option-text">{{ option }}</span>
+                        </label>
+                    {% endfor %}
+                    <p class="multi-select-hint"><em>Select all that apply</em></p>
+                {% else %}
+                    {% for option in lesson.options %}
+                        <label class="option-label">
+                            <input type="radio" name="option" value="{{ option }}" class="option-input" required>
+                            <span class="option-checkmark"></span>
+                            <span class="option-text">{{ option }}</span>
+                        </label>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="quiz-actions">
+                <button type="submit" class="btn btn-primary">⚔️ Submit Answer</button>
+            </div>
+        </form>
+    </div>
+{% endif %}
+
+<div class="next-actions">
+    {% if correct and next_lesson_id %}
+        <a href="{{ url_for('lesson_page', lesson_id=next_lesson_id) }}" class="btn btn-primary">
+            🚀 Next Adventure
+        </a>
+    {% elif not correct %}
+        <a href="{{ url_for('quiz', lesson_id=lesson.id) }}" class="btn btn-secondary">
+            🔄 Try Again
+        </a>
+    {% endif %}
+    <a href="{{ url_for('home') }}" class="btn btn-secondary">
+        🗺️ Return to Map
+    </a>
+</div>
+
+<style>
+/* Dark theme compatible styles */
+.energy-display {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(98, 108, 113, 0.15), rgba(98, 108, 113, 0.25));
+    border: 2px solid rgba(98, 108, 113, 0.4);
+    margin: 20px 0;
+    padding: 20px;
+    color: var(--color-text, #fff);
+}
+
+.shields {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.shield-full {
+    color: #f7d51d;
+    font-weight: bold;
+    font-size: 2.5em;
+    text-shadow: 0 0 10px rgba(247, 213, 29, 0.8);
+    filter: drop-shadow(0 0 5px rgba(247, 213, 29, 0.9));
+    animation: pulse 2s infinite;
+}
+
+.shield-empty {
+    color: #666;
+    opacity: 0.4;
+    font-size: 2.5em;
+    filter: grayscale(100%);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.room-type-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, rgba(168, 75, 47, 0.15), rgba(230, 129, 97, 0.25));
+    border: 2px solid rgba(168, 75, 47, 0.4);
+    border-radius: 50px;
+    margin: 24px 0;
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--color-text, #fff);
+}
+
+.card {
+    background: rgba(38, 40, 40, 0.95);
+    border: 2px solid rgba(94, 82, 64, 0.3);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    color: var(--color-text, #fff);
+}
+
+.result-section.success {
+    background: linear-gradient(135deg, rgba(33, 128, 141, 0.2), rgba(50, 184, 198, 0.15));
+    border-color: #32b8c6;
+}
+
+.result-section.defeat {
+    background: linear-gradient(135deg, rgba(192, 21, 47, 0.2), rgba(255, 84, 89, 0.15));
+    border-color: #ff5459;
+}
+
+.explanation-box {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(33, 128, 141, 0.15);
+    border-radius: 8px;
+    border-left: 4px solid #32b8c6;
+    color: var(--color-text, #fff);
+}
+
+.loot-box, .badge-box {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(168, 75, 47, 0.15);
+    border-radius: 8px;
+    border-left: 4px solid #e68161;
+    color: var(--color-text, #fff);
+}
+
+.correct-answer {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(168, 75, 47, 0.15);
+    border-radius: 6px;
+    border: 1px solid rgba(168, 75, 47, 0.4);
+    font-weight: 500;
+    color: var(--color-text, #fff);
+}
+
+.question-container {
+    background: linear-gradient(135deg, rgba(98, 108, 113, 0.15), rgba(19, 52, 59, 0.2));
+    border-color: #626c71;
+}
+
+.question-title {
+    color: var(--color-text, #fff);
+    margin-bottom: 24px;
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+/* FIXED: Answer boxes styling - much more visible now */
+.option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    margin: 12px 0;
+    background: rgba(245, 245, 245, 0.95); /* Light background for readability */
+    border: 2px solid rgba(33, 128, 141, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: #1a1a1a; /* Dark text for contrast */
+    font-weight: 500;
+}
+
+.option-label:hover {
+    background: rgba(33, 128, 141, 0.1);
+    border-color: #32b8c6;
+    transform: translateX(4px);
+    color: var(--color-text, #fff);
+}
+
+.option-label:focus-within {
+    outline: 2px solid #32b8c6;
+    outline-offset: 2px;
+}
+
+.option-input {
+    position: absolute;
+    opacity: 0;
+}
+
+.option-checkmark {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 2px solid #32b8c6;
+    border-radius: 4px;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.option-input[type="radio"] + .option-checkmark {
+    border-radius: 50%;
+}
+
+.option-input:checked + .option-checkmark {
+    background: #32b8c6;
+    border-color: #32b8c6;
+}
+
+.option-input:checked + .option-checkmark::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+}
+
+.option-input[type="checkbox"]:checked + .option-checkmark::after {
+    content: '✓';
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    width: auto;
+    height: auto;
+    background: none;
+}
+
+.option-text {
+    flex: 1;
+    line-height: 1.4;
+    font-size: 14px;
+}
+
+.multi-select-hint {
+    text-align: center;
+    color: var(--color-text-secondary, #ccc);
+    font-style: italic;
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(98, 108, 113, 0.1);
+    border-radius: 6px;
+    border: 1px dashed rgba(98, 108, 113, 0.4);
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    border: none;
+    cursor: pointer;
+    min-width: 180px;
+    justify-content: center;
+    margin: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #32b8c6, #218085);
+    color: white;
+    box-shadow: 0 4px 12px rgba(50, 184, 198, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(50, 184, 198, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(94, 82, 64, 0.2);
+    color: var(--color-text, #fff);
+    border: 2px solid rgba(94, 82, 64, 0.4);
+}
+
+.btn-secondary:hover {
+    background: rgba(94, 82, 64, 0.3);
+    border-color: #32b8c6;
+    color: #32b8c6;
+}
+
+.quiz-actions, .next-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 32px 0;
+}
+
+.scenario-box {
+    background: linear-gradient(135deg, rgba(168, 75, 47, 0.15), rgba(230, 129, 97, 0.1));
+    border-color: rgba(230, 129, 97, 0.4);
+}
+
+.content-section {
+    background: linear-gradient(135deg, rgba(33, 128, 141, 0.15), rgba(29, 116, 128, 0.1));
+    border-color: rgba(33, 128, 141, 0.4);
+}
+
+.loot-preview {
+    background: linear-gradient(135deg, rgba(168, 75, 47, 0.15), rgba(230, 129, 97, 0.1));
+    border-color: rgba(230, 129, 97, 0.4);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .shields {
+        gap: 8px;
+    }
+    
+    .shield-full, .shield-empty {
+        font-size: 2em;
+    }
+    
+    .btn {
+        min-width: auto;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .quiz-actions, .next-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .option-label {
+        gap: 12px;
+        padding: 12px;
+    }
+    
+    .option-text {
+        font-size: 13px;
+    }
+    
+    .question-title {
+        font-size: 16px;
+    }
+}
+
+/* Dark mode specific overrides */
+@media (prefers-color-scheme: dark) {
+    .option-label {
+        background: rgba(245, 245, 245, 0.1);
+        color: #f5f5f5;
+        border-color: rgba(50, 184, 198, 0.3);
+    }
+    
+    .option-label:hover {
+        background: rgba(50, 184, 198, 0.2);
+        color: #fff;
+    }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+    .option-label {
+        border-width: 3px;
+        background: #fff;
+        color: #000;
+    }
+    
+    .option-label:hover {
+        background: #32b8c6;
+        color: #fff;
+    }
+}
+</style>
+
+{% endblock %}
