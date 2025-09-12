@@ -1,5 +1,5 @@
 {
-  "xp": 1280,
+  "xp": 1535,
   "streak": 5,
   "last_completed_date": "2025-09-09",
   "energy": 3,
@@ -85,22 +85,16 @@
         "description": "Provides advanced protection against web application attacks"
       }
     ],
-    "potions": [
-      {
-        "type": "potion",
-        "name": "High Availability Elixir",
-        "description": "Temporarily boosts understanding of fault-tolerant patterns"
-      }
-    ],
+    "potions": [],
     "gold": 50,
     "cards": []
   },
   "stats": {
-    "battles_won": 14,
-    "elites_defeated": 7,
+    "battles_won": 19,
+    "elites_defeated": 8,
     "bosses_defeated": 1,
-    "total_questions": 39,
-    "correct_answers": 23,
+    "total_questions": 49,
+    "correct_answers": 30,
     "streak_best": 5,
     "runs_completed": 0
   },
@@ -117,11 +111,6 @@
     "zap"
   ],
   "relic_uses": {
-    "lesson_7": {
-      "guardian_shield_used": true
-    },
-    "lesson_8": {},
-    "lesson_9": {},
     "lesson_10": {
       "guardian_shield_used": true
     },
@@ -129,9 +118,14 @@
     "lesson_12": {
       "guardian_shield_used": true
     },
-    "lesson_13": {},
+    "lesson_13": {
+      "guardian_shield_used": true
+    },
     "lesson_14": {},
     "lesson_15": {},
-    "lesson_16": {}
+    "lesson_16": {},
+    "lesson_1": {},
+    "lesson_7": {},
+    "lesson_6": {}
   }
 }

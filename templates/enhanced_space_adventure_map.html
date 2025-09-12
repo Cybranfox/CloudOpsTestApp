@@ -1,0 +1,759 @@
+{% extends "base.html" %}
+
+{% block title %}Space Adventure Map - CloudQuest RPG{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='ftl_style_sectors.css') }}">
+<style>
+/* Enhanced Space Adventure Map - FTL-Style with Animated UI */
+.space-adventure-container {
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 35%, #0f0f23 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated starfield background */
+.starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Sector-based galaxy map */
+.galaxy-sectors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 60px;
+    padding: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Individual AWS service sectors */
+.service-sector {
+    position: relative;
+    background: rgba(13, 27, 42, 0.85);
+    border: 2px solid rgba(50, 184, 198, 0.3);
+    border-radius: 20px;
+    padding: 25px;
+    min-height: 250px;
+    backdrop-filter: blur(15px);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.service-sector::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(50, 184, 198, 0.1), transparent);
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.service-sector:hover::before {
+    opacity: 1;
+    animation: borderGlow 2s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.service-sector:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(50, 184, 198, 0.8);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(50, 184, 198, 0.2);
+}
+
+/* Sector headers */
+.sector-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.sector-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: linear-gradient(135deg, #32b8c6, #1a8a96);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.sector-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.service-sector:hover .sector-icon::before {
+    opacity: 1;
+    animation: iconShine 0.6s ease-out;
+}
+
+@keyframes iconShine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.sector-title {
+    color: #32b8c6;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 0 15px rgba(50, 184, 198, 0.4);
+}
+
+.sector-description {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* Lesson nodes in sectors */
+.lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.lesson-beacon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+/* Lesson states with enhanced animations */
+.lesson-beacon.completed {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+}
+
+.lesson-beacon.completed::after {
+    content: '✓';
+    position: absolute;
+    font-size: 20px;
+    animation: checkmarkPop 0.5s ease-out;
+}
+
+@keyframes checkmarkPop {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    50% { transform: scale(1.3) rotate(0deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.lesson-beacon.current {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    animation: currentPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+}
+
+@keyframes currentPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+    }
+    50% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 35px rgba(245, 158, 11, 0.8);
+    }
+}
+
+.lesson-beacon.available {
+    background: linear-gradient(135deg, #32b8c6, #0891b2);
+    color: white;
+    animation: availableGlow 3s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(50, 184, 198, 0.4);
+}
+
+@keyframes availableGlow {
+    0%, 100% { 
+        box-shadow: 0 0 20px rgba(50, 184, 198, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 30px rgba(50, 184, 198, 0.7);
+    }
+}
+
+.lesson-beacon.locked {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.lesson-beacon:hover:not(.locked) {
+    transform: scale(1.15) translateY(-5px);
+    box-shadow: 0 10px 30px rgba(50, 184, 198, 0.4);
+}
+
+/* Sector progress indicators */
+.sector-progress {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 25px;
+    padding: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-track {
+    height: 12px;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    background: rgba(100, 116, 139, 0.3);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #32b8c6, #22c55e);
+    border-radius: 20px;
+    transition: width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255,255,255,0.3), 
+        transparent
+    );
+    animation: progressShimmer 2s infinite;
+}
+
+@keyframes progressShimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Animated connection paths between sectors */
+.sector-connections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.connection-path {
+    position: absolute;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        rgba(50, 184, 198, 0.2) 25%,
+        rgba(50, 184, 198, 0.6) 50%,
+        rgba(50, 184, 198, 0.2) 75%,
+        transparent 100%
+    );
+    border-radius: 2px;
+    animation: dataFlow 6s ease-in-out infinite;
+}
+
+@keyframes dataFlow {
+    0%, 100% { 
+        background-position: -100% 0;
+        opacity: 0.3;
+    }
+    50% { 
+        background-position: 100% 0;
+        opacity: 0.8;
+    }
+}
+
+/* Floating UI particles */
+.ui-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.ui-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(50, 184, 198, 0.4);
+    border-radius: 50%;
+    animation: particleDrift 20s linear infinite;
+}
+
+@keyframes particleDrift {
+    0% {
+        transform: translateY(110vh) translateX(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% {
+        transform: translateY(-10vh) translateX(50px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 1200px) {
+    .galaxy-sectors {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .galaxy-sectors {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 20px;
+    }
+    
+    .service-sector {
+        min-height: 200px;
+        padding: 20px;
+    }
+    
+    .lesson-beacon {
+        width: 60px;
+        height: 60px;
+        font-size: 14px;
+    }
+    
+    .sector-title {
+        font-size: 1.2rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-adventure-container">
+    <!-- Animated starfield background -->
+    <div class="starfield" id="starfield"></div>
+    
+    <!-- Floating UI particles -->
+    <div class="ui-particles" id="uiParticles"></div>
+
+    <div class="galaxy-sectors">
+        <!-- Connection paths between sectors -->
+        <div class="sector-connections">
+            <div class="connection-path" style="top: 30%; left: 25%; width: 50%; transform: rotate(15deg);"></div>
+            <div class="connection-path" style="top: 60%; left: 15%; width: 70%; transform: rotate(-10deg);"></div>
+            <div class="connection-path" style="top: 45%; left: 10%; width: 30%; transform: rotate(45deg);"></div>
+        </div>
+
+        <!-- Compute Sector -->
+        <div class="service-sector" data-sector="compute">
+            <div class="sector-header">
+                <div class="sector-icon">⚡</div>
+                <div>
+                    <h3 class="sector-title">Compute Sector</h3>
+                    <p class="sector-description">Processing power across the galaxy</p>
+                </div>
+            </div>
+            
+            <div class="lesson-grid">
+                <a href="/lesson/1" class="lesson-beacon {% if progress.current_lesson > 1 %}completed{% elif progress.current_lesson == 1 %}current{% else %}available{% endif %}">
+                    1
+                </a>
+                <a href="/lesson/2" class="lesson-beacon {% if progress.current_lesson > 2 %}completed{% elif progress.current_lesson == 2 %}current{% elif progress.current_lesson >= 1 %}available{% else %}locked{% endif %}">
+                    2
+                </a>
+                <a href="/lesson/3" class="lesson-beacon {% if progress.current_lesson > 3 %}completed{% elif progress.current_lesson == 3 %}current{% elif progress.current_lesson >= 2 %}available{% else %}locked{% endif %}">
+                    3
+                </a>
+                <a href="/lesson/4" class="lesson-beacon {% if progress.current_lesson > 4 %}completed{% elif progress.current_lesson == 4 %}current{% elif progress.current_lesson >= 3 %}available{% else %}locked{% endif %}">
+                    4
+                </a>
+            </div>
+            
+            <div class="sector-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: {{ (progress.completed_lessons | length / 4 * 100) | round }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Storage Sector -->
+        <div class="service-sector" data-sector="storage">
+            <div class="sector-header">
+                <div class="sector-icon">💾</div>
+                <div>
+                    <h3 class="sector-title">Storage Sector</h3>
+                    <p class="sector-description">Data repositories and archives</p>
+                </div>
+            </div>
+            
+            <div class="lesson-grid">
+                <a href="/lesson/5" class="lesson-beacon {% if progress.current_lesson > 5 %}completed{% elif progress.current_lesson == 5 %}current{% elif progress.current_lesson >= 4 %}available{% else %}locked{% endif %}">
+                    5
+                </a>
+                <a href="/lesson/6" class="lesson-beacon {% if progress.current_lesson > 6 %}completed{% elif progress.current_lesson == 6 %}current{% elif progress.current_lesson >= 5 %}available{% else %}locked{% endif %}">
+                    6
+                </a>
+                <a href="/lesson/7" class="lesson-beacon {% if progress.current_lesson > 7 %}completed{% elif progress.current_lesson == 7 %}current{% elif progress.current_lesson >= 6 %}available{% else %}locked{% endif %}">
+                    7
+                </a>
+                <a href="/lesson/8" class="lesson-beacon {% if progress.current_lesson > 8 %}completed{% elif progress.current_lesson == 8 %}current{% elif progress.current_lesson >= 7 %}available{% else %}locked{% endif %}">
+                    8
+                </a>
+            </div>
+            
+            <div class="sector-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: {{ (([5,6,7,8] | intersect(progress.completed_lessons) | length) / 4 * 100) | round }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Sector -->
+        <div class="service-sector" data-sector="security">
+            <div class="sector-header">
+                <div class="sector-icon">🛡️</div>
+                <div>
+                    <h3 class="sector-title">Security Sector</h3>
+                    <p class="sector-description">Defensive systems and protocols</p>
+                </div>
+            </div>
+            
+            <div class="lesson-grid">
+                <a href="/lesson/9" class="lesson-beacon {% if progress.current_lesson > 9 %}completed{% elif progress.current_lesson == 9 %}current{% elif progress.current_lesson >= 8 %}available{% else %}locked{% endif %}">
+                    9
+                </a>
+                <a href="/lesson/10" class="lesson-beacon {% if progress.current_lesson > 10 %}completed{% elif progress.current_lesson == 10 %}current{% elif progress.current_lesson >= 9 %}available{% else %}locked{% endif %}">
+                    10
+                </a>
+                <a href="/lesson/11" class="lesson-beacon {% if progress.current_lesson > 11 %}completed{% elif progress.current_lesson == 11 %}current{% elif progress.current_lesson >= 10 %}available{% else %}locked{% endif %}">
+                    11
+                </a>
+                <a href="/lesson/12" class="lesson-beacon {% if progress.current_lesson > 12 %}completed{% elif progress.current_lesson == 12 %}current{% elif progress.current_lesson >= 11 %}available{% else %}locked{% endif %}">
+                    12
+                </a>
+            </div>
+            
+            <div class="sector-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: {{ (([9,10,11,12] | intersect(progress.completed_lessons) | length) / 4 * 100) | round }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Networking Sector -->
+        <div class="service-sector" data-sector="networking">
+            <div class="sector-header">
+                <div class="sector-icon">🌐</div>
+                <div>
+                    <h3 class="sector-title">Network Sector</h3>
+                    <p class="sector-description">Communication and connectivity</p>
+                </div>
+            </div>
+            
+            <div class="lesson-grid">
+                <a href="/lesson/13" class="lesson-beacon {% if progress.current_lesson > 13 %}completed{% elif progress.current_lesson == 13 %}current{% elif progress.current_lesson >= 12 %}available{% else %}locked{% endif %}">
+                    13
+                </a>
+                <a href="/lesson/14" class="lesson-beacon {% if progress.current_lesson > 14 %}completed{% elif progress.current_lesson == 14 %}current{% elif progress.current_lesson >= 13 %}available{% else %}locked{% endif %}">
+                    14
+                </a>
+                <a href="/lesson/15" class="lesson-beacon {% if progress.current_lesson > 15 %}completed{% elif progress.current_lesson == 15 %}current{% elif progress.current_lesson >= 14 %}available{% else %}locked{% endif %}">
+                    15
+                </a>
+                <a href="/lesson/16" class="lesson-beacon {% if progress.current_lesson > 16 %}completed{% elif progress.current_lesson == 16 %}current{% elif progress.current_lesson >= 15 %}available{% else %}locked{% endif %}">
+                    16
+                </a>
+            </div>
+            
+            <div class="sector-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: {{ (([13,14,15,16] | intersect(progress.completed_lessons) | length) / 4 * 100) | round }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Sector -->
+        <div class="service-sector" data-sector="database">
+            <div class="sector-header">
+                <div class="sector-icon">🗄️</div>
+                <div>
+                    <h3 class="sector-title">Database Sector</h3>
+                    <p class="sector-description">Information management systems</p>
+                </div>
+            </div>
+            
+            <div class="lesson-grid">
+                <a href="/lesson/17" class="lesson-beacon {% if progress.current_lesson > 17 %}completed{% elif progress.current_lesson == 17 %}current{% elif progress.current_lesson >= 16 %}available{% else %}locked{% endif %}">
+                    17
+                </a>
+                <a href="/lesson/18" class="lesson-beacon {% if progress.current_lesson > 18 %}completed{% elif progress.current_lesson == 18 %}current{% elif progress.current_lesson >= 17 %}available{% else %}locked{% endif %}">
+                    18
+                </a>
+                <a href="/lesson/19" class="lesson-beacon {% if progress.current_lesson > 19 %}completed{% elif progress.current_lesson == 19 %}current{% elif progress.current_lesson >= 18 %}available{% else %}locked{% endif %}">
+                    19
+                </a>
+                <a href="/lesson/20" class="lesson-beacon {% if progress.current_lesson > 20 %}completed{% elif progress.current_lesson == 20 %}current{% elif progress.current_lesson >= 19 %}available{% else %}locked{% endif %}">
+                    20
+                </a>
+            </div>
+            
+            <div class="sector-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: {{ (([17,18,19,20] | intersect(progress.completed_lessons) | length) / 4 * 100) | round }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DevOps Sector -->
+        <div class="service-sector" data-sector="devops">
+            <div class="sector-header">
+                <div class="sector-icon">🚀</div>
+                <div>
+                    <h3 class="sector-title">DevOps Sector</h3>
+                    <p class="sector-description">Automation and deployment</p>
+                </div>
+            </div>
+            
+            <div class="lesson-grid">
+                <a href="/lesson/21" class="lesson-beacon {% if progress.current_lesson > 21 %}completed{% elif progress.current_lesson == 21 %}current{% elif progress.current_lesson >= 20 %}available{% else %}locked{% endif %}">
+                    21
+                </a>
+                <a href="/lesson/22" class="lesson-beacon {% if progress.current_lesson > 22 %}completed{% elif progress.current_lesson == 22 %}current{% elif progress.current_lesson >= 21 %}available{% else %}locked{% endif %}">
+                    22
+                </a>
+                <a href="/lesson/23" class="lesson-beacon {% if progress.current_lesson > 23 %}completed{% elif progress.current_lesson == 23 %}current{% elif progress.current_lesson >= 22 %}available{% else %}locked{% endif %}">
+                    23
+                </a>
+                <a href="/lesson/24" class="lesson-beacon {% if progress.current_lesson > 24 %}completed{% elif progress.current_lesson == 24 %}current{% elif progress.current_lesson >= 23 %}available{% else %}locked{% endif %}">
+                    24
+                </a>
+            </div>
+            
+            <div class="sector-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: {{ (([21,22,23,24] | intersect(progress.completed_lessons) | length) / 4 * 100) | round }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Generate animated starfield
+    function createStarfield() {
+        const starfield = document.getElementById('starfield');
+        const starCount = 100;
+        
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // Random position and size
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+            
+            // Random animation delay
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            
+            starfield.appendChild(star);
+        }
+    }
+    
+    // Generate floating UI particles
+    function createUIParticles() {
+        const container = document.getElementById('uiParticles');
+        const particleCount = 15;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'ui-particle';
+            
+            // Random horizontal position
+            particle.style.left = Math.random() * 100 + '%';
+            
+            // Random animation delay and duration
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            
+            container.appendChild(particle);
+        }
+    }
+    
+    // Add hover sound effects and enhanced interactions
+    function initializeInteractivity() {
+        const lessonBeacons = document.querySelectorAll('.lesson-beacon');
+        const serviceSectors = document.querySelectorAll('.service-sector');
+        
+        // Enhanced lesson beacon interactions
+        lessonBeacons.forEach(beacon => {
+            if (!beacon.classList.contains('locked')) {
+                beacon.addEventListener('mouseenter', function() {
+                    // Play UI sound if available
+                    if (window.awsOrbitAudio && window.awsOrbitAudio.playClick) {
+                        window.awsOrbitAudio.playClick();
+                    }
+                    
+                    // Add ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 0;
+                        height: 0;
+                        border-radius: 50%;
+                        background: rgba(50, 184, 198, 0.3);
+                        transform: translate(-50%, -50%);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                        z-index: -1;
+                    `;
+                    
+                    beacon.style.position = 'relative';
+                    beacon.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            }
+        });
+        
+        // Enhanced sector hover effects
+        serviceSectors.forEach(sector => {
+            sector.addEventListener('mouseenter', function() {
+                // Trigger connected sector subtle glow
+                const connectedSectors = document.querySelectorAll('.service-sector');
+                connectedSectors.forEach(s => {
+                    if (s !== sector) {
+                        s.style.borderColor = 'rgba(50, 184, 198, 0.2)';
+                    }
+                });
+            });
+            
+            sector.addEventListener('mouseleave', function() {
+                // Reset connected sector glow
+                const connectedSectors = document.querySelectorAll('.service-sector');
+                connectedSectors.forEach(s => {
+                    s.style.borderColor = '';
+                });
+            });
+        });
+    }
+    
+    // Add CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Initialize all animations and interactions
+    createStarfield();
+    createUIParticles();
+    initializeInteractivity();
+    
+    // Intersection Observer for sector unlock animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = Math.random() * 0.3 + 's';
+                entry.target.classList.add('sector-visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    document.querySelectorAll('.service-sector').forEach(sector => {
+        observer.observe(sector);
+    });
+});
+</script>
+
+<style>
+.sector-visible {
+    animation: sectorUnlock 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes sectorUnlock {
+    0% {
+        transform: scale(0.8) rotateY(-90deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05) rotateY(0deg);
+    }
+    100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+    }
+}
+</style>
+{% endblock %}
