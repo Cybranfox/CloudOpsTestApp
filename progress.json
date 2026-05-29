@@ -1,5 +1,5 @@
 {
-  "xp": 1535,
+  "xp": 1560,
   "streak": 5,
   "last_completed_date": "2025-09-09",
   "energy": 3,
@@ -20,7 +20,8 @@
     "Caching Expert",
     "Event Architect",
     "Operations Master",
-    "Security Guardian"
+    "Security Guardian",
+    "Workflow Orchestrator"
   ],
   "completed_lessons": [
     2,
@@ -38,10 +39,11 @@
     13,
     14,
     15,
-    16
+    16,
+    17
   ],
   "max_energy": 3,
-  "current_lesson": 17,
+  "current_lesson": 18,
   "inventory": {
     "relics": [
       {
@@ -90,11 +92,11 @@
     "cards": []
   },
   "stats": {
-    "battles_won": 19,
+    "battles_won": 20,
     "elites_defeated": 8,
     "bosses_defeated": 1,
-    "total_questions": 49,
-    "correct_answers": 30,
+    "total_questions": 51,
+    "correct_answers": 31,
     "streak_best": 5,
     "runs_completed": 0
   },
@@ -111,9 +113,6 @@
     "zap"
   ],
   "relic_uses": {
-    "lesson_10": {
-      "guardian_shield_used": true
-    },
     "lesson_11": {},
     "lesson_12": {
       "guardian_shield_used": true
@@ -124,8 +123,11 @@
     "lesson_14": {},
     "lesson_15": {},
     "lesson_16": {},
-    "lesson_1": {},
+    "lesson_1": {
+      "guardian_shield_used": true
+    },
     "lesson_7": {},
-    "lesson_6": {}
+    "lesson_6": {},
+    "lesson_17": {}
   }
 }

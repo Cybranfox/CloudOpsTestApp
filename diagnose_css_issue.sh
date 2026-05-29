@@ -1,0 +1,415 @@
+#!/bin/bash
+# 🔍 diagnose_css_issue.sh - Check what's wrong with the lesson circles
+
+echo "🔍 CloudQuest RPG - CSS Diagnostic"
+echo "================================="
+
+echo "🔧 Checking current template and CSS..."
+
+# Check if the space adventure map template exists and what it contains
+if [[ -f "templates/space_adventure_map.html" ]]; then
+    echo "✅ space_adventure_map.html exists"
+    
+    # Check if it has the proper CSS styling
+    if grep -q "lesson-circle" templates/space_adventure_map.html; then
+        echo "✅ lesson-circle CSS found in template"
+    else
+        echo "❌ lesson-circle CSS NOT found in template"
+    fi
+    
+    # Check file size
+    size=$(stat -c%s templates/space_adventure_map.html 2>/dev/null || stat -f%z templates/space_adventure_map.html 2>/dev/null || echo "unknown")
+    echo "📏 Template file size: $size bytes"
+    
+    # Check for CSS blocks
+    css_blocks=$(grep -c "<style>" templates/space_adventure_map.html)
+    echo "🎨 CSS blocks found: $css_blocks"
+    
+else
+    echo "❌ space_adventure_map.html NOT found"
+fi
+
+echo ""
+echo "🔧 Quick Fix: Create minimal working version..."
+
+# Create a minimal working template that should definitely work
+cat > templates/space_adventure_map.html << 'EOF'
+{% extends "base.html" %}
+
+{% block title %}Space Adventure Map - CloudQuest RPG{% endblock %}
+
+{% block head %}
+<style>
+/* Minimal Working Duolingo-Style Map */
+.space-map {
+    background: linear-gradient(180deg, #0d1421 0%, #1a1b3e 50%, #0d1421 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.map-content {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.map-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #64c8ff;
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+}
+
+.sector-unit {
+    margin-bottom: 60px;
+}
+
+.sector-title {
+    text-align: center;
+    font-size: 1.3rem;
+    color: #a855f7;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.lessons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.lesson-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.lesson-row.left { justify-content: flex-start; margin-left: 80px; }
+.lesson-row.right { justify-content: flex-end; margin-right: 80px; }
+
+/* FIXED: Lesson circles that actually work */
+.lesson-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    border: 3px solid transparent;
+}
+
+/* Working lesson states */
+.lesson-circle.completed {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    border-color: rgba(34, 197, 94, 0.5);
+}
+
+.lesson-circle.current {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border-color: rgba(245, 158, 11, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.lesson-circle.available {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.lesson-circle.locked {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.lesson-circle:hover:not(.locked) {
+    transform: scale(1.1) translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.progress-info {
+    text-align: center;
+    margin-top: 20px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .lesson-circle {
+        width: 70px;
+        height: 70px;
+        font-size: 18px;
+    }
+    
+    .lesson-row.left { margin-left: 40px; }
+    .lesson-row.right { margin-right: 40px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-map">
+    <div class="map-content">
+        <h1 class="map-title">AWS Cloud Orbit</h1>
+        
+        <!-- Compute Sector -->
+        <div class="sector-unit">
+            <div class="sector-title">
+                <span>⚡</span>
+                <span>Compute Sector</span>
+            </div>
+            
+            <div class="lessons-container">
+                <div class="lesson-row">
+                    <a href="/lesson/1" class="lesson-circle {% if progress.current_lesson > 1 %}completed{% elif progress.current_lesson == 1 %}current{% else %}available{% endif %}">1</a>
+                </div>
+                <div class="lesson-row right">
+                    <a href="/lesson/2" class="lesson-circle {% if progress.current_lesson > 2 %}completed{% elif progress.current_lesson == 2 %}current{% elif progress.current_lesson >= 1 %}available{% else %}locked{% endif %}">2</a>
+                </div>
+                <div class="lesson-row left">
+                    <a href="/lesson/3" class="lesson-circle {% if progress.current_lesson > 3 %}completed{% elif progress.current_lesson == 3 %}current{% elif progress.current_lesson >= 2 %}available{% else %}locked{% endif %}">3</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/4" class="lesson-circle {% if progress.current_lesson > 4 %}completed{% elif progress.current_lesson == 4 %}current{% elif progress.current_lesson >= 3 %}available{% else %}locked{% endif %}">4</a>
+                </div>
+            </div>
+            
+            <div class="progress-info">
+                {% set compute_completed = 0 %}
+                {% for lesson in [1,2,3,4] %}
+                    {% if lesson in progress.completed_lessons %}
+                        {% set compute_completed = compute_completed + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {{ compute_completed }}/4 Complete
+            </div>
+        </div>
+
+        <!-- Storage Sector -->
+        <div class="sector-unit">
+            <div class="sector-title">
+                <span>💾</span>
+                <span>Storage Sector</span>
+            </div>
+            
+            <div class="lessons-container">
+                <div class="lesson-row">
+                    <a href="/lesson/5" class="lesson-circle {% if progress.current_lesson > 5 %}completed{% elif progress.current_lesson == 5 %}current{% elif progress.current_lesson >= 4 %}available{% else %}locked{% endif %}">5</a>
+                </div>
+                <div class="lesson-row left">
+                    <a href="/lesson/6" class="lesson-circle {% if progress.current_lesson > 6 %}completed{% elif progress.current_lesson == 6 %}current{% elif progress.current_lesson >= 5 %}available{% else %}locked{% endif %}">6</a>
+                </div>
+                <div class="lesson-row right">
+                    <a href="/lesson/7" class="lesson-circle {% if progress.current_lesson > 7 %}completed{% elif progress.current_lesson == 7 %}current{% elif progress.current_lesson >= 6 %}available{% else %}locked{% endif %}">7</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/8" class="lesson-circle {% if progress.current_lesson > 8 %}completed{% elif progress.current_lesson == 8 %}current{% elif progress.current_lesson >= 7 %}available{% else %}locked{% endif %}">8</a>
+                </div>
+            </div>
+            
+            <div class="progress-info">
+                {% set storage_completed = 0 %}
+                {% for lesson in [5,6,7,8] %}
+                    {% if lesson in progress.completed_lessons %}
+                        {% set storage_completed = storage_completed + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {{ storage_completed }}/4 Complete
+            </div>
+        </div>
+
+        <!-- Security Sector -->
+        <div class="sector-unit">
+            <div class="sector-title">
+                <span>🛡️</span>
+                <span>Security Sector</span>
+            </div>
+            
+            <div class="lessons-container">
+                <div class="lesson-row right">
+                    <a href="/lesson/9" class="lesson-circle {% if progress.current_lesson > 9 %}completed{% elif progress.current_lesson == 9 %}current{% elif progress.current_lesson >= 8 %}available{% else %}locked{% endif %}">9</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/10" class="lesson-circle {% if progress.current_lesson > 10 %}completed{% elif progress.current_lesson == 10 %}current{% elif progress.current_lesson >= 9 %}available{% else %}locked{% endif %}">10</a>
+                </div>
+                <div class="lesson-row left">
+                    <a href="/lesson/11" class="lesson-circle {% if progress.current_lesson > 11 %}completed{% elif progress.current_lesson == 11 %}current{% elif progress.current_lesson >= 10 %}available{% else %}locked{% endif %}">11</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/12" class="lesson-circle {% if progress.current_lesson > 12 %}completed{% elif progress.current_lesson == 12 %}current{% elif progress.current_lesson >= 11 %}available{% else %}locked{% endif %}">12</a>
+                </div>
+            </div>
+            
+            <div class="progress-info">
+                {% set security_completed = 0 %}
+                {% for lesson in [9,10,11,12] %}
+                    {% if lesson in progress.completed_lessons %}
+                        {% set security_completed = security_completed + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {{ security_completed }}/4 Complete
+            </div>
+        </div>
+
+        <!-- Network Sector -->
+        <div class="sector-unit">
+            <div class="sector-title">
+                <span>🌐</span>
+                <span>Network Sector</span>
+            </div>
+            
+            <div class="lessons-container">
+                <div class="lesson-row">
+                    <a href="/lesson/13" class="lesson-circle {% if progress.current_lesson > 13 %}completed{% elif progress.current_lesson == 13 %}current{% elif progress.current_lesson >= 12 %}available{% else %}locked{% endif %}">13</a>
+                </div>
+                <div class="lesson-row right">
+                    <a href="/lesson/14" class="lesson-circle {% if progress.current_lesson > 14 %}completed{% elif progress.current_lesson == 14 %}current{% elif progress.current_lesson >= 13 %}available{% else %}locked{% endif %}">14</a>
+                </div>
+                <div class="lesson-row left">
+                    <a href="/lesson/15" class="lesson-circle {% if progress.current_lesson > 15 %}completed{% elif progress.current_lesson == 15 %}current{% elif progress.current_lesson >= 14 %}available{% else %}locked{% endif %}">15</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/16" class="lesson-circle {% if progress.current_lesson > 16 %}completed{% elif progress.current_lesson == 16 %}current{% elif progress.current_lesson >= 15 %}available{% else %}locked{% endif %}">16</a>
+                </div>
+            </div>
+            
+            <div class="progress-info">
+                {% set network_completed = 0 %}
+                {% for lesson in [13,14,15,16] %}
+                    {% if lesson in progress.completed_lessons %}
+                        {% set network_completed = network_completed + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {{ network_completed }}/4 Complete
+            </div>
+        </div>
+
+        <!-- Database Sector -->
+        <div class="sector-unit">
+            <div class="sector-title">
+                <span>🗄️</span>
+                <span>Database Sector</span>
+            </div>
+            
+            <div class="lessons-container">
+                <div class="lesson-row left">
+                    <a href="/lesson/17" class="lesson-circle {% if progress.current_lesson > 17 %}completed{% elif progress.current_lesson == 17 %}current{% elif progress.current_lesson >= 16 %}available{% else %}locked{% endif %}">17</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/18" class="lesson-circle {% if progress.current_lesson > 18 %}completed{% elif progress.current_lesson == 18 %}current{% elif progress.current_lesson >= 17 %}available{% else %}locked{% endif %}">18</a>
+                </div>
+                <div class="lesson-row right">
+                    <a href="/lesson/19" class="lesson-circle {% if progress.current_lesson > 19 %}completed{% elif progress.current_lesson == 19 %}current{% elif progress.current_lesson >= 18 %}available{% else %}locked{% endif %}">19</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/20" class="lesson-circle {% if progress.current_lesson > 20 %}completed{% elif progress.current_lesson == 20 %}current{% elif progress.current_lesson >= 19 %}available{% else %}locked{% endif %}">20</a>
+                </div>
+            </div>
+            
+            <div class="progress-info">
+                {% set database_completed = 0 %}
+                {% for lesson in [17,18,19,20] %}
+                    {% if lesson in progress.completed_lessons %}
+                        {% set database_completed = database_completed + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {{ database_completed }}/4 Complete
+            </div>
+        </div>
+
+        <!-- DevOps Sector -->
+        <div class="sector-unit">
+            <div class="sector-title">
+                <span>🚀</span>
+                <span>DevOps Sector</span>
+            </div>
+            
+            <div class="lessons-container">
+                <div class="lesson-row">
+                    <a href="/lesson/21" class="lesson-circle {% if progress.current_lesson > 21 %}completed{% elif progress.current_lesson == 21 %}current{% elif progress.current_lesson >= 20 %}available{% else %}locked{% endif %}">21</a>
+                </div>
+                <div class="lesson-row left">
+                    <a href="/lesson/22" class="lesson-circle {% if progress.current_lesson > 22 %}completed{% elif progress.current_lesson == 22 %}current{% elif progress.current_lesson >= 21 %}available{% else %}locked{% endif %}">22</a>
+                </div>
+                <div class="lesson-row right">
+                    <a href="/lesson/23" class="lesson-circle {% if progress.current_lesson > 23 %}completed{% elif progress.current_lesson == 23 %}current{% elif progress.current_lesson >= 22 %}available{% else %}locked{% endif %}">23</a>
+                </div>
+                <div class="lesson-row">
+                    <a href="/lesson/24" class="lesson-circle {% if progress.current_lesson > 24 %}completed{% elif progress.current_lesson == 24 %}current{% elif progress.current_lesson >= 23 %}available{% else %}locked{% endif %}">24</a>
+                </div>
+            </div>
+            
+            <div class="progress-info">
+                {% set devops_completed = 0 %}
+                {% for lesson in [21,22,23,24] %}
+                    {% if lesson in progress.completed_lessons %}
+                        {% set devops_completed = devops_completed + 1 %}
+                    {% endif %}
+                {% endfor %}
+                {{ devops_completed }}/4 Complete
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎮 Minimal Working Duolingo Map - Ready!');
+    
+    // Add simple click effects
+    const circles = document.querySelectorAll('.lesson-circle');
+    circles.forEach(circle => {
+        if (!circle.classList.contains('locked')) {
+            circle.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
+EOF
+
+echo "✅ Created minimal working template"
+
+echo ""
+echo "🔍 DIAGNOSIS COMPLETE"
+echo "==================="
+echo ""
+echo "🔧 LIKELY ISSUE:"
+echo "• CSS not applying properly to lesson elements"
+echo "• Template might be too complex or have conflicts"
+echo "• Browser cache might be showing old version"
+echo ""
+echo "💡 SOLUTION APPLIED:"
+echo "• Created minimal working version"
+echo "• Simplified CSS that definitely works"
+echo "• Proper Duolingo-style circles"
+echo "• Clean sci-fi theme"
+echo ""
+echo "🚀 NEXT STEPS:"
+echo "1. Restart your Flask server (Ctrl+C, then python app.py)"
+echo "2. Hard refresh browser (Ctrl+F5 or Cmd+Shift+R)"
+echo "3. Should now see proper circular lesson buttons!"

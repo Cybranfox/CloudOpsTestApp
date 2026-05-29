@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Mobile / Capacitor
+mobile_build/
+node_modules/
+android/
+ios/
+*.apk
+*.aab
+
+# Logs and diagnostics
+*.log
+*.diff
+
+# PyCharm / IDE
+.idea/
+.vscode/
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+progress.json
