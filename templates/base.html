@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AWS Cloud Orbit - RPG Learning Experience{% endblock %}</title>
+    <title>{% block title %}Cloud Orbit - RPG Learning Experience{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='zap.png') }}" type="image/png">
     <!-- PWA Support -->
@@ -13,6 +13,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CloudQuest">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='zap.png') }}">
+    {% block head %}{% endblock %}
     
     <!-- Service Worker Registration -->
     <script>
@@ -35,12 +36,13 @@
             <div class="nav-container">
                 <a href="{{ url_for('home') }}" class="nav-brand">
                     <img src="{{ url_for('static', filename='zap.png') }}" alt="Zap" class="nav-logo">
-                    <span>AWS Cloud Orbit</span>
+                    <span>Cloud Orbit</span>
                 </a>
                 
                 <div class="nav-menu">
                     <a href="{{ url_for('home') }}" class="nav-link">🗺️ Adventure Map</a>
-                    <a href="/api/progress" class="nav-link">📊 Progress</a>
+                    <a href="/progress" class="nav-link">📊 Progress</a>
+                    <button id="soundToggle" class="nav-link sound-toggle" onclick="toggleSound()" title="Toggle Sound">🔊</button>
                 </div>
             </div>
         </nav>
@@ -54,13 +56,22 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 AWS Cloud Orbit - Master the Cloud Through Adventure</p>
+            <p>&copy; 2025 Cloud Orbit - Master the Cloud Through Adventure</p>
             <p class="footer-subtitle">Your AI-powered AWS learning companion</p>
         </div>
     </footer>
 
     <!-- JavaScript for enhanced interactivity -->
     <script src="{{ url_for('static', filename='zap_animator.js') }}"></script>
+    <script src="{{ url_for('static', filename='audio_integration.js') }}"></script>
+    <script>
+    function toggleSound() {
+        if (window.awsOrbitAudio) {
+            const enabled = window.awsOrbitAudio.toggle();
+            document.getElementById('soundToggle').textContent = enabled ? '🔊' : '🔇';
+        }
+    }
+    </script>
     
     <style>
         /* Base template specific styles */
@@ -112,6 +123,13 @@
             padding: var(--space-8) var(--space-16);
             border-radius: var(--radius-base);
             transition: all var(--duration-normal) var(--ease-standard);
+        }
+
+        .sound-toggle {
+            background: none;
+            border: none;
+            font-size: var(--font-size-lg);
+            cursor: pointer;
         }
 
         .nav-link:hover {

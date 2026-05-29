@@ -474,4 +474,30 @@
 }
 </style>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% if correct is defined %}
+        {% if correct %}
+            window.awsOrbitAudio?.playCorrect();
+            window.awsOrbitAudio?.playShieldGain();
+        {% else %}
+            window.awsOrbitAudio?.playWrong();
+            window.awsOrbitAudio?.playShieldLoss();
+        {% endif %}
+    {% endif %}
+
+    const form = document.querySelector('.quiz-form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            window.awsOrbitAudio?.playWhoosh();
+        });
+    }
+
+    document.querySelectorAll('.option-label').forEach(label => {
+        label.addEventListener('click', function() {
+            window.awsOrbitAudio?.playClick();
+        });
+    });
+});
+</script>
 {% endblock %}

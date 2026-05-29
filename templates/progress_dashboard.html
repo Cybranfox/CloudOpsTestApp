@@ -1,0 +1,586 @@
+{% extends "base.html" %}
+{% block title %}Progress — Cloud Orbit{% endblock %}
+
+{% block head %}
+<style>
+/* ── Layout ─────────────────────────────────────────────────────────── */
+.dashboard {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 48px;
+}
+
+/* ── Shared card shell ───────────────────────────────────────────────── */
+.dash-card {
+    background: rgba(19, 52, 59, 0.55);
+    border: 1.5px solid rgba(50, 184, 198, 0.18);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(6px);
+}
+
+.dash-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(50, 184, 198, 0.7);
+    margin-bottom: 18px;
+}
+
+/* ── Hero card ───────────────────────────────────────────────────────── */
+.hero-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(135deg, rgba(19, 52, 59, 0.9) 0%, rgba(26, 104, 115, 0.5) 100%);
+    border-color: rgba(50, 184, 198, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(50,184,198,0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.hero-avatar {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.avatar-ring {
+    width: 96px;
+    height: 96px;
+}
+
+.avatar-ring svg {
+    transform: rotate(-90deg);
+}
+
+.avatar-img {
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: rgba(19,52,59,0.8);
+}
+
+.hero-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.hero-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 2px;
+}
+
+.hero-level {
+    font-size: 13px;
+    color: rgba(50, 184, 198, 0.9);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.xp-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.xp-bar-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #32b8c6, #64c8ff);
+    border-radius: 99px;
+    transition: width 1s ease;
+    box-shadow: 0 0 8px rgba(50,184,198,0.6);
+}
+
+.xp-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    white-space: nowrap;
+}
+
+/* ── Streak + shields row ────────────────────────────────────────────── */
+.metrics-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 22px 16px;
+    text-align: center;
+}
+
+.metric-icon {
+    font-size: 36px;
+    line-height: 1;
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+.metric-value {
+    font-size: 32px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+}
+
+.metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+}
+
+.streak-card .metric-icon { color: #ff7c1f; }
+.shields-card .metric-icon { color: #f7d51d; }
+
+.shields-pips {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.shield-pip {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #f7d51d;
+    box-shadow: 0 0 6px rgba(247,213,29,0.8);
+}
+
+.shield-pip.empty {
+    background: rgba(255,255,255,0.12);
+    box-shadow: none;
+}
+
+/* ── Stats grid (Slay the Spire run-end) ────────────────────────────── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.stat-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 8px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.stat-icon { font-size: 20px; }
+
+.stat-value {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+}
+
+.stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+}
+
+/* ── Platform progress (MIMO style) ─────────────────────────────────── */
+.platform-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.platform-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.platform-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    width: 36px;
+    text-align: center;
+}
+
+.platform-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.platform-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.platform-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.platform-count {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+}
+
+.platform-track {
+    height: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.platform-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s ease;
+}
+
+.platform-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 99px;
+    flex-shrink: 0;
+}
+
+.badge-active   { background: rgba(50,184,198,0.15); color: #32b8c6; border: 1px solid rgba(50,184,198,0.3); }
+.badge-soon     { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); }
+
+/* ── Relics (StS relic bar) ─────────────────────────────────────────── */
+.relics-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.relic-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(168, 75, 47, 0.12);
+    border: 1px solid rgba(230, 129, 97, 0.25);
+    border-radius: 12px;
+    cursor: default;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.relic-chip:hover { border-color: rgba(230, 129, 97, 0.55); }
+
+.relic-chip:hover .relic-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.relic-glyph { font-size: 20px; }
+
+.relic-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(230, 129, 97, 0.9);
+}
+
+.relic-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: rgba(19, 30, 32, 0.97);
+    border: 1px solid rgba(230, 129, 97, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 10;
+}
+
+.relics-empty {
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    font-style: italic;
+}
+
+/* ── Badges (Duolingo achievement grid) ─────────────────────────────── */
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.badge-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 8px;
+    border-radius: 16px;
+    text-align: center;
+    transition: transform 0.2s;
+    cursor: default;
+}
+
+.badge-cell.unlocked {
+    background: rgba(50, 184, 198, 0.08);
+    border: 1.5px solid rgba(50, 184, 198, 0.25);
+}
+
+.badge-cell.locked {
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(255,255,255,0.07);
+    opacity: 0.55;
+    filter: grayscale(0.8);
+}
+
+.badge-cell.unlocked:hover { transform: translateY(-3px); }
+
+.badge-glyph { font-size: 28px; line-height: 1; }
+.badge-cell.locked .badge-glyph { filter: grayscale(1); opacity: 0.4; }
+
+.badge-cell-name {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.2;
+}
+
+.badge-cell.unlocked .badge-cell-name { color: rgba(50, 184, 198, 0.9); }
+
+.badge-cell-desc {
+    font-size: 9.5px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.3;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .hero-card { flex-direction: column; text-align: center; }
+    .metrics-row { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .badges-grid { grid-template-columns: repeat(2, 1fr); }
+    .dash-card { padding: 20px 16px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+
+    <!-- ── Hero ─────────────────────────────────────────────────────── -->
+    <div class="dash-card hero-card">
+        <div class="hero-avatar">
+            <svg class="avatar-ring" viewBox="0 0 96 96" width="96" height="96">
+                <circle cx="48" cy="48" r="42" fill="none" stroke="rgba(50,184,198,0.15)" stroke-width="8"/>
+                <circle cx="48" cy="48" r="42" fill="none"
+                    stroke="#32b8c6" stroke-width="8"
+                    stroke-linecap="round"
+                    stroke-dasharray="{{ (level_progress_pct / 100 * 263.9) | round(1) }} 263.9"
+                    style="filter: drop-shadow(0 0 6px #32b8c6)"/>
+            </svg>
+            <img src="{{ url_for('static', filename='zap.png') }}" alt="Zap" class="avatar-img">
+        </div>
+
+        <div class="hero-info">
+            <div class="hero-name">Cloud Cadet</div>
+            <div class="hero-level">Level {{ level }} Explorer</div>
+            <div class="xp-bar-wrap">
+                <div class="xp-bar-track">
+                    <div class="xp-bar-fill" style="width: {{ level_progress_pct }}%"></div>
+                </div>
+                <span class="xp-label">{{ total_xp }} / {{ next_level_xp }} XP</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Streak + Shields ──────────────────────────────────────────── -->
+    <div class="metrics-row">
+        <div class="dash-card metric-card streak-card">
+            <div class="metric-icon">🔥</div>
+            <div class="metric-value">{{ progress.streak }}</div>
+            <div class="metric-label">Day Streak</div>
+        </div>
+
+        <div class="dash-card metric-card shields-card">
+            <div class="metric-icon">⚡</div>
+            <div class="shields-pips">
+                {% for i in range(progress.max_energy) %}
+                    <div class="shield-pip {% if i >= progress.energy %}empty{% endif %}"></div>
+                {% endfor %}
+            </div>
+            <div class="metric-value">{{ progress.energy }}/{{ progress.max_energy }}</div>
+            <div class="metric-label">Energy Shields</div>
+        </div>
+    </div>
+
+    <!-- ── Battle Stats (Slay the Spire run end) ────────────────────── -->
+    <div class="dash-card">
+        <div class="dash-card-title">Battle Statistics</div>
+        <div class="stats-grid">
+            <div class="stat-cell">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">{{ accuracy }}%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-icon">⚔️</div>
+                <div class="stat-value">{{ stats.get('battles_won', 0) }}</div>
+                <div class="stat-label">Battles Won</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-icon">👑</div>
+                <div class="stat-value">{{ stats.get('elites_defeated', 0) }}</div>
+                <div class="stat-label">Elites Slain</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-icon">🐉</div>
+                <div class="stat-value">{{ stats.get('bosses_defeated', 0) }}</div>
+                <div class="stat-label">Bosses Felled</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value">{{ stats.get('total_questions', 0) }}</div>
+                <div class="stat-label">Questions</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value">{{ stats.get('correct_answers', 0) }}</div>
+                <div class="stat-label">Correct</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value">{{ progress.badges | length }}</div>
+                <div class="stat-label">Badges</div>
+            </div>
+            <div class="stat-cell">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value">{{ stats.get('streak_best', 0) }}</div>
+                <div class="stat-label">Best Streak</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Platform Progress (MIMO style) ───────────────────────────── -->
+    <div class="dash-card">
+        <div class="dash-card-title">Learning Tracks</div>
+        <div class="platform-list">
+            {% for p in platform_stats %}
+            <div class="platform-row">
+                <div class="platform-icon">{{ p.icon }}</div>
+                <div class="platform-meta">
+                    <div class="platform-name-row">
+                        <span class="platform-name">{{ p.short_name }}</span>
+                        {% if p.status == 'active' %}
+                            <span class="platform-count">{{ p.completed }}/{{ p.total }} lessons</span>
+                        {% else %}
+                            <span class="platform-count">Coming soon</span>
+                        {% endif %}
+                    </div>
+                    <div class="platform-track">
+                        <div class="platform-fill"
+                             style="width: {{ p.pct }}%; background: linear-gradient(90deg, rgb({{ p.color_rgb }}), rgba({{ p.color_rgb }},0.6));
+                                    box-shadow: 0 0 8px rgba({{ p.color_rgb }},0.5);">
+                        </div>
+                    </div>
+                </div>
+                {% if p.status == 'active' %}
+                    <span class="platform-badge badge-active">Active</span>
+                {% else %}
+                    <span class="platform-badge badge-soon">Soon</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ── Relics (Slay the Spire) ──────────────────────────────────── -->
+    <div class="dash-card">
+        <div class="dash-card-title">Relics Collected</div>
+        {% if relics %}
+            <div class="relics-grid">
+                {% for relic in relics %}
+                <div class="relic-chip">
+                    <span class="relic-glyph">💎</span>
+                    <span class="relic-name">{{ relic.name }}</span>
+                    <div class="relic-tooltip">{{ relic.description }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="relics-empty">No relics yet — defeat elite and boss encounters to collect them.</div>
+        {% endif %}
+    </div>
+
+    <!-- ── Achievements (Duolingo badges) ───────────────────────────── -->
+    <div class="dash-card">
+        <div class="dash-card-title">Achievements</div>
+        <div class="badges-grid">
+            {% for ach in all_achievements %}
+            <div class="badge-cell {% if ach.unlocked %}unlocked{% else %}locked{% endif %}">
+                <div class="badge-glyph">{{ ach.icon }}</div>
+                <div class="badge-cell-name">{{ ach.name }}</div>
+                <div class="badge-cell-desc">{{ ach.description }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    window.awsOrbitAudio?.playNotification();
+
+    // Animate bars in on load
+    document.querySelectorAll('.xp-bar-fill, .platform-fill').forEach(el => {
+        const target = el.style.width;
+        el.style.width = '0%';
+        requestAnimationFrame(() => {
+            setTimeout(() => { el.style.width = target; }, 100);
+        });
+    });
+});
+</script>
+{% endblock %}

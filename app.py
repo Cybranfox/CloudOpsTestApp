@@ -4,6 +4,7 @@ from datetime import date, datetime
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 
 from improved_data import get_lessons
+from platforms_data import get_platforms, get_platform, get_platform_progress
 from progress import (
     check_achievements,
     complete_lesson,
@@ -14,6 +15,14 @@ from progress import (
 )
 
 app = Flask(__name__)
+
+# Custom Jinja2 filters
+def intersect_filter(list1, list2):
+    """Return intersection of two lists"""
+    return [item for item in list1 if item in list2]
+
+# Register the filter
+app.jinja_env.filters['intersect'] = intersect_filter
 
 
 @app.route("/")
@@ -178,12 +187,12 @@ def badges():
             [b for b in progress.get("badges", []) if "Master" in b or "Architect" in b]
         ),
         # Dates (simplified)
-        "first_lesson_date": "2025-09-11",
-        "knowledge_seeker_date": "2025-09-11",
-        "perfectionist_date": "2025-09-11",
-        "streak_champion_date": "2025-09-11",
-        "aws_master_date": "2025-09-11",
-        "guardian_protected_date": "2025-09-11",
+        "first_lesson_date": date.today().isoformat(),
+        "knowledge_seeker_date": date.today().isoformat(),
+        "perfectionist_date": date.today().isoformat(),
+        "streak_champion_date": date.today().isoformat(),
+        "aws_master_date": date.today().isoformat(),
+        "guardian_protected_date": date.today().isoformat(),
     }
 
     # AWS Domain badges (from your existing badges)
@@ -226,7 +235,7 @@ def badges():
                 "icon": domain["icon"],
                 "description": domain["description"],
                 "earned": domain["name"] in existing_badges,
-                "date": "2025-09-11" if domain["name"] in existing_badges else None,
+                "date": date.today().isoformat() if domain["name"] in existing_badges else None,
                 "hint": f"Complete {domain['name'].lower()} lessons with high accuracy",
             }
         )
@@ -239,9 +248,66 @@ def badges():
     return render_template("badges_cosmic.html", **badges_data)
 
 
+@app.route("/progress")
+def progress_dashboard():
+    """Duolingo + Slay the Spire inspired progress screen"""
+    progress = load_progress()
+    stats = progress.get("stats", {})
+    platforms = get_platforms()
+
+    # XP level: every 500 XP = 1 level
+    total_xp = progress.get("xp", 0)
+    level = max(1, total_xp // 500 + 1)
+    level_xp = (level - 1) * 500
+    next_level_xp = level * 500
+    level_progress_pct = round(((total_xp - level_xp) / 500) * 100)
+
+    # Accuracy
+    total_q = stats.get("total_questions", 1)
+    correct_q = stats.get("correct_answers", 0)
+    accuracy = round((correct_q / total_q) * 100) if total_q > 0 else 0
+
+    # Per-platform progress
+    platform_stats = []
+    for p in platforms:
+        completed, total = get_platform_progress(progress, p["id"])
+        pct = round((completed / total) * 100) if total > 0 else 0
+        platform_stats.append({**p, "completed": completed, "total": total, "pct": pct})
+
+    # Achievement definitions with unlock conditions
+    all_achievements = [
+        {"id": "first_victory",   "name": "First Victory",        "icon": "⚔️",  "description": "Complete your first battle",         "unlocked": "first_victory" in progress.get("achievements", [])},
+        {"id": "elite_slayer",    "name": "Elite Slayer",          "icon": "👑",  "description": "Defeat 3 elite challenges",           "unlocked": "elite_slayer" in progress.get("achievements", [])},
+        {"id": "boss_hunter",     "name": "Boss Hunter",           "icon": "🐉",  "description": "Defeat your first boss",              "unlocked": "boss_hunter" in progress.get("achievements", [])},
+        {"id": "knowledge_seeker","name": "Knowledge Seeker",      "icon": "📚",  "description": "Answer 100 questions",                "unlocked": "knowledge_seeker" in progress.get("achievements", [])},
+        {"id": "perfect_streak",  "name": "Streak Champion",       "icon": "🔥",  "description": "Maintain a 7-day learning streak",    "unlocked": "perfect_streak" in progress.get("achievements", [])},
+        {"id": "aws_master",      "name": "AWS Master",            "icon": "☁️",  "description": "Earn all domain badges",              "unlocked": "aws_master" in progress.get("achievements", [])},
+        {"id": "relic_collector", "name": "Relic Collector",       "icon": "💎",  "description": "Collect 5 different relics",          "unlocked": "relic_collector" in progress.get("achievements", [])},
+        {"id": "guardian_saved",  "name": "Guardian's Chosen",     "icon": "🛡️",  "description": "Guardian's Shield saves you",         "unlocked": "guardian_saved" in progress.get("achievements", [])},
+    ]
+
+    relics = progress.get("inventory", {}).get("relics", [])
+    potions = progress.get("inventory", {}).get("potions", [])
+
+    return render_template(
+        "progress_dashboard.html",
+        progress=progress,
+        stats=stats,
+        level=level,
+        level_progress_pct=level_progress_pct,
+        total_xp=total_xp,
+        next_level_xp=next_level_xp,
+        accuracy=accuracy,
+        platform_stats=platform_stats,
+        all_achievements=all_achievements,
+        relics=relics,
+        potions=potions,
+    )
+
+
 @app.route("/api/progress")
 def api_progress():
-    """API endpoint for progress data"""
+    """API endpoint for raw progress data"""
     return jsonify(load_progress())
 
 
