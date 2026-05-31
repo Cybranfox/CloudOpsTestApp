@@ -22,6 +22,7 @@ Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practi
 ### 🗺️ Adventure Map
 - Duolingo-style zigzag path with colour-coded node states (completed / current / available / locked)
 - 6 AWS sectors × 4 battles each = 24 challenges to conquer
+- **Entrance animations** — nodes fade + slide in with a spring-easing pop, staggered 60 ms apart; sector headers transition in before each sector's nodes
 
 ### ⚔️ Battle System (Slay the Spire mechanics)
 - **Energy Shields** — lose one on a wrong answer, gain one on correct; manage resources carefully

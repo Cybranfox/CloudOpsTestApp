@@ -123,9 +123,34 @@
         height: 70px;
         font-size: 18px;
     }
-    
+
     .lesson-row.left { margin-left: 40px; }
     .lesson-row.right { margin-right: 40px; }
+}
+
+/* Phase 3b: Entrance animations */
+.lesson-circle { opacity: 0; }
+
+@keyframes nodeEntrance {
+    from { opacity: 0; transform: translateY(24px) scale(0.82); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.lesson-circle.node-entering {
+    animation: nodeEntrance 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.lesson-circle.node-visible { opacity: 1; }
+
+.sector-title {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.sector-title.title-visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 </style>
 {% endblock %}
@@ -337,17 +362,34 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎮 Minimal Working Duolingo Map - Ready!');
-    
-    // Add simple click effects
+    console.log('🎮 Cloud Orbit Map - Phase 3b entrance animations');
+
+    // Stagger sector titles in
+    const titles = document.querySelectorAll('.sector-title');
+    titles.forEach((title, i) => {
+        setTimeout(() => title.classList.add('title-visible'), i * 240);
+    });
+
+    // Stagger node entrances
     const circles = document.querySelectorAll('.lesson-circle');
-    circles.forEach(circle => {
+    circles.forEach((circle, i) => {
+        circle.style.animationDelay = (i * 60) + 'ms';
+        setTimeout(() => {
+            circle.classList.add('node-entering');
+        }, i * 60);
+
+        // After entrance ends, swap to node-visible so CSS pulse resumes on current nodes
+        circle.addEventListener('animationend', function onEnd() {
+            circle.removeEventListener('animationend', onEnd);
+            circle.classList.remove('node-entering');
+            circle.classList.add('node-visible');
+        });
+
+        // Click ripple
         if (!circle.classList.contains('locked')) {
             circle.addEventListener('click', function() {
                 this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
+                setTimeout(() => { this.style.transform = ''; }, 150);
             });
         }
     });
