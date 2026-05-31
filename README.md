@@ -45,6 +45,7 @@ Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practi
 ### ⚡ Zap — Your Mascot
 - Context-aware speech bubbles (battle stations, encouraging, explaining)
 - Animated states driven by `zap_animator.js`
+- Quiz-wired CSS animations: `thinking` (question screen), `celebrate` (bounce+spin on correct), `hurt` (shake on wrong)
 
 ### 📱 Mobile / PWA
 - Full PWA manifest + service worker for offline use

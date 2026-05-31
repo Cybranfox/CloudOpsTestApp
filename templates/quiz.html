@@ -476,14 +476,37 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const zapMascot = document.getElementById('zapMascot');
+    const zapSpeech = document.getElementById('zapSpeech');
+
+    function setZapState(cls, durationMs, msg) {
+        if (!zapMascot) return;
+        zapMascot.classList.remove('zap-celebrate', 'zap-hurt', 'zap-thinking', 'zap-idle');
+        zapMascot.classList.add(cls);
+        if (msg && zapSpeech) {
+            zapSpeech.textContent = msg;
+            zapSpeech.classList.add('visible');
+        }
+        if (durationMs > 0) {
+            setTimeout(() => {
+                zapMascot.classList.remove(cls);
+                if (zapSpeech) zapSpeech.classList.remove('visible');
+            }, durationMs);
+        }
+    }
+
     {% if correct is defined %}
         {% if correct %}
             window.awsOrbitAudio?.playCorrect();
             window.awsOrbitAudio?.playShieldGain();
+            setZapState('zap-celebrate', 1600, '🎉 Excellent work! You nailed it!');
         {% else %}
             window.awsOrbitAudio?.playWrong();
             window.awsOrbitAudio?.playShieldLoss();
+            setZapState('zap-hurt', 700, '💪 Keep going — you\'ll get it!');
         {% endif %}
+    {% else %}
+        setZapState('zap-thinking', 0, 'Think it through — I believe in you!');
     {% endif %}
 
     const form = document.querySelector('.quiz-form');

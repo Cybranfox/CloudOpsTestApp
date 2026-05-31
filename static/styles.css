@@ -1020,6 +1020,50 @@ main {
   50% { transform: translateY(var(--space-8)); }
 }
 
+/* Phase 3a: Quiz mascot states — idle/celebrate/hurt/thinking */
+
+.zap-idle {
+  animation: float 4s ease-in-out infinite;
+}
+
+.zap-celebrate {
+  animation: zap-bounce-spin 1.5s ease-in-out forwards;
+  filter: brightness(1.25) drop-shadow(0 0 14px var(--color-success));
+}
+
+@keyframes zap-bounce-spin {
+  0%   { transform: scale(1)    rotate(0deg)  translateY(0); }
+  20%  { transform: scale(1.15) rotate(-8deg) translateY(-22px); }
+  40%  { transform: scale(1.2)  rotate(8deg)  translateY(-32px); }
+  60%  { transform: scale(1.15) rotate(-5deg) translateY(-18px); }
+  80%  { transform: scale(1.1)  rotate(3deg)  translateY(-8px); }
+  100% { transform: scale(1)    rotate(0deg)  translateY(0); }
+}
+
+.zap-hurt {
+  animation: zap-shake 0.65s ease-in-out forwards;
+  filter: brightness(0.75) saturate(0.5) hue-rotate(180deg);
+}
+
+@keyframes zap-shake {
+  0%, 100% { transform: translateX(0)    rotate(0deg); }
+  15%       { transform: translateX(-12px) rotate(-6deg); }
+  30%       { transform: translateX(12px)  rotate(6deg); }
+  45%       { transform: translateX(-9px)  rotate(-4deg); }
+  60%       { transform: translateX(9px)   rotate(4deg); }
+  75%       { transform: translateX(-5px)  rotate(-2deg); }
+  90%       { transform: translateX(5px)   rotate(1deg); }
+}
+
+.zap-thinking {
+  animation: zap-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes zap-pulse {
+  0%, 100% { transform: scale(1)    translateY(0);    opacity: 1; }
+  50%       { transform: scale(1.07) translateY(-7px); opacity: 0.82; }
+}
+
 /* FIXED CONTRAST SECTIONS */
 
 .room-type-indicator {
