@@ -64,5 +64,46 @@
             <a href="/progress">Back to Dashboard</a>
         </div>
     </div>
+
+    <!-- Offline mode: populate weak spots from localStorage -->
+    <script>
+    (function() {
+        var container = document.querySelector('.practice-container');
+        var emptyState = document.querySelector('.empty-state');
+        {% if not lessons %}
+        // Server returned no lessons — check localStorage for weak spots
+        if (window.CloudOrbitOffline) {
+            var p = CloudOrbitOffline.getProgress();
+            var weakIds = p.weak_spots || [];
+            if (weakIds.length > 0) {
+                // Hide empty state
+                if (emptyState) emptyState.style.display = 'none';
+                // Show weak spot cards
+                for (var i = 0; i < Math.min(weakIds.length, 5); i++) {
+                    var card = document.createElement('div');
+                    card.className = 'practice-card';
+                    card.innerHTML = '<p class="practice-card-title">Lesson #' + weakIds[i] + '</p>' +
+                        '<p style="color:var(--color-text-secondary);font-size:0.85rem;margin-bottom:12px;">Previously answered incorrectly</p>' +
+                        '<a href="/quiz/' + weakIds[i] + '/" class="start-btn">Retry Battle</a>';
+                    var backLink = document.querySelector('.back-link');
+                    if (backLink) {
+                        container.insertBefore(card, backLink);
+                    } else {
+                        container.appendChild(card);
+                    }
+                }
+            }
+        }
+        {% endif %}
+
+        // Check if offline and update empty state message
+        fetch('/api/progress', { method: 'HEAD' }).catch(function() {
+            var emptyMsg = document.querySelector('.empty-state p');
+            if (emptyMsg && !document.querySelector('.practice-card')) {
+                emptyMsg.textContent = 'No weak spots saved on this device. Connect to the web version to sync.';
+            }
+        });
+    })();
+    </script>
 </body>
 </html>

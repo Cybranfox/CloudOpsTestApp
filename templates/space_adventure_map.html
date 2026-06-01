@@ -238,6 +238,21 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // ── Offline mode: mark completed lessons from localStorage ─────────
+    fetch('/api/progress', { method: 'HEAD' }).catch(function() {
+        if (!window.CloudOrbitOffline) return;
+        var p = CloudOrbitOffline.getProgress();
+        var completed = p.completed_lessons || [];
+        document.querySelectorAll('.lesson-circle').forEach(function(el) {
+            var href = el.getAttribute('href') || '';
+            var match = href.match(/\/lesson\/(\d+)/);
+            if (match && completed.indexOf(parseInt(match[1])) !== -1) {
+                el.classList.add('completed');
+                el.classList.remove('available', 'current');
+            }
+        });
+    });
 });
 </script>
 {% endblock %}
