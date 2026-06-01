@@ -2,21 +2,5 @@
   "appId": "com.cloudorbit.app",
   "appName": "Cloud Orbit",
   "webDir": "dist",
-  "bundledWebRuntime": false,
-  "server": {
-    "androidScheme": "https",
-    "allowNavigation": [
-      "/lesson/*",
-      "/quiz/*",
-      "/daily",
-      "/weekly",
-      "/practice",
-      "/progress",
-      "/badges",
-      "/onboarding",
-      "/privacy",
-      "/terms",
-      "/"
-    ]
-  }
+  "bundledWebRuntime": false
 }
