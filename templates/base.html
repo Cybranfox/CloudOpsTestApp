@@ -57,10 +57,34 @@
         </div>
     </main>
 
+    <!-- Mobile bottom tab bar -->
+    <nav class="bottom-nav" aria-label="Main navigation">
+        <a href="/" class="bottom-nav-item">
+            <span class="bottom-nav-icon">🗺️</span>
+            <span class="bottom-nav-label">Map</span>
+        </a>
+        <a href="/daily" class="bottom-nav-item">
+            <span class="bottom-nav-icon">⚡</span>
+            <span class="bottom-nav-label">Daily</span>
+        </a>
+        <a href="/progress" class="bottom-nav-item">
+            <span class="bottom-nav-icon">📊</span>
+            <span class="bottom-nav-label">Progress</span>
+        </a>
+        <a href="/badges" class="bottom-nav-item">
+            <span class="bottom-nav-icon">🏆</span>
+            <span class="bottom-nav-label">Badges</span>
+        </a>
+        <a href="/practice" class="bottom-nav-item">
+            <span class="bottom-nav-icon">🎯</span>
+            <span class="bottom-nav-label">Practice</span>
+        </a>
+    </nav>
+
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Cloud Orbit - Master the Cloud Through Adventure</p>
-            <p class="footer-subtitle">Your AI-powered AWS learning companion</p>
+            <p>&copy; 2026 Cloud Orbit - Master the Cloud Through Adventure</p>
+            <p class="footer-subtitle">Your AI-powered cloud learning companion</p>
         </div>
     </footer>
 
@@ -241,7 +265,37 @@
             .speech-bubble {
                 max-width: 90%;
             }
+
+            /* Show bottom tab bar on mobile */
+            .bottom-nav {
+                display: flex;
+            }
+            .navbar { display: none; }
+            .footer { padding-bottom: 72px; }
         }
+
+        /* ── Mobile Bottom Tab Bar ─────────────────────────────────── */
+        .bottom-nav {
+            display: none;  /* hidden on desktop */
+            position: fixed;
+            bottom: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--color-surface, rgba(38,40,40,0.97));
+            border-top: 1px solid var(--color-card-border, rgba(94,82,64,0.3));
+            padding: 6px 0 env(safe-area-inset-bottom, 8px);
+            justify-content: space-around;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .bottom-nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 2px; padding: 4px 12px;
+            text-decoration: none; color: var(--color-text-secondary, #aaa);
+            font-size: 0.65rem; font-weight: 600;
+            transition: color 0.2s;
+        }
+        .bottom-nav-item:hover,
+        .bottom-nav-item:focus { color: var(--color-primary, #32b8c6); }
+        .bottom-nav-icon { font-size: 1.3rem; }
 
         /* Loading and transition effects */
         .page-transition {
@@ -425,12 +479,17 @@
             }
         });
 
-        // Intercept all internal anchor clicks for exit animation
+        // Intercept internal anchor clicks for exit animation
+        // Skip: right-click, middle-click, Cmd/Ctrl-click, external links, locked nodes
         document.addEventListener('click', function(e) {
+            if (e.button !== 0) return;              // left-click only
+            if (e.metaKey || e.ctrlKey) return;       // allow new-tab
+            if (e.shiftKey) return;                   // allow new-window
             var a = e.target.closest('a[href]');
             if (!a || a.target === '_blank') return;
-            // Skip locked lesson circles
+            if (a.getAttribute('role') === 'menuitem') return;  // nav links
             if (a.classList.contains('locked')) return;
+            if (a.hostname !== window.location.hostname) return; // external
             e.preventDefault();
             var href = a.href;
             document.body.classList.remove('page-enter');
