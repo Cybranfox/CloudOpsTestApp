@@ -1,0 +1,59 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:  # Manual trigger only
+  push:
+    tags:
+      - 'v*'  # Auto-build on version tags
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Freeze static build
+        run: python freeze.py
+
+      - name: Verify dist/ structure
+        run: |
+          test -f dist/index.html || (echo "ERROR: dist/index.html missing" && exit 1)
+          test -d dist/static || (echo "ERROR: dist/static/ missing" && exit 1)
+          echo "dist/ structure OK"
+
+      - name: Build Capacitor Android project
+        run: |
+          npx cap init "Cloud Orbit" "com.cloudorbit.app" --web-dir dist
+          npx cap add android
+          npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          ./gradlew assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-orbit-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-dist
+          path: dist/

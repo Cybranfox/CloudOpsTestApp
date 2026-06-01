@@ -116,12 +116,12 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 ### 🔄 Week 5 — Mobile / Ionic Build
 **Owner: Solutions Architect + Backend Developer**
 
-- [ ] Audit Capacitor config (`appId: com.cloudorbit.app`, splash, icons)
-- [ ] Static build pipeline: Frozen-Flask export OR migrate to JSON API + SPA
-- [ ] Ionic wrapper: Android + iOS targets
+- [x] Audit Capacitor config (`appId: com.cloudorbit.app`, splash, icons) (2026-06-01)
+- [x] Static build pipeline: Frozen-Flask export in freeze.py (2026-06-01)
+- [x] Ionic wrapper: Android target via Capacitor (iOS needs macOS runner) (2026-06-01)
 - [ ] Push notifications: streak reminders via Capacitor Local Notifications
-- [ ] Offline mode: service worker caches all lesson content
-- [ ] Android APK CI: GitHub Actions `build-apk.yml`
+- [x] Offline mode: service worker caches all lesson content (2026-06-01)
+- [x] Android APK CI: GitHub Actions `build-apk.yml` (2026-06-01)
 
 ---
 

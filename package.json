@@ -1,0 +1,22 @@
+{
+  "name": "cloud-orbit",
+  "version": "1.0.0",
+  "description": "Cloud Orbit — Gamified DevOps/Cloud Learning RPG",
+  "private": true,
+  "scripts": {
+    "build:static": "python freeze.py",
+    "build:capacitor": "npx cap sync",
+    "build:android": "npx cap sync android && npx cap open android",
+    "lint": "echo 'No JS lint configured'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/local-notifications": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}

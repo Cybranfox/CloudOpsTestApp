@@ -1,11 +1,11 @@
 {
-  "name": "CloudQuest RPG - AWS Learning Adventure",
-  "short_name": "CloudQuest",
-  "description": "Master AWS through epic space adventures!",
-  "start_url": "/?mode=offline",
+  "name": "Cloud Orbit — Learn DevOps Through Adventure",
+  "short_name": "Cloud Orbit",
+  "description": "Gamified cloud and DevOps learning RPG. Master AWS, Kubernetes, Docker, Ansible, and Terraform through epic battles.",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#0a0a1a",
+  "background_color": "#131e20",
   "theme_color": "#32b8c6",
   "icons": [
     {
@@ -15,11 +15,24 @@
       "purpose": "any maskable"
     },
     {
-      "src": "/static/mascot/zap_victory.png", 
+      "src": "/static/mascot/zap_victory.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "categories": ["education", "games"],
-  "lang": "en-US"
+  "categories": ["education", "games", "productivity"],
+  "lang": "en-US",
+  "shortcuts": [
+    {
+      "name": "Daily Challenge",
+      "url": "/daily",
+      "description": "Today's 5-question run"
+    },
+    {
+      "name": "Progress Dashboard",
+      "url": "/progress",
+      "description": "View your stats"
+    }
+  ]
 }
