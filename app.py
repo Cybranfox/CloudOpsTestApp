@@ -1,10 +1,45 @@
+import os
 import random
 from datetime import date, datetime
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask_cors import CORS
 
-from improved_data import get_lessons
+from improved_data import get_lessons as _get_aws_lessons
 from platforms_data import get_platforms, get_platform, get_platform_progress
+
+# ── Multi-platform lesson registry ────────────────────────────────────────────
+# Lesson ID ranges:  1-99 → AWS   |  101-199 → Kubernetes  |  201-299 → Docker
+# Future:  301-399 Ansible  |  401-499 Terraform
+try:
+    from kubernetes_data import get_lessons as _get_k8s_lessons
+except ImportError:
+    _get_k8s_lessons = lambda: []
+
+try:
+    from docker_data import get_lessons as _get_docker_lessons
+except ImportError:
+    _get_docker_lessons = lambda: []
+
+
+def get_lessons():
+    """Return all lessons across all active platforms."""
+    return _get_aws_lessons() + _get_k8s_lessons() + _get_docker_lessons()
+
+
+def get_lesson_by_id(lesson_id):
+    """Fast single-lesson lookup without loading all lessons."""
+    if lesson_id < 100:
+        source = _get_aws_lessons
+    elif lesson_id < 200:
+        source = _get_k8s_lessons
+    elif lesson_id < 300:
+        source = _get_docker_lessons
+    else:
+        source = get_lessons  # fallback: scan all
+    return next((l for l in source() if l["id"] == lesson_id), None)
+# ──────────────────────────────────────────────────────────────────────────────
 from progress import (
     check_achievements,
     complete_lesson,
@@ -14,7 +49,16 @@ from progress import (
     save_progress,
 )
 
+load_dotenv()
+
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-insecure-change-me")
+
+CORS(app, origins=[
+    "capacitor://localhost",
+    "http://localhost",
+    "http://localhost:5001",
+])
 
 # Custom Jinja2 filters
 def intersect_filter(list1, list2):
@@ -40,8 +84,7 @@ def home():
 @app.route("/lesson/<int:lesson_id>")
 def lesson_page(lesson_id):
     """Display lesson content before quiz"""
-    lessons = get_lessons()
-    lesson = next((l for l in lessons if l["id"] == lesson_id), None)
+    lesson = get_lesson_by_id(lesson_id)
 
     if not lesson:
         return "Lesson not found", 404
@@ -53,8 +96,7 @@ def lesson_page(lesson_id):
 @app.route("/quiz/<int:lesson_id>", methods=["GET", "POST"])
 def quiz(lesson_id):
     """Handle quiz questions and answers with audio feedback"""
-    lessons = get_lessons()
-    lesson = next((l for l in lessons if l["id"] == lesson_id), None)
+    lesson = get_lesson_by_id(lesson_id)
 
     if not lesson:
         return "Lesson not found", 404
@@ -379,6 +421,79 @@ def get_badge_icon(badge_name):
         return "💰"
     else:
         return "🏆"
+
+
+
+
+# ---------------------------------------------------------------------------
+# Phase 1 API routes -- JSON endpoints for the Capacitor static shell
+# ---------------------------------------------------------------------------
+
+
+@app.route("/api/lessons")
+def api_lessons():
+    """Return all lessons as JSON."""
+    return jsonify(get_lessons())
+
+
+@app.route("/api/lesson/<int:lesson_id>")
+def api_lesson(lesson_id):
+    """Return a single lesson with current progress."""
+    lessons = get_lessons()
+    lesson = next((l for l in lessons if l["id"] == lesson_id), None)
+    if not lesson:
+        return jsonify({"error": "not found"}), 404
+    progress = load_progress()
+    return jsonify({"lesson": lesson, "progress": progress})
+
+
+@app.route("/api/quiz/<int:lesson_id>", methods=["POST"])
+def api_quiz(lesson_id):
+    """Accept a quiz answer, return result and updated progress."""
+    data = request.get_json(silent=True) or {}
+    user_answer = data.get("answer")
+
+    lessons = get_lessons()
+    lesson = next((l for l in lessons if l["id"] == lesson_id), None)
+    if not lesson:
+        return jsonify({"error": "not found"}), 404
+
+    if isinstance(lesson.get("answer"), list):
+        correct = set(user_answer or []) == set(lesson["answer"])
+    else:
+        correct = user_answer == lesson.get("answer")
+
+    progress, message, next_lesson_id = register_quiz_result(lesson_id, correct)
+    return jsonify({
+        "correct": correct,
+        "message": message,
+        "next_lesson_id": next_lesson_id,
+        "progress": progress,
+        "explanation": lesson.get("explanation", ""),
+    })
+
+
+@app.route("/api/platforms")
+def api_platforms():
+    """Return all platform data with progress."""
+    progress = load_progress()
+    platforms = get_platforms()
+    result = []
+    for p in platforms:
+        completed, total = get_platform_progress(progress, p["id"])
+        pct = round((completed / total) * 100) if total > 0 else 0
+        result.append({**p, "completed": completed, "total": total, "pct": pct})
+    return jsonify(result)
+
+
+@app.route("/api/reward/<int:milestone_count>", methods=["POST"])
+def api_reward(milestone_count):
+    """Claim milestone reward, return bonus XP and updated progress."""
+    progress = load_progress()
+    bonus_xp = 50 + (milestone_count // 15) * 10
+    progress["xp"] += bonus_xp
+    save_progress(progress)
+    return jsonify({"bonus_xp": bonus_xp, "total_xp": progress["xp"], "progress": progress})
 
 
 if __name__ == "__main__":

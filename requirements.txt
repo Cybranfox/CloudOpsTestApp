@@ -3,3 +3,6 @@ jinja2
 werkzeug
 itsdangerous
 click
+flask-cors>=4.0.0
+python-dotenv>=1.0.0
+gunicorn>=21.0.0
