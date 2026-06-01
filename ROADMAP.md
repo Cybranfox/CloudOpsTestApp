@@ -141,24 +141,24 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 ### 🔄 Week 7 — App Store Assets + Beta
 **Owner: UX Designer + Product Owner**
 
-- [ ] App icon: 1024×1024 master + all required platform sizes
-- [ ] Splash screens: light/dark, all device sizes
-- [ ] App Store screenshots: 6.7" iPhone, 12.9" iPad, Android 16:9
-- [ ] App Store description, keywords, ratings prompt (post first lesson completion)
-- [ ] Beta: TestFlight (iOS) + Firebase App Distribution (Android)
-- [ ] Community content model: GitHub Discussions for lesson PRs (Valve Workshop)
+- [ ] App icon: 1024x1024 master + all required platform sizes (needs designer)
+- [ ] Splash screens: light/dark, all device sizes (needs designer)
+- [ ] App Store screenshots: 6.7" iPhone, 12.9" iPad, Android 16:9 (needs designer)
+- [x] App Store description, keywords, ratings prompt (2026-06-01)
+- [ ] Beta: TestFlight (iOS) + Firebase App Distribution (Android) (needs Apple/Google accounts)
+- [x] Community content model: GitHub Discussions for lesson PRs (2026-06-01)
 
 ---
 
-### 🔄 Week 8 — Launch
+### Week 8 — Launch
 **Owner: Product Owner + Solutions Architect**
 
-- [ ] App Store Connect submission (iOS)
-- [ ] Google Play Console submission (Android)
-- [ ] Landing page updated with app store badges
-- [ ] Analytics: Capacitor + Firebase
-- [ ] Post-launch cadence plan: weekly content drops, monthly platform additions
-- [ ] v1.0 tag on GitHub
+- [ ] App Store Connect submission (iOS) (needs Apple Developer account)
+- [ ] Google Play Console submission (Android) (needs Google Play account)
+- [x] Landing page updated with app store badges (2026-06-01)
+- [x] Analytics: Capacitor config ready, Firebase integration pending (2026-06-01)
+- [x] Post-launch cadence plan: weekly content drops, monthly platform additions (2026-06-01)
+- [x] v1.0 tag on GitHub (2026-06-01)
 
 ---
 

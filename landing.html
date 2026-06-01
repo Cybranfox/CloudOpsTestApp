@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Orbit — Learn DevOps Through Adventure</title>
+    <meta name="description" content="Gamified cloud & DevOps learning RPG. Master AWS, Kubernetes, Docker, Ansible, and Terraform through epic battles. 78 lessons. Free. Open source.">
+    <meta property="og:title" content="Cloud Orbit — Learn DevOps Through Adventure">
+    <meta property="og:description" content="Master cloud & DevOps through RPG battles. 78 lessons across 5 platforms.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Nunito", -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #131e20 50%, #0a0a1a 100%);
+            color: #e0e0e0; min-height: 100vh; overflow-x: hidden;
+        }
+        .hero {
+            text-align: center; padding: 80px 20px 60px;
+            background: radial-gradient(ellipse at 50% 0%, rgba(50,184,198,0.15) 0%, transparent 60%);
+        }
+        .hero h1 {
+            font-family: "Fredoka", sans-serif; font-size: 3rem; font-weight: 700;
+            background: linear-gradient(135deg, #32b8c6, #f7d51d); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; margin-bottom: 16px;
+        }
+        .hero p { font-size: 1.2rem; color: #aaa; max-width: 500px; margin: 0 auto 32px; }
+        .cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .cta {
+            display: inline-block; padding: 14px 32px; border-radius: 50px;
+            font-weight: 700; font-size: 1.05rem; text-decoration: none; transition: transform 0.2s;
+        }
+        .cta:hover { transform: translateY(-2px); }
+        .cta-primary { background: linear-gradient(135deg, #32b8c6, #21808d); color: #fff; }
+        .cta-secondary { background: rgba(255,255,255,0.1); color: #fff; border: 2px solid rgba(255,255,255,0.2); }
+        .stats { display: flex; justify-content: center; gap: 48px; padding: 48px 20px; flex-wrap: wrap; }
+        .stat { text-align: center; }
+        .stat-number { font-family: "Fredoka", sans-serif; font-size: 2.5rem; font-weight: 700; color: #f7d51d; }
+        .stat-label { color: #aaa; font-size: 0.9rem; }
+        .platforms {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px; max-width: 900px; margin: 0 auto; padding: 0 20px 60px;
+        }
+        .platform-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 24px; text-align: center; transition: transform 0.2s;
+        }
+        .platform-card:hover { transform: translateY(-4px); }
+        .platform-icon { font-size: 2.5rem; margin-bottom: 8px; }
+        .platform-name { font-weight: 700; font-size: 1.1rem; }
+        .platform-count { color: #aaa; font-size: 0.85rem; }
+        .footer { text-align: center; padding: 32px; color: #666; font-size: 0.85rem; }
+        .footer a { color: #32b8c6; }
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .stats { gap: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Cloud Orbit</h1>
+        <p>Master cloud & DevOps through RPG battles. No account needed. Works offline. Free forever.</p>
+        <div class="cta-group">
+            <a href="https://github.com/Cybranfox/CloudOpsTestApp" class="cta cta-primary">View on GitHub</a>
+            <a href="https://github.com/Cybranfox/CloudOpsTestApp/blob/main/ROADMAP.md" class="cta cta-secondary">Roadmap</a>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><div class="stat-number">78</div><div class="stat-label">Lessons</div></div>
+        <div class="stat"><div class="stat-number">5</div><div class="stat-label">Platforms</div></div>
+        <div class="stat"><div class="stat-number">86</div><div class="stat-label">Tests (0.2s)</div></div>
+        <div class="stat"><div class="stat-number">0</div><div class="stat-label">Data Collected</div></div>
+    </div>
+
+    <div class="platforms">
+        <div class="platform-card"><div class="platform-icon">☁️</div><div class="platform-name">AWS</div><div class="platform-count">24 challenges</div></div>
+        <div class="platform-card"><div class="platform-icon">⚙️</div><div class="platform-name">Kubernetes</div><div class="platform-count">20 challenges</div></div>
+        <div class="platform-card"><div class="platform-icon">🐳</div><div class="platform-name">Docker</div><div class="platform-count">10 challenges</div></div>
+        <div class="platform-card"><div class="platform-icon">🔧</div><div class="platform-name">Ansible</div><div class="platform-count">12 challenges</div></div>
+        <div class="platform-card"><div class="platform-icon">🏔️</div><div class="platform-name">Terraform</div><div class="platform-count">12 challenges</div></div>
+    </div>
+
+    <div class="footer">
+        <p>Cloud Orbit is open source under the MIT License.</p>
+        <p><a href="https://github.com/Cybranfox/CloudOpsTestApp">github.com/Cybranfox/CloudOpsTestApp</a></p>
+        <p style="margin-top:8px;"><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
+    </div>
+</body>
+</html>
