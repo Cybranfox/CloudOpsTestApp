@@ -30,7 +30,12 @@ except ImportError:
 
 def get_lessons():
     """Return all lessons across all active platforms."""
-    return _get_aws_lessons() + _get_k8s_lessons() + _get_docker_lessons() + _get_ansible_lessons()
+    return (
+        _get_aws_lessons()
+        + _get_k8s_lessons()
+        + _get_docker_lessons()
+        + _get_ansible_lessons()
+    )
 
 
 def get_lesson_by_id(lesson_id):
@@ -46,6 +51,8 @@ def get_lesson_by_id(lesson_id):
     else:
         source = get_lessons  # fallback: scan all
     return next((l for l in source() if l["id"] == lesson_id), None)
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 from progress import (
     check_achievements,
@@ -61,11 +68,14 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-insecure-change-me")
 
-CORS(app, origins=[
-    "capacitor://localhost",
-    "http://localhost",
-    "http://localhost:5001",
-])
+CORS(
+    app,
+    origins=[
+        "capacitor://localhost",
+        "http://localhost",
+        "http://localhost:5001",
+    ],
+)
 
 
 # ── Error handlers ─────────────────────────────────────────────────────────
@@ -77,15 +87,19 @@ def not_found(e):
 @app.errorhandler(500)
 def server_error(e):
     return render_template("500.html"), 500
+
+
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 # Custom Jinja2 filters
 def intersect_filter(list1, list2):
     """Return intersection of two lists"""
     return [item for item in list1 if item in list2]
 
+
 # Register the filter
-app.jinja_env.filters['intersect'] = intersect_filter
+app.jinja_env.filters["intersect"] = intersect_filter
 
 
 @app.route("/")
@@ -304,7 +318,11 @@ def badges():
                 "icon": domain["icon"],
                 "description": domain["description"],
                 "earned": domain["name"] in existing_badges,
-                "date": date.today().isoformat() if domain["name"] in existing_badges else None,
+                "date": (
+                    date.today().isoformat()
+                    if domain["name"] in existing_badges
+                    else None
+                ),
                 "hint": f"Complete {domain['name'].lower()} lessons with high accuracy",
             }
         )
@@ -345,14 +363,62 @@ def progress_dashboard():
 
     # Achievement definitions with unlock conditions
     all_achievements = [
-        {"id": "first_victory",   "name": "First Victory",        "icon": "⚔️",  "description": "Complete your first battle",         "unlocked": "first_victory" in progress.get("achievements", [])},
-        {"id": "elite_slayer",    "name": "Elite Slayer",          "icon": "👑",  "description": "Defeat 3 elite challenges",           "unlocked": "elite_slayer" in progress.get("achievements", [])},
-        {"id": "boss_hunter",     "name": "Boss Hunter",           "icon": "🐉",  "description": "Defeat your first boss",              "unlocked": "boss_hunter" in progress.get("achievements", [])},
-        {"id": "knowledge_seeker","name": "Knowledge Seeker",      "icon": "📚",  "description": "Answer 100 questions",                "unlocked": "knowledge_seeker" in progress.get("achievements", [])},
-        {"id": "perfect_streak",  "name": "Streak Champion",       "icon": "🔥",  "description": "Maintain a 7-day learning streak",    "unlocked": "perfect_streak" in progress.get("achievements", [])},
-        {"id": "aws_master",      "name": "AWS Master",            "icon": "☁️",  "description": "Earn all domain badges",              "unlocked": "aws_master" in progress.get("achievements", [])},
-        {"id": "relic_collector", "name": "Relic Collector",       "icon": "💎",  "description": "Collect 5 different relics",          "unlocked": "relic_collector" in progress.get("achievements", [])},
-        {"id": "guardian_saved",  "name": "Guardian's Chosen",     "icon": "🛡️",  "description": "Guardian's Shield saves you",         "unlocked": "guardian_saved" in progress.get("achievements", [])},
+        {
+            "id": "first_victory",
+            "name": "First Victory",
+            "icon": "⚔️",
+            "description": "Complete your first battle",
+            "unlocked": "first_victory" in progress.get("achievements", []),
+        },
+        {
+            "id": "elite_slayer",
+            "name": "Elite Slayer",
+            "icon": "👑",
+            "description": "Defeat 3 elite challenges",
+            "unlocked": "elite_slayer" in progress.get("achievements", []),
+        },
+        {
+            "id": "boss_hunter",
+            "name": "Boss Hunter",
+            "icon": "🐉",
+            "description": "Defeat your first boss",
+            "unlocked": "boss_hunter" in progress.get("achievements", []),
+        },
+        {
+            "id": "knowledge_seeker",
+            "name": "Knowledge Seeker",
+            "icon": "📚",
+            "description": "Answer 100 questions",
+            "unlocked": "knowledge_seeker" in progress.get("achievements", []),
+        },
+        {
+            "id": "perfect_streak",
+            "name": "Streak Champion",
+            "icon": "🔥",
+            "description": "Maintain a 7-day learning streak",
+            "unlocked": "perfect_streak" in progress.get("achievements", []),
+        },
+        {
+            "id": "aws_master",
+            "name": "AWS Master",
+            "icon": "☁️",
+            "description": "Earn all domain badges",
+            "unlocked": "aws_master" in progress.get("achievements", []),
+        },
+        {
+            "id": "relic_collector",
+            "name": "Relic Collector",
+            "icon": "💎",
+            "description": "Collect 5 different relics",
+            "unlocked": "relic_collector" in progress.get("achievements", []),
+        },
+        {
+            "id": "guardian_saved",
+            "name": "Guardian's Chosen",
+            "icon": "🛡️",
+            "description": "Guardian's Shield saves you",
+            "unlocked": "guardian_saved" in progress.get("achievements", []),
+        },
     ]
 
     relics = progress.get("inventory", {}).get("relics", [])
@@ -450,8 +516,6 @@ def get_badge_icon(badge_name):
         return "🏆"
 
 
-
-
 # ---------------------------------------------------------------------------
 # Phase 1 API routes -- JSON endpoints for the Capacitor static shell
 # ---------------------------------------------------------------------------
@@ -491,13 +555,15 @@ def api_quiz(lesson_id):
         correct = user_answer == lesson.get("answer")
 
     progress, message, next_lesson_id = register_quiz_result(lesson_id, correct)
-    return jsonify({
-        "correct": correct,
-        "message": message,
-        "next_lesson_id": next_lesson_id,
-        "progress": progress,
-        "explanation": lesson.get("explanation", ""),
-    })
+    return jsonify(
+        {
+            "correct": correct,
+            "message": message,
+            "next_lesson_id": next_lesson_id,
+            "progress": progress,
+            "explanation": lesson.get("explanation", ""),
+        }
+    )
 
 
 @app.route("/api/platforms")
@@ -520,7 +586,9 @@ def api_reward(milestone_count):
     bonus_xp = 50 + (milestone_count // 15) * 10
     progress["xp"] += bonus_xp
     save_progress(progress)
-    return jsonify({"bonus_xp": bonus_xp, "total_xp": progress["xp"], "progress": progress})
+    return jsonify(
+        {"bonus_xp": bonus_xp, "total_xp": progress["xp"], "progress": progress}
+    )
 
 
 if __name__ == "__main__":

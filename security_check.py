@@ -55,17 +55,11 @@ def check_secret_key_not_hardcoded():
         source = f.read()
 
     # Match: app.secret_key = "anything" or app.secret_key = 'anything'
-    pattern_direct = re.compile(
-        r"app\.secret_key\s*=\s*[\"'][^\"']{4,}[\"']"
-    )
+    pattern_direct = re.compile(r"app\.secret_key\s*=\s*[\"'][^\"']{4,}[\"']")
     # Match: "SECRET_KEY": "anything" in a config dict
-    pattern_config = re.compile(
-        r"['\"]SECRET_KEY['\"]\s*:\s*[\"'][^\"']{4,}[\"']"
-    )
+    pattern_config = re.compile(r"['\"]SECRET_KEY['\"]\s*:\s*[\"'][^\"']{4,}[\"']")
     # Match: app.run(..., debug=True, ...)
-    pattern_debug_hardcoded = re.compile(
-        r"app\.run\s*\([^)]*debug\s*=\s*True[^)]*\)"
-    )
+    pattern_debug_hardcoded = re.compile(r"app\.run\s*\([^)]*debug\s*=\s*True[^)]*\)")
 
     if pattern_direct.search(source):
         ERRORS.append(

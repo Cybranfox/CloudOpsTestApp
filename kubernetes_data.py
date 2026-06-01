@@ -8,7 +8,6 @@ Lesson IDs 101-120  |  4 sectors  |  20 lessons
 def get_lessons():
     """Return Kubernetes lesson list (IDs 101-120)."""
     return [
-
         # ─────────────────────── CORE CONCEPTS (101-105) ────────────────────────
         {
             "id": 101,
@@ -226,7 +225,6 @@ def get_lessons():
                 "description": "Legendary: enforces perfect resource balance across any cluster",
             },
         },
-
         # ──────────────────────────── WORKLOADS (106-110) ────────────────────────
         {
             "id": 106,
@@ -445,7 +443,6 @@ def get_lessons():
                 "description": "Legendary: your Pods are last to be evicted under any memory pressure",
             },
         },
-
         # ──────────────────────────── NETWORKING (111-115) ───────────────────────
         {
             "id": 111,
@@ -662,7 +659,6 @@ def get_lessons():
                 "description": "Legendary: route traffic with surgical precision across any release",
             },
         },
-
         # ──────────────────────────── SECURITY (116-120) ─────────────────────────
         {
             "id": 116,

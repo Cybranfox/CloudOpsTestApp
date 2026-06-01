@@ -8,7 +8,6 @@ Lesson IDs 201-210  |  3 sectors  |  10 lessons
 def get_lessons():
     """Return Docker lesson list (IDs 201-210)."""
     return [
-
         # ───────────────────────────── BASICS (201-203) ──────────────────────────
         {
             "id": 201,
@@ -142,7 +141,6 @@ def get_lessons():
                 "description": "Makes any container escape attempt extraordinarily difficult",
             },
         },
-
         # ──────────────────────────── COMPOSE (204-207) ──────────────────────────
         {
             "id": 204,
@@ -325,7 +323,6 @@ def get_lessons():
                 "description": "Instantly removes all hardcoded secrets from any Compose project",
             },
         },
-
         # ─────────────────────── REGISTRY & SECURITY (208-210) ───────────────────
         {
             "id": 208,

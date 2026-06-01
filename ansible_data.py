@@ -8,7 +8,6 @@ Lesson IDs 301-312  |  4 sectors  |  12 lessons
 def get_lessons():
     """Return Ansible lesson list (IDs 301-312)."""
     return [
-
         # ─────────────────────── PLAYBOOKS (301-303) ─────────────────────────
         {
             "id": 301,
@@ -57,7 +56,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "YAML Lint Lens",
-                "description": "Highlights syntax issues before playbook execution"
+                "description": "Highlights syntax issues before playbook execution",
             },
         },
         {
@@ -109,7 +108,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Jinja2 Filter Book",
-                "description": "Unlocks advanced variable manipulation in all playbooks"
+                "description": "Unlocks advanced variable manipulation in all playbooks",
             },
         },
         {
@@ -166,10 +165,9 @@ def get_lessons():
             "loot": {
                 "type": "potion",
                 "name": "Retry Elixir",
-                "description": "One free retry on a failed lesson challenge"
+                "description": "One free retry on a failed lesson challenge",
             },
         },
-
         # ─────────────────────── ROLES (304-306) ─────────────────────────────
         {
             "id": 304,
@@ -226,7 +224,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Galaxy Compass",
-                "description": "Points to the best community roles for any task"
+                "description": "Points to the best community roles for any task",
             },
         },
         {
@@ -284,7 +282,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Meta Compass",
-                "description": "Auto-resolves role dependency conflicts"
+                "description": "Auto-resolves role dependency conflicts",
             },
         },
         {
@@ -310,9 +308,7 @@ def get_lessons():
                 "connect to Redis on port 6379 inside the test container. You have 30 minutes "
                 "to fix all three before the release window closes."
             ),
-            "question": (
-                "What fixes address all three CI failures correctly?"
-            ),
+            "question": ("What fixes address all three CI failures correctly?"),
             "options": [
                 "Replace 'command: apt-get update' with the apt module's update_cache: yes; "
                 "add 'changed_when: false' to a shell task reading existing state; "
@@ -345,10 +341,9 @@ def get_lessons():
             "loot": {
                 "type": "potion",
                 "name": "CI Unblocker",
-                "description": "Auto-fixes one failed Molecule test per sprint"
+                "description": "Auto-fixes one failed Molecule test per sprint",
             },
         },
-
         # ─────────────────────── INVENTORY (307-309) ─────────────────────────
         {
             "id": 307,
@@ -404,7 +399,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Cloud Compass",
-                "description": "Auto-discovers all resources across cloud providers"
+                "description": "Auto-discovers all resources across cloud providers",
             },
         },
         {
@@ -462,7 +457,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Precedence Prism",
-                "description": "Shows the resolved value source for any variable in real-time"
+                "description": "Shows the resolved value source for any variable in real-time",
             },
         },
         {
@@ -523,10 +518,9 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Unified Lens",
-                "description": "Queries all inventory sources from a single playbook"
+                "description": "Queries all inventory sources from a single playbook",
             },
         },
-
         # ─────────────────────── VAULT (310-312) ─────────────────────────────
         {
             "id": 310,
@@ -587,7 +581,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Vault Seal",
-                "description": "Auto-encrypts newly created variable files"
+                "description": "Auto-encrypts newly created variable files",
             },
         },
         {
@@ -650,7 +644,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Key Ring",
-                "description": "Manages all vault passwords for every environment"
+                "description": "Manages all vault passwords for every environment",
             },
         },
         {
@@ -718,7 +712,7 @@ def get_lessons():
             "loot": {
                 "type": "relic",
                 "name": "Zero-Knowledge Key",
-                "description": "One free secret rotation per sprint — no downtime"
+                "description": "One free secret rotation per sprint — no downtime",
             },
         },
     ]

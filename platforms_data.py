@@ -16,12 +16,42 @@ PLATFORMS = [
         "status": "active",
         "total_lessons": 24,
         "sectors": [
-            {"id": "compute",  "name": "Compute",  "icon": "⚡", "lesson_ids": [1, 2, 3, 4]},
-            {"id": "storage",  "name": "Storage",  "icon": "💾", "lesson_ids": [5, 6, 7, 8]},
-            {"id": "security", "name": "Security", "icon": "🛡️", "lesson_ids": [9, 10, 11, 12]},
-            {"id": "network",  "name": "Network",  "icon": "🌐", "lesson_ids": [13, 14, 15, 16]},
-            {"id": "database", "name": "Database", "icon": "🗄️", "lesson_ids": [17, 18, 19, 20]},
-            {"id": "devops",   "name": "DevOps",   "icon": "🚀", "lesson_ids": [21, 22, 23, 24]},
+            {
+                "id": "compute",
+                "name": "Compute",
+                "icon": "⚡",
+                "lesson_ids": [1, 2, 3, 4],
+            },
+            {
+                "id": "storage",
+                "name": "Storage",
+                "icon": "💾",
+                "lesson_ids": [5, 6, 7, 8],
+            },
+            {
+                "id": "security",
+                "name": "Security",
+                "icon": "🛡️",
+                "lesson_ids": [9, 10, 11, 12],
+            },
+            {
+                "id": "network",
+                "name": "Network",
+                "icon": "🌐",
+                "lesson_ids": [13, 14, 15, 16],
+            },
+            {
+                "id": "database",
+                "name": "Database",
+                "icon": "🗄️",
+                "lesson_ids": [17, 18, 19, 20],
+            },
+            {
+                "id": "devops",
+                "name": "DevOps",
+                "icon": "🚀",
+                "lesson_ids": [21, 22, 23, 24],
+            },
         ],
     },
     {
@@ -36,11 +66,31 @@ PLATFORMS = [
         "status": "active",
         "total_lessons": 20,
         "sectors": [
-            {"id": "core",       "name": "Core Concepts", "icon": "🧩", "lesson_ids": [101, 102, 103, 104, 105]},
-            {"id": "workloads",  "name": "Workloads",     "icon": "📦", "lesson_ids": [106, 107, 108, 109, 110]},
-            {"id": "networking", "name": "Networking",    "icon": "🕸️", "lesson_ids": [111, 112, 113, 114, 115]},
-            {"id": "security",   "name": "Security",      "icon": "🔐", "lesson_ids": [116, 117, 118, 119, 120]},
-            {"id": "helm",       "name": "Helm & GitOps", "icon": "⛵", "lesson_ids": []},
+            {
+                "id": "core",
+                "name": "Core Concepts",
+                "icon": "🧩",
+                "lesson_ids": [101, 102, 103, 104, 105],
+            },
+            {
+                "id": "workloads",
+                "name": "Workloads",
+                "icon": "📦",
+                "lesson_ids": [106, 107, 108, 109, 110],
+            },
+            {
+                "id": "networking",
+                "name": "Networking",
+                "icon": "🕸️",
+                "lesson_ids": [111, 112, 113, 114, 115],
+            },
+            {
+                "id": "security",
+                "name": "Security",
+                "icon": "🔐",
+                "lesson_ids": [116, 117, 118, 119, 120],
+            },
+            {"id": "helm", "name": "Helm & GitOps", "icon": "⛵", "lesson_ids": []},
         ],
     },
     {
@@ -55,11 +105,26 @@ PLATFORMS = [
         "status": "active",
         "total_lessons": 10,
         "sectors": [
-            {"id": "basics",     "name": "Basics",         "icon": "📦", "lesson_ids": [201, 202, 203]},
-            {"id": "images",     "name": "Images & Builds","icon": "🏗️", "lesson_ids": []},
-            {"id": "compose",    "name": "Compose",        "icon": "🔗", "lesson_ids": [204, 205, 206, 207]},
-            {"id": "networking", "name": "Networking",     "icon": "🌐", "lesson_ids": []},
-            {"id": "registry",   "name": "Registry",       "icon": "📡", "lesson_ids": [208, 209, 210]},
+            {
+                "id": "basics",
+                "name": "Basics",
+                "icon": "📦",
+                "lesson_ids": [201, 202, 203],
+            },
+            {"id": "images", "name": "Images & Builds", "icon": "🏗️", "lesson_ids": []},
+            {
+                "id": "compose",
+                "name": "Compose",
+                "icon": "🔗",
+                "lesson_ids": [204, 205, 206, 207],
+            },
+            {"id": "networking", "name": "Networking", "icon": "🌐", "lesson_ids": []},
+            {
+                "id": "registry",
+                "name": "Registry",
+                "icon": "📡",
+                "lesson_ids": [208, 209, 210],
+            },
         ],
     },
     {
@@ -74,10 +139,30 @@ PLATFORMS = [
         "status": "active",
         "total_lessons": 12,
         "sectors": [
-            {"id": "playbooks",  "name": "Playbooks",  "icon": "📋", "lesson_ids": [301, 302, 303]},
-            {"id": "roles",      "name": "Roles",      "icon": "🎭", "lesson_ids": [304, 305, 306]},
-            {"id": "inventory",  "name": "Inventory",  "icon": "📇", "lesson_ids": [307, 308, 309]},
-            {"id": "vault",      "name": "Vault",      "icon": "🔒", "lesson_ids": [310, 311, 312]},
+            {
+                "id": "playbooks",
+                "name": "Playbooks",
+                "icon": "📋",
+                "lesson_ids": [301, 302, 303],
+            },
+            {
+                "id": "roles",
+                "name": "Roles",
+                "icon": "🎭",
+                "lesson_ids": [304, 305, 306],
+            },
+            {
+                "id": "inventory",
+                "name": "Inventory",
+                "icon": "📇",
+                "lesson_ids": [307, 308, 309],
+            },
+            {
+                "id": "vault",
+                "name": "Vault",
+                "icon": "🔒",
+                "lesson_ids": [310, 311, 312],
+            },
         ],
     },
     {
@@ -92,10 +177,10 @@ PLATFORMS = [
         "status": "coming_soon",
         "total_lessons": 0,
         "sectors": [
-            {"id": "basics",    "name": "HCL Basics",     "icon": "📝", "lesson_ids": []},
-            {"id": "providers", "name": "Providers",      "icon": "🔌", "lesson_ids": []},
-            {"id": "state",     "name": "State & Backend","icon": "💾", "lesson_ids": []},
-            {"id": "modules",   "name": "Modules",        "icon": "🧩", "lesson_ids": []},
+            {"id": "basics", "name": "HCL Basics", "icon": "📝", "lesson_ids": []},
+            {"id": "providers", "name": "Providers", "icon": "🔌", "lesson_ids": []},
+            {"id": "state", "name": "State & Backend", "icon": "💾", "lesson_ids": []},
+            {"id": "modules", "name": "Modules", "icon": "🧩", "lesson_ids": []},
         ],
     },
 ]
@@ -116,5 +201,7 @@ def get_platform_progress(progress, platform_id):
         return 0, 0
 
     all_ids = [lid for s in platform["sectors"] for lid in s["lesson_ids"]]
-    completed = len([lid for lid in all_ids if lid in progress.get("completed_lessons", [])])
+    completed = len(
+        [lid for lid in all_ids if lid in progress.get("completed_lessons", [])]
+    )
     return completed, len(all_ids)
