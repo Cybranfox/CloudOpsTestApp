@@ -77,13 +77,13 @@ Reduced-motion degrades gracefully. All routes HTTP 200.
 ### 🔄 Week 2 — Content Expansion (Phases 4a–4b)
 **Owner: Data Engineer**
 
-- [ ] Phase 4a — Kubernetes platform: 20 lessons → `kubernetes_data.py`
+- [x] Phase 4a — Kubernetes platform: 20 lessons → `kubernetes_data.py` (2026-06-01)
   (Core Concepts / Workloads / Networking / Security)
-- [ ] Phase 4b — Docker platform: 10 lessons → `docker_data.py`
+- [x] Phase 4b — Docker platform: 10 lessons → `docker_data.py` (2026-06-01)
   (Basics / Images & Builds / Compose / Registry & Security)
-- [ ] Multi-platform lesson routing in `app.py` (lesson_id dispatch by range)
-- [ ] Adventure map renders platform-specific sectors from `platforms_data.py`
-- [ ] Progress dashboard shows per-platform XP rings
+- [x] Multi-platform lesson routing in `app.py` (lesson_id dispatch by range) (2026-06-01)
+- [x] Adventure map renders platform-specific sectors from `platforms_data.py` (2026-06-01)
+- [x] Progress dashboard shows per-platform XP rings (2026-06-01)
 
 **Acceptance criteria:** `/lesson/101` → HTTP 200, K8s lesson renders.
 All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.

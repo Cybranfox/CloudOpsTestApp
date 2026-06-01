@@ -74,10 +74,18 @@ def home():
     """Enhanced home page with space adventure map"""
     progress = load_progress()
     lessons = get_lessons()
+    platforms = get_platforms()
 
-    # Use the fixed space adventure map
+    # Build a lookup of lesson_id -> lesson for quick access
+    lesson_map = {l["id"]: l for l in lessons}
+
+    # Build platform-aware map data for the template
     return render_template(
-        "space_adventure_map.html", progress=progress, lessons=lessons
+        "space_adventure_map.html",
+        progress=progress,
+        lessons=lessons,
+        platforms=platforms,
+        lesson_map=lesson_map,
     )
 
 
