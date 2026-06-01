@@ -439,5 +439,29 @@
         });
     })();
     </script>
+
+    <!-- Offline/APK detection -->
+    <script>
+    (function() {
+        var isAPK = window.location.protocol === 'file:' ||
+                    navigator.userAgent.includes('Android');
+        var hasFlask = false;
+        // Quick check if Flask backend is reachable
+        fetch('/api/progress', { method: 'HEAD' })
+            .then(function(r) { hasFlask = r.ok; })
+            .catch(function() {})
+            .finally(function() {
+                if (!hasFlask && !isAPK) return; // normal web usage
+                if (hasFlask) return; // Flask is running, all good
+                // Show offline notice for APK/file users without backend
+                var banner = document.createElement('div');
+                banner.style.cssText = 'background:rgba(247,213,29,0.1);border:2px solid rgba(247,213,29,0.3);' +
+                    'border-radius:12px;padding:16px;margin:16px;text-align:center;color:#f7d51d;font-size:0.9rem;';
+                banner.innerHTML = '<strong>Offline Mode</strong><br><small>Some features need the web version at ' +
+                    '<a href="https://github.com/Cybranfox/CloudOpsTestApp" style="color:#32b8c6;">GitHub</a></small>';
+                document.body.insertBefore(banner, document.body.firstChild);
+            });
+    })();
+    </script>
 </body>
 </html>

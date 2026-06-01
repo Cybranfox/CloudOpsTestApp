@@ -133,8 +133,6 @@ def daily_challenge():
 @app.route("/weekly")
 def weekly_challenge():
     """Weekly 5-question gauntlet with personal best tracking."""
-    import datetime
-
     progress = load_progress()
     lessons = get_lessons()
     if not lessons:
