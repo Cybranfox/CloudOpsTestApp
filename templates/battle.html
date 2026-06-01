@@ -6,11 +6,19 @@
   <title>Battle</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <style>
-    @keyframes pageEnter { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pageExit  { from { opacity: 1; transform: translateY(0); }  to { opacity: 0; transform: translateY(-20px); } }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pageExit {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-20px); }
+    }
     body.page-enter { animation: pageEnter 300ms ease-out both; }
     body.page-exit  { animation: pageExit  250ms ease-in  both; }
-    @media (prefers-reduced-motion: reduce) { body.page-enter, body.page-exit { animation: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      body.page-enter, body.page-exit { animation: none; }
+    }
   </style>
 </head>
 <body>
@@ -41,6 +49,7 @@
     import ZapController from '/static/zap_controller.js';
     const zapImg = document.getElementById('zap-img');
     const zap = new ZapController(zapImg);
+    // Zap stays idle until result
   </script>
   <script>
   (function() {
