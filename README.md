@@ -1,69 +1,73 @@
 # ☁️ Cloud Orbit — Learn DevOps Through Adventure
 
-> A gamified learning platform that turns cloud and DevOps mastery into an RPG. Battle through real-world scenarios, earn XP, collect relics, and unlock the full stack.
+> A gamified learning platform that turns cloud and DevOps mastery into an RPG. Battle through real-world scenarios, earn XP, collect relics, and unlock the full stack. **54 lessons across 3 live platforms.**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com)
 [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Sprint](https://img.shields.io/badge/Sprint-Week_2_Complete-4CAF50)](ROADMAP.md)
 
 ---
 
 ## 🎮 What is Cloud Orbit?
 
-Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practitioners, and anyone studying for AWS / Kubernetes / Docker / Ansible certifications. Instead of reading docs, you **battle** through scenario-based challenges guided by **Zap** — your animated AI mascot.
+Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practitioners, and anyone studying for AWS / Kubernetes / Docker certifications. Instead of reading docs, you **battle** through scenario-based challenges guided by **Zap** — your animated AI mascot.
 
-**Inspired by:** Duolingo's streak mechanics, Slay the Spire's relic/energy system, MIMO's track-based progression.
+**Inspired by:** Duolingo (streaks), Slay the Spire (relics/energy), MIMO (interactive), BG3 (player agency), Valve (quality obsession).
 
 ---
 
 ## 🚀 Current Features
 
 ### 🗺️ Adventure Map
-- Duolingo-style zigzag path with colour-coded node states (completed / current / available / locked)
-- 6 AWS sectors × 4 battles each = 24 challenges to conquer
-- **Entrance animations** — nodes fade + slide in with a spring-easing pop, staggered 60 ms apart; sector headers transition in before each sector's nodes
+- Dynamic platform-driven sectors rendered from `platforms_data.py` — AWS, Kubernetes, Docker
+- Colour-coded node states (completed / current / available / locked)
+- **Entrance animations** — nodes fade + slide in with spring-easing, staggered 60 ms apart
+- **Page transitions** — fade+slide on every route change (map to lesson to quiz to result to map), 300ms enter, 250ms exit
+- Sector headers animate in before each sector's nodes
 
 ### ⚔️ Battle System (Slay the Spire mechanics)
-- **Energy Shields** — lose one on a wrong answer, gain one on correct; manage resources carefully
-- **Room types** — standard battles, elite challenges, boss fights, each with escalating difficulty
-- **Relics** — permanent passive bonuses earned by defeating elites/bosses (Guardian's Shield, CloudWatch Lens, etc.)
-- **Potions** — consumable boosts found along the way
+- **Energy Shields** — displayed as pip icons, lose one on wrong answer, gain one on correct
+- **Shield pip animations** (Phase 3d) — `pipPop` burst on gain, `pipCrack` shake on loss
+- **Room types** — standard battles, elite challenges, boss fights with escalating difficulty
+- **Relics** — permanent passive bonuses (Guardian's Shield, CloudWatch Lens, etc.)
+- **Potions** — consumable shield refills
 
 ### 📊 Progress Dashboard
-- **Hero card** — animated SVG XP ring, current level, total XP
-- **Streak tracker** — 🔥 day streak with fire indicator
-- **Battle statistics** — Slay-the-Spire run-end grid: accuracy, battles won, elites slain, bosses felled
-- **Learning Tracks** — MIMO-style per-platform progress bars (AWS active; K8s / Docker / Ansible / Terraform coming)
+- **Hero card** — animated SVG XP ring with 1200ms ease-out count-up from zero (Phase 3e)
+- **Streak tracker** — day streak with fire indicator
+- **Battle statistics** — accuracy, battles won, elites slain, bosses felled
+- **Per-platform progress** — AWS, Kubernetes, Docker progress bars with completion %
 - **Relics shelf** — hover tooltips on each collected relic
-- **Achievements grid** — locked/unlocked states across 8 milestone achievements
+- **Achievements grid** — 8 milestone achievements with locked/unlocked states
 
 ### 🔊 Sound System
 - Web Audio API synthesiser — no external files needed
-- Procedurally generated: correct chime, wrong buzz, shield loss/gain, level-up fanfare, badge ding, click
-- Mute toggle (🔊/🔇) in navbar, persists per session
+- Procedural: correct chime, wrong buzz, shield loss/gain, level-up fanfare, badge ding, click
+- Mute toggle in navbar, audio synced with shield pip animations
 
 ### ⚡ Zap — Your Mascot
 - Context-aware speech bubbles (battle stations, encouraging, explaining)
-- Animated states driven by `zap_animator.js`
-- Quiz-wired CSS animations: `thinking` (question screen), `celebrate` (bounce+spin on correct), `hurt` (shake on wrong)
+- Four animated states: `thinking` (question), `celebrate` (correct), `hurt` (wrong), `idle`
+- Quiz-wired CSS animations driven by `zap_animator.js`
 
-### 📱 Mobile / PWA
-- Full PWA manifest + service worker for offline use
-- Capacitor config for Android APK builds
-- Responsive layout down to 375 px
+### Accessibility
+- `prefers-reduced-motion` respected on ALL animations across every page
+- Responsive layout down to 375 px — zero horizontal overflow
+- Mobile-audited: all pages 375px-clean
 
 ---
 
 ## 🗺️ Platform Roadmap
 
-| Platform | Status | Sectors |
-|---|---|---|
-| ☁️ **AWS** | ✅ Active — 24 lessons | Compute, Storage, Security, Network, Database, DevOps |
-| ⚙️ **Kubernetes** | 🔜 Coming soon | Core Concepts, Workloads, Networking, Security, Helm & GitOps |
-| 🐳 **Docker** | 🔜 Coming soon | Basics, Images & Builds, Compose, Networking |
-| 🔧 **Ansible** | 🔜 Coming soon | Playbooks, Roles, Inventory, Vault |
-| 🏔️ **Terraform** | 🔜 Coming soon | HCL Basics, Providers, State & Backend, Modules |
+| Platform | Status | Lessons | Sectors |
+|---|---|---|---|
+| AWS | Active | 24 | Compute, Storage, Security, Network, Database, DevOps |
+| Kubernetes | Active | 20 | Core Concepts, Workloads, Networking, Security |
+| Docker | Active | 10 | Basics, Images & Builds, Compose, Registry & Security |
+| Ansible | Week 3 | 12 | Playbooks, Roles, Inventory, Vault |
+| Terraform | Week 3 | 12 | HCL Basics, Providers, State & Backend, Modules |
 
 ---
 
@@ -71,78 +75,105 @@ Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practi
 
 | Layer | Tech |
 |---|---|
-| Backend | Python 3.11 · Flask · Jinja2 |
-| Frontend | Vanilla JS · CSS3 (dark theme design system) · Web Audio API |
+| Backend | Python 3.11+ . Flask 3.x . Jinja2 |
+| Frontend | Vanilla JS . CSS3 (dark theme design system) . Web Audio API |
 | Data | JSON flat-file progress store (`progress.json`) |
+| Content | 3 platform modules: `improved_data.py` (AWS), `kubernetes_data.py`, `docker_data.py` |
 | Mobile | Capacitor (Android APK) |
-| PWA | Service Worker · Web App Manifest |
+| PWA | Service Worker . Web App Manifest |
+| CI/CD | GitHub Actions (lint, security scan, build) . GitGuardian secrets detection |
 
 ---
 
-## ⚡ Quickstart
+## Quickstart
 
 ```bash
 # 1. Clone
 git clone https://github.com/Cybranfox/CloudOpsTestApp.git
-cd CloudOpsTestApp/AWS_Orbit_RPG
+cd CloudOpsTestApp
 
 # 2. Install dependencies
-pip install flask
+pip install -r requirements.txt
 
 # 3. Run
 python app.py
-# → http://localhost:5001
+# -> http://localhost:5001
 ```
 
-No database, no environment variables, no build step. Works out of the box.
+No database required. Flat-file progress storage. Works out of the box.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-AWS_Orbit_RPG/
-├── app.py                  # Flask routes
-├── progress.py             # Game state engine (XP, shields, relics, achievements)
-├── improved_data.py        # AWS lesson + question bank (24 lessons)
-├── platforms_data.py       # Multi-platform registry (AWS/K8s/Docker/Ansible/Terraform)
-├── progress.json           # Persisted player state
+CloudOpsTestApp/
+├── app.py                   # Flask routes + multi-platform dispatch (ID range routing)
+├── progress.py              # Game state engine (XP, shields, relics, achievements)
+├── improved_data.py         # AWS lesson bank (24 lessons, IDs 1-24)
+├── kubernetes_data.py       # Kubernetes lesson bank (20 lessons, IDs 101-120)
+├── docker_data.py           # Docker lesson bank (10 lessons, IDs 201-210)
+├── platforms_data.py        # Platform registry (AWS/K8s/Docker/Ansible/Terraform)
+├── progress.json            # Persisted player state
+├── requirements.txt         # Python dependencies
+├── ROADMAP.md               # 8-week sprint plan
 ├── static/
-│   ├── styles.css          # Design system (CSS custom properties, dark theme)
+│   ├── styles.css           # Design system (CSS custom properties, dark theme)
 │   ├── audio_integration.js # Web Audio synthesiser (all sounds procedural)
-│   ├── zap_animator.js     # Mascot animation controller
-│   └── sw.js               # Service worker (PWA offline cache)
-└── templates/
-    ├── base.html                # Nav, scripts, sound toggle
-    ├── space_adventure_map.html # Duolingo-style adventure map
-    ├── lesson.html              # Pre-battle lesson card
-    ├── quiz.html                # Battle/quiz screen with energy shields
-    ├── progress_dashboard.html  # Full progress UI (StS + Duolingo inspired)
-    ├── reward_screen_orbit.html # Milestone reward screen
-    └── badges_cosmic.html       # Badge collection screen
+│   ├── zap_animator.js      # Mascot animation controller
+│   ├── space_adventure_enhanced.js  # Map interaction logic
+│   ├── sw.js                # Service worker (PWA offline cache)
+│   └── manifest.json        # PWA manifest
+├── templates/
+│   ├── base.html                 # Nav, scripts, sound toggle, page transitions
+│   ├── space_adventure_map.html  # Dynamic platform-driven adventure map
+│   ├── lesson.html               # Pre-battle lesson card + page transitions
+│   ├── quiz.html                 # Battle screen + shield pip animations (Phase 3d)
+│   ├── progress_dashboard.html   # Full progress UI + XP counter animation (Phase 3e)
+│   ├── reward_screen_orbit.html  # Milestone reward screen
+│   └── badges_cosmic.html        # Badge collection + filter system
+└── .github/
+    └── workflows/
+        └── ci-cd.yml        # CI/CD pipeline (lint, security, build)
 ```
 
 ---
 
-## 🎯 AWS Content Coverage
+## Content Coverage
 
-Lessons are scenario-based exam-style questions targeting **AWS SysOps** and **Developer Associate** certification topics.
+All lessons are scenario-based, exam-quality questions. Each includes: scenario setup, question, 4 options, correct answer, detailed explanation, badge, and loot.
 
-| Sector | Topics Covered |
+### AWS (IDs 1-24)
+| Sector | Topics |
 |---|---|
-| ⚡ Compute | CloudWatch + Auto Scaling, Multi-AZ, CodePipeline & Blue/Green, IAM + KMS |
-| 💾 Storage | VPC Security, S3 Lifecycle, RDS Multi-AZ, DynamoDB |
-| 🛡️ Security | GuardDuty + Security Hub, CloudTrail, Secrets Manager, WAF + Shield |
-| 🌐 Network | Transit Gateway, Route 53, CloudFront, Direct Connect |
-| 🗄️ Database | Step Functions, Kinesis, ElastiCache, Aurora Serverless |
-| 🚀 DevOps | Lambda + SAM, ECS + Fargate, CDK, AWS Organizations |
+| Compute | CloudWatch + Auto Scaling, Multi-AZ, CodePipeline & Blue/Green, IAM + KMS |
+| Storage | VPC Security, S3 Lifecycle, RDS Multi-AZ, DynamoDB |
+| Security | GuardDuty + Security Hub, CloudTrail, Secrets Manager, WAF + Shield |
+| Network | Transit Gateway, Route 53, CloudFront, Direct Connect |
+| Database | Step Functions, Kinesis, ElastiCache, Aurora Serverless |
+| DevOps | Lambda + SAM, ECS + Fargate, CDK, AWS Organizations |
+
+### Kubernetes (IDs 101-120)
+| Sector | Topics |
+|---|---|
+| Core Concepts | Pods & Sidecar Patterns, Deployments & Rolling Updates, Services, ConfigMaps & Secrets, Namespaces & Resource Quotas |
+| Workloads | DaemonSets, StatefulSets, HPA & KEDA, Jobs & CronJobs, Resource Requests & QoS |
+| Networking | Ingress & TLS, NetworkPolicy (Zero-Trust), CoreDNS & Service Discovery |
+| Security | RBAC, IRSA & Pod Identity, PodSecurityContext, OPA Gatekeeper, CIS Benchmarks |
+
+### Docker (IDs 201-210)
+| Sector | Topics |
+|---|---|
+| Basics | Dockerfile Best Practices & Layer Caching, Multi-Stage Builds, Container Security (Non-Root) |
+| Compose | Service Dependencies & Health Checks, Volumes & Bind Mounts, Networking & Service Discovery, Environment Variables |
+| Registry & Security | Image Scanning & CVE Remediation, Private Registry & Image Promotion, Runtime Defences |
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Content PRs welcome — especially for the upcoming K8s / Docker / Ansible tracks. See `platforms_data.py` for the sector structure to follow.
+Content PRs welcome — especially for the upcoming Ansible and Terraform tracks. See `platforms_data.py` for the sector structure and `kubernetes_data.py` for the lesson format to follow.
 
 ---
 
-*© 2025 Cloud Orbit — Master the Cloud Through Adventure*
+*Copyright 2026 Cloud Orbit — Master the Cloud Through Adventure*
