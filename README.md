@@ -6,7 +6,9 @@
 [![Flask](https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com)
 [![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Sprint](https://img.shields.io/badge/Sprint-Week_2_Complete-4CAF50)](ROADMAP.md)
+[![Release](https://img.shields.io/badge/Release-v1.0_β-7B42BC)](https://github.com/Cybranfox/CloudOpsTestApp/releases)
+[![Tests](https://img.shields.io/badge/Tests-86/86-4CAF50)](https://github.com/Cybranfox/CloudOpsTestApp/actions)
+[![Android](https://img.shields.io/badge/Android-APK_Available-32b8c6?logo=android)](https://github.com/Cybranfox/CloudOpsTestApp/releases/tag/v1.0)
 
 ---
 
@@ -57,6 +59,22 @@ Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practi
 - Responsive layout down to 375 px — zero horizontal overflow
 - Mobile-audited: all pages 375px-clean
 
+### 💎 Roguelite Depth (Week 4)
+- **Gem Currency** — Earn gems from correct answers and streaks. Spend on hints (5 gems) and shield refills (10 gems).
+- **Technique Cards** — Earn between battles (20-100% chance based on room type). 5 card types: Double XP, Iron Shield, Wisdom Discount, Oracle's Glimpse, Gem Magnet.
+- **Active Relics** — CloudWatch Lens reveals hints on wrong answers. Guardian's Shield blocks one energy loss per question.
+- **Ascension Levels** — Unlock after platform completion. Higher ascension = less XP, more energy loss (increasing difficulty).
+- **Daily Challenge** — Seeded 5-question run. Same questions for all players each day. Determined by date hash.
+- **Weekly Dungeon** — 5-question gauntlet with personal best tracking. New dungeon every Monday.
+- **Practice Weak Spots** — Re-queue questions answered incorrectly (Duolingo model). Clear them by answering correctly.
+- **Build Paths** — Choose SysOps or Developer route through AWS content (Larian agency model). 12 lessons per path.
+
+### Beta Program
+- **In-app feedback** — Report bugs directly from the dashboard (links to GitHub Issues)
+- **Push notifications** — Streak reminders (6pm daily) and inactive nudges (3 days)
+- **Privacy-first** — No accounts, no tracking, no data collection. All progress stored locally.
+- **Landing page** — [cybranfox.github.io/CloudOpsTestApp/landing.html](https://cybranfox.github.io/CloudOpsTestApp/landing.html)
+
 ---
 
 ## 🗺️ Platform Roadmap
@@ -87,6 +105,12 @@ Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practi
 
 ## Quickstart
 
+### Android (APK)
+1. Download the latest APK from [Releases](https://github.com/Cybranfox/CloudOpsTestApp/releases)
+2. Enable "Install from Unknown Sources" in Android Settings
+3. Open the APK to install
+
+### Web (Local)
 ```bash
 # 1. Clone
 git clone https://github.com/Cybranfox/CloudOpsTestApp.git
