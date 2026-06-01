@@ -2,6 +2,7 @@
 Frozen-Flask static build — generates dist/ for Capacitor wrapping.
 Resolves redirects and produces complete HTML for offline use.
 """
+
 import os
 import shutil
 
