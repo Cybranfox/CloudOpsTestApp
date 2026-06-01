@@ -453,6 +453,9 @@
             </div>
             <div class="metric-value">{{ progress.energy }}/{{ progress.max_energy }}</div>
             <div class="metric-label">Energy Shields</div>
+            {% set gems = progress.inventory.gems if progress.inventory and progress.inventory.gems else 0 %}
+            <div class="metric-value" style="color:#f7d51d;margin-top:12px;">{{ gems }}</div>
+            <div class="metric-label">Gems</div>
         </div>
     </div>
 

@@ -6,17 +6,24 @@
   "max_energy": 3,
   "badges": [],
   "completed_lessons": [],
+  "current_lesson": 1,
   "achievements": [],
+  "ascension_level": 0,
+  "weak_spots": [],
   "inventory": {
     "relics": [],
-    "potions": []
+    "potions": [],
+    "gems": 0,
+    "cards": []
   },
   "stats": {
     "total_questions": 0,
     "correct_answers": 0,
     "battles_won": 0,
-    "elites_slain": 0,
-    "bosses_felled": 0
+    "elites_defeated": 0,
+    "bosses_defeated": 0,
+    "streak_best": 0,
+    "runs_completed": 0
   },
   "relic_uses": {}
 }

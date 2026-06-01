@@ -541,6 +541,62 @@ def use_potion():
     return jsonify({"success": False, "error": "Potion not found"})
 
 
+@app.route("/api/buy-hint", methods=["POST"])
+def buy_hint():
+    """Spend 5 gems to eliminate 2 wrong options from a quiz question."""
+    data = request.get_json()
+    lesson_id = data.get("lesson_id")
+
+    progress = load_progress()
+    gems = progress.get("inventory", {}).get("gems", 0)
+
+    if gems < 5:
+        return jsonify({"success": False, "error": "Not enough gems (need 5)"})
+
+    lesson = get_lesson_by_id(lesson_id)
+    if not lesson:
+        return jsonify({"success": False, "error": "Lesson not found"})
+
+    options = lesson.get("options", [])
+    answer = lesson.get("answer", "")
+
+    # Find wrong options to hide
+    wrong_indices = [i for i, opt in enumerate(options) if opt != answer]
+    import random
+
+    # Hide 2 random wrong options
+    to_hide = random.sample(wrong_indices, min(2, len(wrong_indices)))
+
+    # Deduct gems
+    progress["inventory"]["gems"] = gems - 5
+    save_progress(progress)
+
+    return jsonify({"success": True, "hidden_indices": to_hide, "gems": gems - 5})
+
+
+@app.route("/api/buy-shield", methods=["POST"])
+def buy_shield():
+    """Spend 10 gems to restore all energy shields."""
+    progress = load_progress()
+    gems = progress.get("inventory", {}).get("gems", 0)
+
+    if gems < 10:
+        return jsonify({"success": False, "error": "Not enough gems (need 10)"})
+
+    progress["energy"] = progress.get("max_energy", 3)
+    progress["inventory"]["gems"] = gems - 10
+    save_progress(progress)
+
+    return jsonify(
+        {
+            "success": True,
+            "energy": progress["energy"],
+            "max_energy": progress["max_energy"],
+            "gems": progress["inventory"]["gems"],
+        }
+    )
+
+
 # Helper functions
 def get_recent_badges(progress):
     """Get recently earned badges"""

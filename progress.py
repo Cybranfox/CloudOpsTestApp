@@ -20,7 +20,7 @@ DEFAULT_PROGRESS = {
     "inventory": {
         "relics": [],  # Permanent upgrades
         "potions": [],  # Consumable bonuses
-        "gold": 0,  # Currency for shop purchases
+        "gems": 0,  # Duolingo-style gem currency
         "cards": [],  # Knowledge cards collected
     },
     "stats": {
@@ -33,7 +33,7 @@ DEFAULT_PROGRESS = {
         "runs_completed": 0,
     },
     "achievements": [],  # Special accomplishments
-    "ascension_level": 0,  # Difficulty modifier like StS
+    "ascension_level": 0,  # Roguelite ascension (0=base, higher=harder)
     "character_unlocks": ["zap"],  # Available characters/mascots
     "relic_uses": {},  # Track per-question relic usage to prevent abuse
 }
@@ -103,8 +103,15 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
         elif room_type == "boss":
             progress["stats"]["bosses_defeated"] += 1
 
+        # Award gems based on difficulty (Duolingo model)
+        difficulty = lesson.get("difficulty", "easy")
+        gem_reward = {"easy": 1, "medium": 2, "hard": 3}.get(difficulty, 1)
+        progress["inventory"]["gems"] = (
+            progress["inventory"].get("gems", 0) + gem_reward
+        )
+
         # Build success message
-        message = f"🎉 Correct! You've earned {xp_gain_correct} XP and restored 1 energy shield!"
+        message = f"🎉 Correct! You've earned {xp_gain_correct} XP, restored 1 shield, and gained {gem_reward} gem{'s' if gem_reward > 1 else ''}!"
 
         if lesson.get("explanation"):
             message += f"\n\n💡 {lesson['explanation']}"
@@ -236,6 +243,38 @@ def apply_relic_effects(progress, lesson, correct):
     return progress
 
 
+def get_cloudwatch_hint(progress, lesson_id, question_key):
+    """
+    If player has CloudWatch Lens relic and hasn't used it this question,
+    return the index of one wrong option to eliminate (hint).
+    Returns None if not applicable.
+    """
+    relics = progress.get("inventory", {}).get("relics", [])
+    has_lens = any(r.get("name") == "CloudWatch Lens" for r in relics)
+    if not has_lens:
+        return None
+
+    used = progress.setdefault("relic_uses", {})
+    key = f"cloudwatch_lens_{lesson_id}_{question_key}"
+    if used.get(key):
+        return None
+
+    # Mark as used for this question
+    used[key] = True
+    return "cloudwatch_lens_active"
+
+
+def get_ascension_multiplier(progress):
+    """Return XP and difficulty multipliers based on ascension level."""
+    level = progress.get("ascension_level", 0)
+    if level == 0:
+        return 1.0, 1  # xp_mult, energy_loss
+    # Each ascension: -10% XP, +1 energy loss cap
+    xp_mult = max(0.5, 1.0 - (level * 0.1))
+    energy_loss = min(3, 1 + level)
+    return xp_mult, energy_loss
+
+
 def complete_lesson(lesson_id=None, xp_gain=10):
     """Mark a lesson as completed with enhanced Slay the Spire mechanics."""
     progress = load_progress()
@@ -252,6 +291,15 @@ def complete_lesson(lesson_id=None, xp_gain=10):
     # Update best streak
     if progress["streak"] > progress["stats"]["streak_best"]:
         progress["stats"]["streak_best"] = progress["streak"]
+
+    # Streak gem bonuses (Duolingo model)
+    streak_gems = 0
+    if progress["streak"] in (3, 7, 30):
+        streak_gems = {3: 3, 7: 5, 30: 15}.get(progress["streak"], 0)
+    if streak_gems:
+        progress["inventory"]["gems"] = (
+            progress["inventory"].get("gems", 0) + streak_gems
+        )
 
     # Award XP and restore energy
     progress["xp"] += xp_gain
