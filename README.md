@@ -126,6 +126,8 @@ python app.py
 
 No database required. Flat-file progress storage. Works out of the box.
 
+**[Full Quickstart Guide](QUICKSTART.md)** — includes developer setup, testing, APK builds, and troubleshooting.
+
 ---
 
 ## 📁 Project Structure
