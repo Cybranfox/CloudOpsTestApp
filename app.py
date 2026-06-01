@@ -26,6 +26,11 @@ try:
 except ImportError:
     _get_ansible_lessons = lambda: []
 
+try:
+    from terraform_data import get_lessons as _get_tf_lessons
+except ImportError:
+    _get_tf_lessons = lambda: []
+
 
 def get_lessons():
     """Return all lessons across all active platforms."""
@@ -34,6 +39,7 @@ def get_lessons():
         + _get_k8s_lessons()
         + _get_docker_lessons()
         + _get_ansible_lessons()
+        + _get_tf_lessons()
     )
 
 
@@ -47,6 +53,8 @@ def get_lesson_by_id(lesson_id):
         source = _get_docker_lessons
     elif lesson_id < 400:
         source = _get_ansible_lessons
+    elif lesson_id < 500:
+        source = _get_tf_lessons
     else:
         source = get_lessons  # fallback: scan all
     return next((l for l in source() if l["id"] == lesson_id), None)
