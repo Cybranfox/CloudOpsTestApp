@@ -1,3 +1,4 @@
+import hashlib
 import os
 from datetime import date
 
@@ -97,6 +98,37 @@ def server_error(e):
 # ─────────────────────────────────────────────────────────────────────────────
 
 
+@app.route("/onboarding")
+def onboarding():
+    """First-launch platform picker — Duolingo-style path selection."""
+    platforms = get_platforms()
+    return render_template("onboarding.html", platforms=platforms)
+
+
+@app.route("/daily")
+def daily_challenge():
+    """Seeded 5-question daily challenge — Slay the Spire daily run model."""
+    progress = load_progress()
+    lessons = get_lessons()
+    if not lessons:
+        return redirect(url_for("home"))
+
+    # Deterministic seed from today's date — same questions for everyone
+    today = date.today().isoformat()
+    seed = int(hashlib.md5(today.encode()).hexdigest(), 16)
+
+    # Use the seed to pick 5 lessons deterministically
+    rng = __import__("random").Random(seed)
+    daily_lessons = rng.sample(lessons, min(5, len(lessons)))
+
+    return render_template(
+        "daily.html",
+        lessons=daily_lessons,
+        progress=progress,
+        today=today,
+    )
+
+
 # Custom Jinja2 filters
 def intersect_filter(list1, list2):
     """Return intersection of two lists"""
@@ -111,6 +143,11 @@ app.jinja_env.filters["intersect"] = intersect_filter
 def home():
     """Enhanced home page with space adventure map"""
     progress = load_progress()
+
+    # Onboarding: new players with zero completed lessons see platform picker
+    if not progress.get("completed_lessons"):
+        return redirect(url_for("onboarding"))
+
     lessons = get_lessons()
     platforms = get_platforms()
 

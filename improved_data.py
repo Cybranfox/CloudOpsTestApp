@@ -587,4 +587,263 @@ def get_lessons():
                 "description": "Ultimate mastery over multi-region architecture and disaster recovery patterns",
             },
         },
+        {
+            "id": 21,
+            "title": "Lambda & Serverless Application Model (SAM)",
+            "description": "Build and deploy serverless applications with AWS SAM and Lambda",
+            "room_type": "battle",
+            "difficulty": "medium",
+            "reward_type": "knowledge_card",
+            "content": (
+                "AWS Lambda runs code without provisioning servers — you pay per invocation. "
+                "AWS SAM (Serverless Application Model) is an open-source framework built on "
+                "CloudFormation that simplifies Lambda, API Gateway, and DynamoDB deployments. "
+                "Key concepts: Lambda execution role, environment variables, layers (shared code), "
+                "aliases (version routing), provisioned concurrency (cold start mitigation), "
+                "and SAM templates (transform: AWS::Serverless-2016-10-31). The SAM CLI provides "
+                "'sam build', 'sam local invoke', and 'sam deploy' commands."
+            ),
+            "scenario": (
+                "You need to deploy a serverless REST API that: 1) Processes image uploads via "
+                "S3-triggered Lambda, 2) Stores metadata in DynamoDB, 3) Has a /search endpoint "
+                "via API Gateway + Lambda, 4) Uses Lambda Layers to share common validation code "
+                "across functions. Production traffic requires zero cold starts during business hours."
+            ),
+            "question": (
+                "Which combination of Lambda features handles the image processing, shared code, "
+                "and cold start requirements?"
+            ),
+            "options": [
+                "S3 event trigger → Lambda; Lambda Layer for shared validation; "
+                "provisioned concurrency (8am-6pm schedule) on the /search function; "
+                "API Gateway with Lambda proxy integration",
+                "EC2 instance polling S3 bucket; copy validation code into each Lambda ZIP; "
+                "Reserved concurrency on all functions to cap maximum instances",
+                "S3 event trigger → Lambda@Edge; Lambda container images for shared code; "
+                "auto-scaling based on SQS queue depth from upload events",
+                "Step Functions orchestration with Lambda tasks; shared code in EFS mounted "
+                "to each function; Application Auto Scaling on Lambda execution count",
+            ],
+            "answer": (
+                "S3 event trigger → Lambda; Lambda Layer for shared validation; "
+                "provisioned concurrency (8am-6pm schedule) on the /search function; "
+                "API Gateway with Lambda proxy integration"
+            ),
+            "explanation": (
+                "S3 event notifications trigger Lambda directly — no polling infrastructure "
+                "needed. Lambda Layers package shared code (validation utilities) that multiple "
+                "functions import at runtime without duplicating it in each deployment package. "
+                "Provisioned concurrency pre-warms execution environments, eliminating cold starts — "
+                "use Application Auto Scaling with a scheduled action to provision during business "
+                "hours (8am-6pm) and scale to zero overnight to save cost. API Gateway's Lambda "
+                "proxy integration passes the full HTTP request to Lambda and expects a proper "
+                "HTTP response in return."
+            ),
+            "badge": "Serverless Sage",
+            "loot": {
+                "type": "relic",
+                "name": "Lambda Lens",
+                "description": "Shows cold start duration and optimisation suggestions for every function",
+            },
+        },
+        {
+            "id": 22,
+            "title": "ECS & Fargate — Serverless Containers",
+            "description": "Run containers without managing EC2 instances using AWS Fargate",
+            "room_type": "elite",
+            "difficulty": "hard",
+            "reward_type": "knowledge_card",
+            "content": (
+                "Amazon ECS (Elastic Container Service) orchestrates Docker containers. Two launch "
+                "types: EC2 (you manage instances) and Fargate (serverless — AWS manages the host). "
+                "Key ECS concepts: Task Definition (container blueprint — image, CPU/memory, env vars, "
+                "IAM task role, logging driver), Service (maintains desired task count, integrates "
+                "with ALB for traffic distribution), Cluster (logical grouping of services). "
+                "ECS Service Connect provides service discovery via DNS. Fargate pricing is per "
+                "vCPU and GB of memory per second — no wasted EC2 capacity."
+            ),
+            "scenario": (
+                "Your team is migrating a microservices app from EC2 to containers. The app has "
+                "3 services: web (public-facing, needs ALB), api (internal, needs service discovery), "
+                "worker (background processing, no inbound traffic). You must: 1) Run all 3 on "
+                "Fargate to avoid managing EC2, 2) The web service must scale based on request "
+                "count (target 1000 req/task), 3) The worker pulls from SQS — scale based on "
+                "queue depth, 4) Task IAM roles must follow least privilege (each service gets "
+                "only the permissions it needs)."
+            ),
+            "question": (
+                "How do you configure the 3 ECS Fargate services with proper scaling and "
+                "least-privilege IAM?"
+            ),
+            "options": [
+                "Each service gets its own task definition with a dedicated task role; web uses "
+                "ALB + service auto-scaling (target tracking on request_count_per_target); worker "
+                "uses SQS queue depth via custom CloudWatch metric + step scaling; api uses ECS "
+                "Service Connect for internal discovery",
+                "All three share one task definition for cost optimisation; a single task role "
+                "with AdministratorAccess covers all permissions; use EC2 launch type for "
+                "better scaling control",
+                "Run all containers on a single Fargate task with multiple container definitions; "
+                "use docker-compose style networking between containers; scale the entire task",
+                "Use EKS instead of ECS for Fargate; Kubernetes handles service discovery and "
+                "scaling natively via HPA with KEDA for SQS scaling",
+            ],
+            "answer": (
+                "Each service gets its own task definition with a dedicated task role; web uses "
+                "ALB + service auto-scaling (target tracking on request_count_per_target); worker "
+                "uses SQS queue depth via custom CloudWatch metric + step scaling; api uses ECS "
+                "Service Connect for internal discovery"
+            ),
+            "explanation": (
+                "1) Separate task definitions per service allow independent CPU/memory sizing "
+                "and IAM task roles — each service's container gets only the permissions it needs "
+                "(e.g., web: s3:GetObject for static assets, worker: sqs:ReceiveMessage for its "
+                "queue, api: dynamodb:Query for its table). 2) The ALB's target tracking policy "
+                "on ALBRequestCountPerTarget is the simplest scaling for HTTP services — no custom "
+                "metrics needed. 3) For SQS-based workers, publish a custom CloudWatch metric "
+                "(backlog_per_task = queue_depth / running_task_count) and use step scaling to add "
+                "tasks when backlog grows. 4) ECS Service Connect provides internal service "
+                "discovery via DNS without needing a separate service mesh."
+            ),
+            "badge": "Container Commander",
+            "loot": {
+                "type": "relic",
+                "name": "Fargate Floater",
+                "description": "Auto-optimises task CPU/memory sizing based on CloudWatch metrics",
+            },
+        },
+        {
+            "id": 23,
+            "title": "AWS CDK — Infrastructure as Actual Code",
+            "description": "Define cloud infrastructure using TypeScript, Python, or Go with the CDK",
+            "room_type": "battle",
+            "difficulty": "medium",
+            "reward_type": "knowledge_card",
+            "content": (
+                "The AWS Cloud Development Kit (CDK) lets you define infrastructure using familiar "
+                "programming languages (TypeScript, Python, Java, Go, C#) instead of YAML/JSON. "
+                "Key concepts: Constructs (the basic building block — L1 = direct CloudFormation "
+                "mapping, L2 = curated with sensible defaults, L3 = patterns combining multiple "
+                "services), Stack (unit of deployment — maps to a CloudFormation stack), App "
+                "(container for stacks), Environment (account + region). 'cdk synth' generates "
+                "CloudFormation templates; 'cdk deploy' creates/updates stacks. 'cdk bootstrap' "
+                "provisions a CDK toolkit stack (S3 bucket for assets, IAM role for execution)."
+            ),
+            "scenario": (
+                "Your team wants to use CDK in Python for a new project. You need: 1) A VPC "
+                "with public/private subnets (use the ec2.Vpc L2 construct), 2) An RDS instance "
+                "in private subnets with credentials auto-stored in Secrets Manager, 3) An ECS "
+                "Fargate service with auto-scaling pointing to the RDS, 4) All resources tagged "
+                "with the git branch name for cost tracking. The CDK code must pass 'cdk synth' "
+                "and 'cdk diff' before merging."
+            ),
+            "question": (
+                "How do you structure the CDK Python app to create the VPC, RDS, and ECS stack "
+                "with branch-based tagging?"
+            ),
+            "options": [
+                "App → Stack with env context; Vpc.from_vpc_lookup() for existing VPC or "
+                "ec2.Vpc() with max_azs=2; rds.DatabaseInstance() with "
+                "credentials=rds.Credentials.from_generated_secret(); ecs_patterns."
+                "ApplicationLoadBalancedFargateService(); cdk.Tags.of(stack).add('branch', "
+                "os.environ['BRANCH_NAME'])",
+                "Write CloudFormation YAML directly; use cdk synth to validate; tag resources "
+                "via CloudFormation stack-level tags in the console after deployment",
+                "Use CDK for Terraform (cdktf) instead of AWS CDK; define resources in HCL "
+                "within a Python wrapper; use Terraform workspaces for branch isolation",
+                "Create each resource in a separate CDK app (one for VPC, one for RDS, one for "
+                "ECS); pass resource IDs via SSM Parameter Store between apps",
+            ],
+            "answer": (
+                "App → Stack with env context; Vpc.from_vpc_lookup() for existing VPC or "
+                "ec2.Vpc() with max_azs=2; rds.DatabaseInstance() with "
+                "credentials=rds.Credentials.from_generated_secret(); ecs_patterns."
+                "ApplicationLoadBalancedFargateService(); cdk.Tags.of(stack).add('branch', "
+                "os.environ['BRANCH_NAME'])"
+            ),
+            "explanation": (
+                "1) The CDK App contains one or more Stacks. Each stack deploys a CloudFormation "
+                "stack. 2) L2 constructs (ec2.Vpc, rds.DatabaseInstance) provide sensible defaults — "
+                "ec2.Vpc automatically creates public/private subnets, NAT gateways, and route "
+                "tables. 3) rds.Credentials.from_generated_secret() creates the database password "
+                "AND stores it in Secrets Manager — no plaintext passwords in code. 4) The "
+                "ecs_patterns.ApplicationLoadBalancedFargateService is an L3 pattern that creates "
+                "the ECS service, task definition, ALB, target group, and auto-scaling in one "
+                "construct. 5) cdk.Tags.of(stack) applies tags to ALL resources in the stack — "
+                "perfect for cost allocation by branch."
+            ),
+            "badge": "Infrastructure Coder",
+            "loot": {
+                "type": "relic",
+                "name": "Construct Library",
+                "description": "Pre-approved L2/L3 construct patterns for common architectures",
+            },
+        },
+        {
+            "id": 24,
+            "title": "AWS Organizations & Multi-Account Governance",
+            "description": "Manage multiple AWS accounts with SCPs, OUs, and landing zones",
+            "room_type": "boss",
+            "difficulty": "hard",
+            "reward_type": "knowledge_card",
+            "content": (
+                "AWS Organizations enables central governance of multiple accounts. Key features: "
+                "Organisational Units (OUs) for grouping accounts (e.g., Production, Development, "
+                "Security), Service Control Policies (SCPs) that guardrail permissions at the OU "
+                "or account level (they DENY even if IAM allows), AWS Control Tower for automated "
+                "landing zone setup (multi-account baseline with guardrails), AWS Resource Access "
+                "Manager (RAM) for sharing resources across accounts, and consolidated billing "
+                "with volume discounts. SCPs use IAM policy syntax but only DENY or allow-limit — "
+                "they don't grant permissions. AWS SSO (IAM Identity Center) provides centralised "
+                "federated access across all member accounts."
+            ),
+            "scenario": (
+                "Your growing startup now has 12 AWS accounts. The CISO requires: 1) Developers "
+                "in the Dev OU cannot create or delete Route 53 hosted zones (that's a network "
+                "team responsibility), 2) Nobody in any account can delete CloudTrail logs, "
+                "3) The security team's audit account must have read-only access to all other "
+                "accounts' CloudTrail S3 buckets, 4) New accounts must be automatically created "
+                "with a baseline (VPC, IAM roles, CloudTrail enabled, Config enabled)."
+            ),
+            "question": (
+                "Which combination of AWS Organizations features enforces all four CISO requirements?"
+            ),
+            "options": [
+                "SCP on Dev OU: deny route53:CreateHostedZone + route53:DeleteHostedZone; "
+                "SCP on root: deny cloudtrail:DeleteTrail + cloudtrail:StopLogging; S3 bucket "
+                "policy on audit account's CloudTrail bucket allowing s3:GetObject from all "
+                "account IDs; Control Tower Account Factory for baseline provisioning",
+                "IAM policies in each account restricting developers; CloudTrail made immutable; "
+                "cross-account IAM roles for audit; manual account creation with runbooks",
+                "AWS Config rules detecting Route53 changes and CloudTrail deletions; "
+                "GuardDuty monitoring across all accounts; custom Lambda scripts for new account "
+                "setup triggered by CloudWatch Events",
+                "SCP on root: allow *; Resource Access Manager shares audit bucket to all "
+                "accounts; Control Tower Landing Zone; AWS SSO for federated developer access",
+            ],
+            "answer": (
+                "SCP on Dev OU: deny route53:CreateHostedZone + route53:DeleteHostedZone; "
+                "SCP on root: deny cloudtrail:DeleteTrail + cloudtrail:StopLogging; S3 bucket "
+                "policy on audit account's CloudTrail bucket allowing s3:GetObject from all "
+                "account IDs; Control Tower Account Factory for baseline provisioning"
+            ),
+            "explanation": (
+                "1) SCPs are the only way to PREVENT actions that even the account root user "
+                "can't override — they're guardrails, not permissions. An SCP on the Dev OU "
+                "denying Route53 host zone actions means no developer IAM role in any Dev account "
+                "can perform those actions, period. 2) An SCP attached to the root (organisation "
+                "root, not account root) applies to ALL accounts — perfect for universal rules "
+                "like 'never delete CloudTrail'. 3) S3 bucket policies with cross-account access "
+                "let the audit account read CloudTrail logs from every account's bucket. 4) "
+                "Control Tower Account Factory provisions new accounts with a pre-configured "
+                "baseline: VPC, IAM roles (AWSControlTowerAdmin, AWSControlTowerExecution), "
+                "CloudTrail enabled, AWS Config enabled, and guardrail SCPs applied automatically."
+            ),
+            "badge": "Organisation Sovereign",
+            "loot": {
+                "type": "legendary_relic",
+                "name": "Governance Crown",
+                "description": "Enables cross-account SCP preview — test policies before applying",
+            },
+        },
     ]

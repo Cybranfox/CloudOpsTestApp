@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Path — Cloud Orbit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { overflow-x: hidden; }
+        .onboarding-container {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 100vh; padding: 32px 16px;
+            text-align: center;
+        }
+        .onboarding-title {
+            font-family: "Fredoka", "Nunito", sans-serif;
+            font-size: 2.2rem; font-weight: 700; margin-bottom: 8px;
+            color: var(--color-text, #fff);
+        }
+        .onboarding-subtitle {
+            font-size: 1.1rem; color: var(--color-text-secondary, #aaa);
+            margin-bottom: 40px; max-width: 400px;
+        }
+        .platform-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px; max-width: 600px; width: 100%;
+        }
+        .platform-card {
+            background: var(--color-surface, rgba(38,40,40,0.95));
+            border: 2px solid var(--color-card-border, rgba(94,82,64,0.3));
+            border-radius: 16px; padding: 24px 16px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            text-decoration: none; color: var(--color-text, #fff);
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .platform-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .platform-card:active { transform: scale(0.97); }
+        .platform-icon { font-size: 3rem; }
+        .platform-name {
+            font-family: "Fredoka", "Nunito", sans-serif;
+            font-size: 1.1rem; font-weight: 600;
+        }
+        .platform-count { font-size: 0.8rem; color: var(--color-text-secondary, #aaa); }
+        .platform-soon {
+            opacity: 0.4; pointer-events: none; cursor: default;
+        }
+        @media (max-width: 480px) {
+            .platform-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .platform-card { transition: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-container">
+        <h1 class="onboarding-title">Choose Your Path</h1>
+        <p class="onboarding-subtitle">
+            Pick a platform to start your cloud journey. You can switch anytime — progress is tracked across all five.
+        </p>
+
+        <div class="platform-grid">
+            {% for p in platforms %}
+            <a href="/lesson/{{ p.sectors[0].lesson_ids[0] if p.sectors[0].lesson_ids else '#' }}"
+               class="platform-card {% if p.status != 'active' %}platform-soon{% endif %}"
+               {% if p.status != 'active' %}aria-disabled="true"{% endif %}>
+                <span class="platform-icon">{{ p.icon }}</span>
+                <span class="platform-name">{{ p.short_name or p.name }}</span>
+                <span class="platform-count">
+                    {% if p.status == 'active' %}{{ p.total_lessons }} challenges{% else %}Coming soon{% endif %}
+                </span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

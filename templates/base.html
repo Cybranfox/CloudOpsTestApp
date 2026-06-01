@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Cloud Orbit - RPG Learning Experience{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='zap.png') }}" type="image/png">
     <!-- PWA Support -->
@@ -64,6 +67,32 @@
     <!-- JavaScript for enhanced interactivity -->
     <script src="{{ url_for('static', filename='zap_animator.js') }}"></script>
     <script src="{{ url_for('static', filename='audio_integration.js') }}"></script>
+
+    <!-- Button ripple micro-interaction -->
+    <script>
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.btn');
+        if (!btn) return;
+        var ripple = document.createElement('span');
+        var rect = btn.getBoundingClientRect();
+        var size = Math.max(rect.width, rect.height);
+        ripple.style.cssText =
+            'position:absolute;border-radius:50%;background:rgba(255,255,255,0.3);' +
+            'width:' + size + 'px;height:' + size + 'px;' +
+            'left:' + (e.clientX - rect.left - size/2) + 'px;' +
+            'top:' + (e.clientY - rect.top - size/2) + 'px;' +
+            'transform:scale(0);animation:ripple 0.6s ease-out forwards;' +
+            'pointer-events:none;';
+        btn.appendChild(ripple);
+        ripple.addEventListener('animationend', function() { ripple.remove(); });
+    });
+    </script>
+    <style>
+    @keyframes ripple {
+        to { transform: scale(2); opacity: 0; }
+    }
+    .btn { overflow: hidden; }
+    </style>
     <script>
     function toggleSound() {
         if (window.awsOrbitAudio) {

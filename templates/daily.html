@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Challenge — Cloud Orbit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { overflow-x: hidden; }
+        .daily-container {
+            max-width: 700px; margin: 0 auto; padding: 24px 16px;
+        }
+        .daily-header {
+            text-align: center; margin-bottom: 32px;
+        }
+        .daily-title {
+            font-family: "Fredoka", "Nunito", sans-serif;
+            font-size: 2rem; font-weight: 700; color: var(--color-text, #fff);
+        }
+        .daily-date { color: var(--color-text-secondary, #aaa); font-size: 0.9rem; }
+        .daily-challenge-card {
+            background: var(--color-surface, rgba(38,40,40,0.95));
+            border: 2px solid var(--color-card-border, rgba(94,82,64,0.3));
+            border-radius: 16px; padding: 24px; margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        .daily-challenge-card:hover {
+            border-color: var(--color-primary, #32b8c6);
+        }
+        .challenge-number {
+            font-family: "Fredoka", sans-serif; font-size: 1.5rem;
+            font-weight: 700; color: var(--color-primary, #32b8c6);
+        }
+        .challenge-title { font-weight: 600; margin: 4px 0; }
+        .challenge-platform {
+            display: inline-block; padding: 2px 10px; border-radius: 12px;
+            font-size: 0.75rem; font-weight: 600; margin-bottom: 8px;
+        }
+        .platform-aws { background: rgba(255,153,0,0.15); color: #FF9900; }
+        .platform-k8s { background: rgba(50,108,229,0.15); color: #326CE5; }
+        .platform-docker { background: rgba(36,150,237,0.15); color: #2496ED; }
+        .platform-ansible { background: rgba(238,0,0,0.15); color: #EE0000; }
+        .platform-terraform { background: rgba(123,66,188,0.15); color: #7B42BC; }
+        .start-btn {
+            display: inline-block; padding: 8px 20px;
+            background: var(--color-primary, #32b8c6); color: #fff;
+            border-radius: 20px; text-decoration: none; font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .start-btn:hover { filter: brightness(1.1); }
+        .daily-footer {
+            text-align: center; margin-top: 32px; color: var(--color-text-secondary, #aaa);
+            font-size: 0.85rem;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .daily-challenge-card { transition: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="daily-container">
+        <div class="daily-header">
+            <h1 class="daily-title">Daily Challenge</h1>
+            <p class="daily-date">{{ today }}</p>
+            <p>Five questions. One run. Bonus XP for completing the gauntlet.</p>
+        </div>
+
+        {% for lesson in lessons %}
+        <div class="daily-challenge-card">
+            <span class="challenge-number">#{{ loop.index }}</span>
+            <p class="challenge-title">{{ lesson.title }}</p>
+            {% set pid = lesson.id %}
+            {% if pid < 100 %}
+                <span class="challenge-platform platform-aws">AWS</span>
+            {% elif pid < 200 %}
+                <span class="challenge-platform platform-k8s">Kubernetes</span>
+            {% elif pid < 300 %}
+                <span class="challenge-platform platform-docker">Docker</span>
+            {% elif pid < 400 %}
+                <span class="challenge-platform platform-ansible">Ansible</span>
+            {% else %}
+                <span class="challenge-platform platform-terraform">Terraform</span>
+            {% endif %}
+            <br>
+            <a href="/quiz/{{ lesson.id }}" class="start-btn">Start Battle</a>
+        </div>
+        {% endfor %}
+
+        <div class="daily-footer">
+            <p>New challenge every day. Same questions for everyone — compare your streak!</p>
+            <p><a href="/">Back to Map</a></p>
+        </div>
+    </div>
+</body>
+</html>

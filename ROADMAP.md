@@ -95,8 +95,8 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 
 - [x] Phase 4c — Ansible platform: 12 lessons → `ansible_data.py` (2026-06-01)
 - [x] Phase 4d — Terraform platform: 12 lessons → `terraform_data.py` (2026-06-01)
-- [ ] Onboarding flow: platform picker on first launch (Duolingo-style path select)
-- [ ] Daily challenge: seeded 5-question daily run, bonus XP (StS daily run model)
+- [x] Onboarding flow: platform picker on first launch (Duolingo-style path select) (2026-06-01)
+- [x] Daily challenge: seeded 5-question daily run, bonus XP (StS daily run model) (2026-06-01)
 - [ ] Practice weak spots: re-queue questions answered incorrectly (Duolingo model)
 
 ---

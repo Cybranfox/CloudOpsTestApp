@@ -537,11 +537,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Particle burst system for mascot feedback
+    function burstParticles(x, y, count, color) {
+        for (var i = 0; i < count; i++) {
+            var p = document.createElement('div');
+            p.className = 'particle';
+            var angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+            var dist = 40 + Math.random() * 80;
+            var size = 4 + Math.random() * 8;
+            p.style.cssText =
+                'left:' + x + 'px;top:' + y + 'px;width:' + size + 'px;height:' + size + 'px;' +
+                'background:' + color + ';--dx:' + Math.cos(angle) * dist + 'px;' +
+                '--dy:' + Math.sin(angle) * dist + 'px;';
+            document.body.appendChild(p);
+            requestAnimationFrame(function() { p.classList.add('burst'); });
+            p.addEventListener('animationend', function() { p.remove(); });
+        }
+    }
+
+    function spawnParticles(mascot, type) {
+        if (!mascot) return;
+        var rect = mascot.getBoundingClientRect();
+        var cx = rect.left + rect.width / 2;
+        var cy = rect.top + rect.height / 2;
+        if (type === 'celebrate') {
+            burstParticles(cx, cy, 16, '#f7d51d');
+            setTimeout(function() { burstParticles(cx, cy - 30, 10, '#32b8c6'); }, 200);
+        } else {
+            burstParticles(cx, cy, 8, '#ff5459');
+        }
+    }
+
     {% if correct is defined %}
         {% if correct %}
             window.awsOrbitAudio?.playCorrect();
             window.awsOrbitAudio?.playShieldGain();
             setZapState('zap-celebrate', 1600, '🎉 Excellent work! You nailed it!');
+            spawnParticles(zapMascot, 'celebrate');
             // Phase 3d: animate the last full pip (shield gain)
             (function() {
                 var pips = document.querySelectorAll('.shield-full');
@@ -557,6 +589,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.awsOrbitAudio?.playWrong();
             window.awsOrbitAudio?.playShieldLoss();
             setZapState('zap-hurt', 700, '💪 Keep going — you\'ll get it!');
+            spawnParticles(zapMascot, 'hurt');
             // Phase 3d: animate the first empty pip (shield lost)
             (function() {
                 var emptyPips = document.querySelectorAll('.shield-empty');
