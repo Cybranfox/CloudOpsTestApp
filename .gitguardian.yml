@@ -5,37 +5,44 @@ scan:
 
   extra_detectors:
     - name: flask-secret-key-hardcoded
-      regex: 'app\.secret_key\s*=\s*["\''][^"''${}][^"'']{6,}["\'']'
+      regex: >-
+        app\.secret_key\s*=\s*["'][^"'${}][^"']{6,}["']
       description: Flask secret_key set to a hardcoded string literal
       severity: HIGH
 
     - name: aws-access-key-id
-      regex: '(?<![A-Z0-9])(AKIA|AIPA|ABIA|ACCA)[A-Z0-9]{16}(?![A-Z0-9])'
+      regex: >-
+        (?<![A-Z0-9])(AKIA|AIPA|ABIA|ACCA)[A-Z0-9]{16}(?![A-Z0-9])
       description: AWS Access Key ID
       severity: CRITICAL
 
     - name: aws-secret-access-key
-      regex: "(?i)aws.{0,20}secret.{0,20}[=:]\\s*[\"']?[A-Za-z0-9/+]{40}[\"']?"
+      regex: >-
+        (?i)aws.{0,20}secret.{0,20}[=:]\s*["']?[A-Za-z0-9/+]{40}["']?
       description: AWS Secret Access Key
       severity: CRITICAL
 
     - name: generic-api-token
-      regex: '(?i)(api[_-]?key|api[_-]?token|access[_-]?token)\s*[=:]\s*["\'][A-Za-z0-9\-_]{20,}["\']'
+      regex: >-
+        (?i)(api[_-]?key|api[_-]?token|access[_-]?token)\s*[=:]\s*["'][A-Za-z0-9\-_]{20,}["']
       description: Generic API key or token
       severity: HIGH
 
     - name: openai-api-key
-      regex: 'sk-[A-Za-z0-9]{48}'
+      regex: >-
+        sk-[A-Za-z0-9]{48}
       description: OpenAI API key
       severity: CRITICAL
 
     - name: github-pat
-      regex: 'ghp_[A-Za-z0-9]{36}'
+      regex: >-
+        ghp_[A-Za-z0-9]{36}
       description: GitHub personal access token
       severity: CRITICAL
 
     - name: render-api-key
-      regex: 'rnd_[A-Za-z0-9]{32,}'
+      regex: >-
+        rnd_[A-Za-z0-9]{32,}
       description: Render.com API key
       severity: HIGH
 
