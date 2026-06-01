@@ -1,8 +1,7 @@
 """
 Frozen-Flask static build — generates dist/ for Capacitor wrapping.
-All routes pre-rendered as static HTML + JSON API endpoints.
+Resolves redirects and produces complete HTML for offline use.
 """
-
 import os
 import shutil
 
@@ -10,23 +9,26 @@ from app import app
 
 DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
 
-# Routes to freeze (no dynamic parameters)
-ROUTES = [
-    "/",
-    "/daily",
-    "/weekly",
-    "/practice",
-    "/progress",
-    "/badges",
-    "/onboarding",
-    "/privacy",
-    "/terms",
-    "/api/progress",
-    "/api/platforms",
-    "/api/lessons",
-    # Lesson + quiz pages for all platforms (sampled to keep build fast)
-    # Full freeze would iterate all 78 lesson IDs
-]
+
+def render_route(client, route, file_path):
+    """Render a route, following any redirects to get actual content."""
+    resp = client.get(route)
+
+    # Follow redirects — render the target page content, not a meta-refresh
+    if resp.status_code == 302:
+        location = resp.headers.get("Location", "/")
+        # Follow the redirect internally to get actual content
+        resp = client.get(location)
+
+    if resp.status_code == 200:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, "wb") as f:
+            f.write(resp.data)
+        print(f"  OK  {route} -> {file_path} ({len(resp.data)}B)")
+        return True
+    else:
+        print(f"  {resp.status_code} {route}")
+        return False
 
 
 def freeze():
@@ -35,7 +37,6 @@ def freeze():
         shutil.rmtree(DIST)
 
     os.makedirs(DIST, exist_ok=True)
-    os.makedirs(os.path.join(DIST, "static"), exist_ok=True)
 
     # Copy static assets
     static_src = os.path.join(os.path.dirname(__file__), "static")
@@ -43,54 +44,43 @@ def freeze():
     if os.path.exists(static_src):
         shutil.copytree(static_src, static_dst, dirs_exist_ok=True)
 
-    # Copy templates for reference (not strictly needed for static)
-    templates_src = os.path.join(os.path.dirname(__file__), "templates")
-    templates_dst = os.path.join(DIST, "templates")
-    if not os.path.exists(templates_dst):
-        shutil.copytree(templates_src, templates_dst)
-
     client = app.test_client()
 
-    for route in ROUTES:
-        file_path = os.path.join(DIST, route.lstrip("/"), "index.html")
-        if route == "/":
-            file_path = os.path.join(DIST, "index.html")
+    # Core pages
+    core_routes = [
+        ("/", "index.html"),
+        ("/daily", "daily/index.html"),
+        ("/weekly", "weekly/index.html"),
+        ("/practice", "practice/index.html"),
+        ("/progress", "progress/index.html"),
+        ("/badges", "badges/index.html"),
+        ("/onboarding", "onboarding/index.html"),
+        ("/privacy", "privacy/index.html"),
+        ("/terms", "terms/index.html"),
+    ]
+    for route, filename in core_routes:
+        file_path = os.path.join(DIST, filename)
+        render_route(client, route, file_path)
 
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    # API endpoints as JSON
+    api_routes = [
+        ("/api/progress", "api/progress/index.html"),
+        ("/api/platforms", "api/platforms/index.html"),
+        ("/api/lessons", "api/lessons/index.html"),
+    ]
+    for route, filename in api_routes:
+        file_path = os.path.join(DIST, filename)
+        render_route(client, route, file_path)
 
-        resp = client.get(route)
-        if resp.status_code == 200:
-            with open(file_path, "wb") as f:
-                f.write(resp.data)
-            print(f"  OK  {route} -> {file_path}")
-        elif resp.status_code == 302:
-            # Redirect — copy the target
-            location = resp.headers.get("Location", "/")
-            print(f"  302 {route} -> {location}")
-            # Write a meta-refresh page
-            html = (
-                f'<html><meta http-equiv="refresh" content="0;url={location}">'
-                f"</html>"
-            )
-            with open(file_path, "w") as f:
-                f.write(html)
-        else:
-            print(f"  {resp.status_code} {route}")
-
-    # Freeze lesson pages for all 78 lessons
+    # All lesson and quiz pages
     from app import get_lessons
 
     lessons = get_lessons()
     for l in lessons:
         lid = l["id"]
         for route in [f"/lesson/{lid}", f"/quiz/{lid}"]:
-            resp = client.get(route)
-            if resp.status_code == 200:
-                file_path = os.path.join(DIST, route.lstrip("/"), "index.html")
-                os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                with open(file_path, "wb") as f:
-                    f.write(resp.data)
-        print(f"  OK  lesson/{lid} + quiz/{lid}")
+            file_path = os.path.join(DIST, route.lstrip("/"), "index.html")
+            render_route(client, route, file_path)
 
     # Copy progress.example.json as initial state
     example = os.path.join(os.path.dirname(__file__), "progress.example.json")
