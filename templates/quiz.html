@@ -664,6 +664,104 @@ document.addEventListener('DOMContentLoaded', function() {
             window.awsOrbitAudio?.playClick();
         });
     });
+
+    // ── Offline/APK mode: client-side quiz engine ──────────────────────
+    (function() {
+        var lessonData = {{ lesson | tojson }};
+        var form = document.querySelector('.quiz-form');
+
+        if (!form) return;
+
+        // Check if Flask backend is reachable; if not, intercept form
+        fetch('/api/progress', { method: 'HEAD' }).then(function(r) {
+            if (r.ok) return; // Backend available, normal flow
+            enableOfflineMode();
+        }).catch(function() {
+            enableOfflineMode();
+        });
+
+        function enableOfflineMode() {
+            // Load offline engine
+            var script = document.createElement('script');
+            script.src = '/static/offline_engine.js';
+            script.onload = function() {
+                wireOfflineForm();
+            };
+            document.head.appendChild(script);
+        }
+
+        function wireOfflineForm() {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var checked = form.querySelector('input[name="option"]:checked');
+                if (!checked) return;
+
+                var result = CloudOrbitOffline.checkAnswer(lessonData, checked.value);
+                var p = result.progress;
+
+                // Update shield display
+                var shieldRow = document.querySelector('.shields');
+                if (shieldRow) {
+                    var html = '';
+                    for (var i = 0; i < p.max_energy; i++) {
+                        html += '<span class="shield-' + (i < p.energy ? 'full' : 'empty') + '">' +
+                                (i < p.energy ? '\u26a1' : '\uD83D\uDC94') + '</span>';
+                    }
+                    shieldRow.innerHTML = html;
+                    var countEl = shieldRow.previousElementSibling;
+                    if (countEl) countEl.innerHTML = '\u26a1 Energy Shields: ' + p.energy + '/' + p.max_energy;
+                }
+
+                // Show result
+                var resultDiv = document.querySelector('.card.result-section') ||
+                                document.createElement('div');
+                if (!resultDiv.className.includes('result-section')) {
+                    resultDiv = document.createElement('div');
+                    resultDiv.className = 'card result-section';
+                    form.parentNode.insertBefore(resultDiv, form.nextSibling);
+                }
+
+                if (result.correct) {
+                    resultDiv.className = 'card result-section success';
+                    resultDiv.innerHTML = '<h3>\uD83C\uDF89 Victory Achieved!</h3>' +
+                        '<p>Energy restored! ' + p.energy + '/' + p.max_energy + ' shields.</p>' +
+                        (lessonData.explanation ? '<div class="explanation-box"><h4>\uD83D\uDCA1 Explanation:</h4><p>' + lessonData.explanation + '</p></div>' : '') +
+                        (result.badge ? '<div class="badge-box"><h4>\uD83C\uDFC6 Badge Earned!</h4><p>' + result.badge + '</p></div>' : '') +
+                        '<p style="margin-top:12px;">+' + result.gemReward + ' gems | Total: ' + p.inventory.gems + ' | XP: ' + p.xp + '</p>';
+                } else {
+                    resultDiv.className = 'card result-section defeat';
+                    resultDiv.innerHTML = '<h3>\uD83D\uDC94 Defeat...</h3>' +
+                        '<p>Shield lost! ' + p.energy + '/' + p.max_energy + ' shields remaining.</p>' +
+                        (lessonData.explanation ? '<div class="explanation-box"><h4>\uD83D\uDCA1 Explanation:</h4><p>' + lessonData.explanation + '</p></div>' : '');
+                }
+
+                // Hide the form
+                form.style.display = 'none';
+
+                // Add navigation buttons
+                var nextDiv = document.createElement('div');
+                nextDiv.className = 'next-actions';
+                nextDiv.style.cssText = 'display:flex;gap:16px;margin-top:20px;justify-content:center;flex-wrap:wrap;';
+                if (result.correct) {
+                    var nextId = lessonData.id + 1;
+                    nextDiv.innerHTML = '<a href="/lesson/' + nextId + '/" class="btn btn-primary">\uD83D\uDE80 Next Adventure</a>' +
+                        '<a href="/" class="btn btn-secondary">\uD83D\uDDFA\uFE0F Return to Map</a>';
+                } else {
+                    nextDiv.innerHTML = '<button onclick="location.reload()" class="btn btn-secondary">\uD83D\uDD04 Try Again</button>' +
+                        '<a href="/" class="btn btn-secondary">\uD83D\uDDFA\uFE0F Return to Map</a>';
+                }
+                resultDiv.appendChild(nextDiv);
+            });
+
+            // Show offline indicator
+            var banner = document.createElement('div');
+            banner.style.cssText = 'background:rgba(247,213,29,0.1);border:1px solid rgba(247,213,29,0.3);' +
+                'border-radius:8px;padding:8px 12px;margin-bottom:16px;text-align:center;' +
+                'font-size:0.8rem;color:#f7d51d;';
+            banner.textContent = 'Offline Mode — progress saved to device';
+            form.parentNode.insertBefore(banner, form);
+        }
+    })();
 });
 </script>
 {% endblock %}

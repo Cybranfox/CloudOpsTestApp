@@ -665,6 +665,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         requestAnimationFrame(step);
     })();
+
+    // ── Offline mode: load progress from localStorage ──────────────────
+    fetch('/api/progress', { method: 'HEAD' }).catch(function() {
+        // Flask not available — inject localStorage progress into the page
+        var p = window.CloudOrbitOffline && CloudOrbitOffline.getProgress();
+        if (!p) return;
+        // Update visible stats
+        var xpLabel = document.querySelector('.xp-label');
+        if (xpLabel && !xpLabel.textContent.match(/^\d+/)) {
+            var level = Math.max(1, Math.floor((p.xp || 0) / 500) + 1);
+            var nextXp = level * 500;
+            xpLabel.textContent = (p.xp || 0) + ' / ' + nextXp + ' XP';
+        }
+        var energyVal = document.querySelector('.metric-value');
+        if (energyVal && energyVal.textContent.includes('/')) {
+            energyVal.textContent = (p.energy || 3) + '/' + (p.max_energy || 3);
+        }
+        // Show offline badge
+        var hero = document.querySelector('.hero-info');
+        if (hero) {
+            var badge = document.createElement('div');
+            badge.style.cssText = 'font-size:0.7rem;color:#f7d51d;margin-top:4px;';
+            badge.textContent = 'Offline Mode — data on device';
+            hero.appendChild(badge);
+        }
+    });
 });
 </script>
 {% endblock %}

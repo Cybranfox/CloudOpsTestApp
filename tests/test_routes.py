@@ -223,6 +223,13 @@ class TestMobileReadiness:
         html = resp.data.decode()
         assert "Fredoka" in html or "Nunito" in html
 
+    def test_offline_engine_js_exists(self, client):
+        resp = client.get("/static/offline_engine.js")
+        assert resp.status_code == 200
+        assert b"CloudOrbitOffline" in resp.data
+        assert b"localStorage" in resp.data
+        assert b"checkAnswer" in resp.data
+
     def test_root_capacitor_config(self):
         import os
 
