@@ -167,3 +167,81 @@ class TestContentQuality:
             assert len(lesson["explanation"]) > 10, (
                 "Lesson %s explanation too short" % lesson.get("id")
             )
+
+
+# ── Mobile Readiness ────────────────────────────────────────────────────────
+
+class TestMobileReadiness:
+    """Verify mobile/PWA/APK requirements are met."""
+
+    def test_viewport_meta_in_base(self, client):
+        resp = client.get("/")
+        html = resp.data.decode()
+        assert 'viewport' in html.lower()
+        assert 'width=device-width' in html
+        assert 'initial-scale=1.0' in html
+
+    def test_manifest_json_exists(self, client):
+        resp = client.get("/static/manifest.json")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["name"] == "Cloud Orbit — Learn DevOps Through Adventure"
+        assert data["display"] == "standalone"
+
+    def test_service_worker_exists(self, client):
+        resp = client.get("/static/sw.js")
+        assert resp.status_code == 200
+        assert b"cloud-orbit" in resp.data
+
+    def test_capacitor_config_exists(self, client):
+        resp = client.get("/static/capacitor.config.json")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["appId"] == "com.cloudorbit.app"
+        assert data["webDir"] == "dist"
+
+    def test_mobile_nav_renders(self, client):
+        resp = client.get("/")
+        html = resp.data.decode()
+        assert "bottom-nav" in html
+
+    def test_offline_banner_present(self, client):
+        resp = client.get("/")
+        html = resp.data.decode()
+        assert "Offline" in html or "offline" in html.lower()
+
+    def test_page_transition_a11y(self, client):
+        resp = client.get("/")
+        html = resp.data.decode()
+        # Click handler should preserve modifier keys
+        assert "metaKey" in html or "ctrlKey" in html
+        # Should check for left-click only
+        assert "e.button" in html
+
+    def test_google_fonts_loaded(self, client):
+        resp = client.get("/")
+        html = resp.data.decode()
+        assert "Fredoka" in html or "Nunito" in html
+
+    def test_root_capacitor_config(self):
+        import os
+
+        root_config = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "capacitor.config.json"
+        )
+        assert os.path.exists(root_config), "capacitor.config.json missing from repo root"
+
+    def test_freeze_index_is_real_page(self):
+        """APK fix: index.html must be a real page, not a meta-refresh stub."""
+        import os
+
+        dist_index = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "dist", "index.html"
+        )
+        if os.path.exists(dist_index):
+            with open(dist_index, encoding="utf-8") as f:
+                content = f.read()
+            # Must be actual HTML, not a tiny meta-refresh
+            assert len(content) > 1000, f"dist/index.html is only {len(content)}B"
+            assert "<!DOCTYPE html>" in content
+            assert "meta-refresh" not in content.lower()
