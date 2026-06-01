@@ -39,3 +39,4 @@ Thumbs.db
 
 # Misc
 progress.json
+!progress.example.json

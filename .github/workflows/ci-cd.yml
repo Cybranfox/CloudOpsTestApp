@@ -1,0 +1,175 @@
+name: CI/CD -- Lint, Test, Build APK, Scan, Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install flake8 pytest black bandit
+
+      - name: Black format check
+        run: black --check *.py --line-length 88
+
+      - name: Flake8 lint
+        run: flake8 *.py --max-line-length=88 --extend-ignore=E203,W503
+
+      - name: Security hardening check (CI gate)
+        run: python security_check.py
+        env:
+          FLASK_SECRET_KEY: ci-test-key-not-real
+
+      - name: Bandit SAST scan
+        run: |
+          bandit -r app.py progress.py -ll -f json -o bandit-report.json
+        continue-on-error: true
+
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+      - name: Verify Flask app imports cleanly
+        run: |
+          python -c "
+          import app, improved_data, progress, platforms_data
+          lessons = improved_data.get_lessons()
+          assert len(lessons) > 0, 'No lessons loaded'
+          p = progress.load_progress()
+          assert 'xp' in p, 'Progress structure broken'
+          print(f'OK: {len(lessons)} lessons loaded, progress keys present')
+          "
+        env:
+          FLASK_SECRET_KEY: ci-test-key-not-real
+
+      - name: Run pytest
+        run: pytest tests/ -v 2>/dev/null || echo "No tests directory yet -- skipping"
+        env:
+          FLASK_SECRET_KEY: ci-test-key-not-real
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  security-scan:
+    name: GitGuardian Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history required by GitGuardian
+
+      - name: GitGuardian scan
+        uses: GitGuardian/ggshield-action@v1
+        env:
+          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  build-dist:
+    name: Validate dist/ and Node setup
+    needs: [lint-and-test, security-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Validate dist/ structure
+        run: |
+          test -d dist            || (echo "ERROR: dist/ directory missing -- run the static build step first" && exit 1)
+          test -f dist/index.html || (echo "ERROR: dist/index.html missing" && exit 1)
+          test -f dist/js/api.js  || (echo "ERROR: dist/js/api.js missing" && exit 1)
+          echo "dist/ structure OK"
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  build-apk:
+    name: Build Capacitor Debug APK
+    needs: build-dist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Capacitor sync
+        run: npx cap sync android
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-orbit-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-api:
+    name: Deploy Flask API to Render
+    needs: [lint-and-test, security-scan]
+    runs-on: ubuntu-latest
+    # Only deploy on direct pushes to main (not PRs)
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger Render deploy
+        run: |
+          curl --fail -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'

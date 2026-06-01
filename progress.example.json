@@ -1,0 +1,22 @@
+{
+  "xp": 0,
+  "streak": 0,
+  "last_completed_date": null,
+  "energy": 3,
+  "max_energy": 3,
+  "badges": [],
+  "completed_lessons": [],
+  "achievements": [],
+  "inventory": {
+    "relics": [],
+    "potions": []
+  },
+  "stats": {
+    "total_questions": 0,
+    "correct_answers": 0,
+    "battles_won": 0,
+    "elites_slain": 0,
+    "bosses_felled": 0
+  },
+  "relic_uses": {}
+}
