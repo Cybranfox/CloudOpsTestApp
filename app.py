@@ -11,7 +11,7 @@ from platforms_data import get_platforms, get_platform, get_platform_progress
 
 # ── Multi-platform lesson registry ────────────────────────────────────────────
 # Lesson ID ranges:  1-99 → AWS   |  101-199 → Kubernetes  |  201-299 → Docker
-# Future:  301-399 Ansible  |  401-499 Terraform
+#  301-399 → Ansible  |  401-499 → Terraform
 try:
     from kubernetes_data import get_lessons as _get_k8s_lessons
 except ImportError:
@@ -22,10 +22,15 @@ try:
 except ImportError:
     _get_docker_lessons = lambda: []
 
+try:
+    from ansible_data import get_lessons as _get_ansible_lessons
+except ImportError:
+    _get_ansible_lessons = lambda: []
+
 
 def get_lessons():
     """Return all lessons across all active platforms."""
-    return _get_aws_lessons() + _get_k8s_lessons() + _get_docker_lessons()
+    return _get_aws_lessons() + _get_k8s_lessons() + _get_docker_lessons() + _get_ansible_lessons()
 
 
 def get_lesson_by_id(lesson_id):
@@ -36,6 +41,8 @@ def get_lesson_by_id(lesson_id):
         source = _get_k8s_lessons
     elif lesson_id < 300:
         source = _get_docker_lessons
+    elif lesson_id < 400:
+        source = _get_ansible_lessons
     else:
         source = get_lessons  # fallback: scan all
     return next((l for l in source() if l["id"] == lesson_id), None)

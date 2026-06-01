@@ -93,7 +93,7 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 ### 🔄 Week 3 — Content + Onboarding (Phases 4c–4d)
 **Owner: Data Engineer + UX Designer**
 
-- [ ] Phase 4c — Ansible platform: 12 lessons → `ansible_data.py`
+- [x] Phase 4c — Ansible platform: 12 lessons → `ansible_data.py` (2026-06-01)
 - [ ] Phase 4d — Terraform platform: 12 lessons → `terraform_data.py`
 - [ ] Onboarding flow: platform picker on first launch (Duolingo-style path select)
 - [ ] Daily challenge: seeded 5-question daily run, bonus XP (StS daily run model)
