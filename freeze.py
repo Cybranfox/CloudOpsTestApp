@@ -79,8 +79,13 @@ def freeze():
     for l in lessons:
         lid = l["id"]
         for route in [f"/lesson/{lid}", f"/quiz/{lid}"]:
+            # Create directory index (served when URL ends with /)
             file_path = os.path.join(DIST, route.lstrip("/"), "index.html")
             render_route(client, route, file_path)
+            # Also create .html sibling (Capacitor needs this for no-slash URLs)
+            sibling = os.path.join(DIST, route.lstrip("/") + ".html")
+            if os.path.exists(file_path):
+                shutil.copy(file_path, sibling)
 
     # Copy progress.example.json as initial state
     example = os.path.join(os.path.dirname(__file__), "progress.example.json")

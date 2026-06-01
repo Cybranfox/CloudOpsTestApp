@@ -67,7 +67,7 @@
 
         <div class="platform-grid">
             {% for p in platforms %}
-            <a href="/lesson/{{ p.sectors[0].lesson_ids[0] if p.sectors[0].lesson_ids else '#' }}"
+            <a href="/lesson/{{ p.sectors[0].lesson_ids[0] if p.sectors[0].lesson_ids else '#' }}/"
                class="platform-card {% if p.status != 'active' %}platform-soon{% endif %}"
                {% if p.status != 'active' %}aria-disabled="true"{% endif %}>
                 <span class="platform-icon">{{ p.icon }}</span>
