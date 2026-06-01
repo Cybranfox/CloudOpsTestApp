@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E501, E731, E741
+# E501: Black manages line length — long strings in lesson content intentional
+# E731: lambda for optional imports is idiomatic (try/except ImportError pattern)
+# E741: 'l' as loop variable for lesson is clear in context

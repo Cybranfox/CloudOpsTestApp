@@ -1,13 +1,12 @@
 import os
-import random
-from datetime import date, datetime
+from datetime import date
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_cors import CORS
 
 from improved_data import get_lessons as _get_aws_lessons
-from platforms_data import get_platforms, get_platform, get_platform_progress
+from platforms_data import get_platforms, get_platform_progress
 
 # ── Multi-platform lesson registry ────────────────────────────────────────────
 # Lesson ID ranges:  1-99 → AWS   |  101-199 → Kubernetes  |  201-299 → Docker
@@ -54,9 +53,7 @@ def get_lesson_by_id(lesson_id):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-from progress import (
-    check_achievements,
-    complete_lesson,
+from progress import (  # noqa: E402
     has_guardian_shield,
     load_progress,
     register_quiz_result,
