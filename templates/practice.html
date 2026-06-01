@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Weak Spots — Cloud Orbit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { overflow-x: hidden; }
+        .practice-container {
+            max-width: 700px; margin: 0 auto; padding: 24px 16px;
+        }
+        .practice-header { text-align: center; margin-bottom: 32px; }
+        .practice-title {
+            font-family: "Fredoka", "Nunito", sans-serif;
+            font-size: 2rem; font-weight: 700; color: var(--color-text, #fff);
+        }
+        .practice-subtitle { color: var(--color-text-secondary, #aaa); margin-top: 8px; }
+        .practice-card {
+            background: var(--color-surface, rgba(38,40,40,0.95));
+            border: 2px solid var(--color-card-border, rgba(94,82,64,0.3));
+            border-radius: 16px; padding: 24px; margin-bottom: 12px;
+        }
+        .practice-card:hover { border-color: var(--color-primary, #32b8c6); }
+        .practice-card-title { font-weight: 600; margin-bottom: 8px; }
+        .start-btn {
+            display: inline-block; padding: 6px 18px;
+            background: var(--color-primary, #32b8c6); color: #fff;
+            border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 0.85rem;
+        }
+        .start-btn:hover { filter: brightness(1.1); }
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+        .back-link { text-align: center; margin-top: 32px; }
+    </style>
+</head>
+<body>
+    <div class="practice-container">
+        <div class="practice-header">
+            <h1 class="practice-title">Practice Weak Spots</h1>
+            <p class="practice-subtitle">Review questions you've answered incorrectly. Master them to clear your weak spots.</p>
+        </div>
+
+        {% if lessons %}
+            {% for lesson in lessons %}
+            <div class="practice-card">
+                <p class="practice-card-title">{{ lesson.title }}</p>
+                <p style="color:var(--color-text-secondary, #aaa);font-size:0.85rem;margin-bottom:12px;">{{ lesson.description }}</p>
+                <a href="/quiz/{{ lesson.id }}" class="start-btn">Retry Battle</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🎯</div>
+                <h2>No Weak Spots!</h2>
+                <p style="color:var(--color-text-secondary, #aaa);">You've mastered everything so far. Keep going!</p>
+            </div>
+        {% endif %}
+
+        <div class="back-link">
+            <a href="/progress">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

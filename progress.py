@@ -113,6 +113,11 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
         if lesson_id not in progress.get("completed_lessons", []):
             progress["completed_lessons"].append(lesson_id)
 
+        # Remove from weak spots if previously incorrect (Duolingo model)
+        weak_spots = progress.get("weak_spots", [])
+        if lesson_id in weak_spots:
+            weak_spots.remove(lesson_id)
+
         # Award badge
         badge_name = lesson.get("badge")
         if badge_name and badge_name not in progress.get("badges", []):
@@ -131,6 +136,11 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
         old_energy = progress.get("energy", 3)
         progress["energy"] = max(0, old_energy - 1)
         progress["xp"] += xp_gain_incorrect
+
+        # Track weak spots for practice mode (Duolingo model)
+        weak_spots = progress.setdefault("weak_spots", [])
+        if lesson_id not in weak_spots:
+            weak_spots.append(lesson_id)
 
         message = f"❌ Incorrect answer. You lost 1 shield (now {progress['energy']}/{progress['max_energy']}) but gained {xp_gain_incorrect} XP for trying."
 

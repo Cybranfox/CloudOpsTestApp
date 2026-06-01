@@ -69,7 +69,8 @@ def space_map_html():
 class TestRoutes:
     def test_home_200(self, client):
         r = client.get("/")
-        assert r.status_code == 200
+        # 200 = normal, 302 = redirect to onboarding (new player)
+        assert r.status_code in (200, 302)
 
     def test_progress_200(self, client):
         r = client.get("/progress")
@@ -135,9 +136,9 @@ class TestLessonFlow:
         assert "quiz-form" in html or "option" in html
 
     def test_quiz_post_wrong_answer(self, client):
-        # Submit a clearly wrong placeholder answer; should still return 200
+        # Submit a clearly wrong placeholder answer; 200 or 302 (milestone redirect)
         r = client.post("/quiz/1", data={"option": "__wrong_answer_placeholder__"})
-        assert r.status_code == 200
+        assert r.status_code in (200, 302)
 
     def test_quiz_post_response_contains_result_section(self, client):
         r = client.post("/quiz/1", data={"option": "__wrong_answer_placeholder__"})

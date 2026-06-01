@@ -129,6 +129,30 @@ def daily_challenge():
     )
 
 
+@app.route("/practice")
+def practice_weak_spots():
+    """Show up to 5 previously incorrect questions for review."""
+    progress = load_progress()
+    weak_ids = progress.get("weak_spots", [])
+
+    if not weak_ids:
+        return render_template("practice.html", lessons=[], progress=progress)
+
+    import random
+
+    # Pick up to 5 random weak spot lessons
+    selected_ids = random.sample(weak_ids, min(5, len(weak_ids)))
+    lessons = get_lessons()
+    lesson_map = {l["id"]: l for l in lessons}
+    practice_lessons = [lesson_map[lid] for lid in selected_ids if lid in lesson_map]
+
+    return render_template(
+        "practice.html",
+        lessons=practice_lessons,
+        progress=progress,
+    )
+
+
 # Custom Jinja2 filters
 def intersect_filter(list1, list2):
     """Return intersection of two lists"""

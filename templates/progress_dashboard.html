@@ -568,6 +568,16 @@
         </div>
     </div>
 
+    <!-- Practice Weak Spots (Duolingo model) -->
+    {% if progress.weak_spots %}
+    <div class="dash-card" style="text-align:center;border:2px solid rgba(255,84,89,0.3);">
+        <p style="font-weight:600;margin-bottom:8px;">{{ progress.weak_spots|length }} weak spot{{ 's' if progress.weak_spots|length != 1 else '' }} to review</p>
+        <a href="/practice" class="btn" style="background:linear-gradient(135deg,#ff5459,#c0152f);color:#fff;padding:10px 24px;border-radius:20px;text-decoration:none;display:inline-block;font-weight:600;">
+            Practice Weak Spots
+        </a>
+    </div>
+    {% endif %}
+
 </div>
 
 <script>
