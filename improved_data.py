@@ -13,6 +13,7 @@ def get_lessons():
             "description": "Master CloudWatch metrics, alarms, and automated remediation",
             "room_type": "battle",
             "difficulty": "easy",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "CloudWatch is your primary monitoring service for AWS resources. Create custom metrics, "
@@ -42,6 +43,7 @@ def get_lessons():
             "description": "Design fault-tolerant architectures with high availability",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "Build resilient systems using Auto Scaling Groups across multiple AZs, configure "
@@ -71,6 +73,7 @@ def get_lessons():
             "description": "Master CI/CD pipelines and zero-downtime deployment strategies",
             "room_type": "elite",
             "difficulty": "hard",
+            "path": "developer",
             "reward_type": "relic",
             "content": (
                 "Use CloudFormation templates to define infrastructure as code, implement blue/green "
@@ -100,6 +103,7 @@ def get_lessons():
             "description": "Implement defense-in-depth security using IAM, KMS, and security services",
             "room_type": "elite",
             "difficulty": "hard",
+            "path": "developer",
             "reward_type": "relic",
             "content": (
                 "Design least-privilege IAM policies using conditions and resource-based permissions, "
@@ -129,6 +133,7 @@ def get_lessons():
             "description": "Design secure VPC architectures with proper network segmentation",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "Configure VPCs with public/private subnets across multiple AZs, implement security groups "
@@ -158,6 +163,7 @@ def get_lessons():
             "description": "Optimize AWS costs using Reserved Instances, Spot Instances, and Cost Explorer",
             "room_type": "shop",
             "difficulty": "medium",
+            "path": "sysops",
             "reward_type": "gold",
             "content": (
                 "Use Cost Explorer for detailed spending analysis, implement Reserved Instances and Savings Plans "
@@ -187,6 +193,7 @@ def get_lessons():
             "description": "Build scalable serverless applications with proper error handling",
             "room_type": "battle",
             "difficulty": "hard",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "Develop Lambda functions with proper error handling and dead letter queues, design REST APIs "
@@ -216,6 +223,7 @@ def get_lessons():
             "description": "Design and optimize database solutions for different use cases",
             "room_type": "elite",
             "difficulty": "hard",
+            "path": "sysops",
             "reward_type": "relic",
             "content": (
                 "Choose appropriate database services (RDS Multi-AZ, DynamoDB, ElastiCache), implement "
@@ -245,6 +253,7 @@ def get_lessons():
             "description": "Deploy and manage containerized applications with ECS and EKS",
             "room_type": "boss",
             "difficulty": "boss",
+            "path": "developer",
             "reward_type": "legendary_relic",
             "content": (
                 "Deploy containers with ECS and Fargate for serverless container management, manage Kubernetes "
@@ -274,6 +283,7 @@ def get_lessons():
             "description": "Master advanced CloudFormation templates and AWS CDK",
             "room_type": "battle",
             "difficulty": "hard",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "Create complex CloudFormation templates with nested stacks, use parameters and conditions "
@@ -303,6 +313,7 @@ def get_lessons():
             "description": "Optimize S3 storage costs and implement data lifecycle policies",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "Design S3 lifecycle policies to automatically transition objects between storage classes, "
@@ -332,6 +343,7 @@ def get_lessons():
             "description": "Implement advanced DNS routing and health checks",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "Configure Route 53 health checks and failover routing, implement geolocation and latency-based "
@@ -361,6 +373,7 @@ def get_lessons():
             "description": "Implement caching strategies for high-performance applications",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "Deploy ElastiCache for Redis and Memcached clusters, implement session management "
@@ -390,6 +403,7 @@ def get_lessons():
             "description": "Build loosely coupled applications using event-driven patterns",
             "room_type": "elite",
             "difficulty": "hard",
+            "path": "developer",
             "reward_type": "relic",
             "content": (
                 "Design event-driven architectures using EventBridge custom event buses, create event rules "
@@ -419,6 +433,7 @@ def get_lessons():
             "description": "Automate operations tasks and maintain system compliance",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "Use Systems Manager Session Manager for secure shell access, implement automated patching "
@@ -448,6 +463,7 @@ def get_lessons():
             "description": "Implement web application security with AWS WAF and Shield",
             "room_type": "elite",
             "difficulty": "hard",
+            "path": "sysops",
             "reward_type": "relic",
             "content": (
                 "Configure AWS WAF with custom rules and managed rule sets, implement rate limiting "
@@ -477,6 +493,7 @@ def get_lessons():
             "description": "Coordinate distributed applications using visual workflows",
             "room_type": "battle",
             "difficulty": "hard",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "Design state machines with Step Functions for complex workflows, implement error handling "
@@ -506,6 +523,7 @@ def get_lessons():
             "description": "Process streaming data with Kinesis and real-time analytics",
             "room_type": "battle",
             "difficulty": "hard",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "Design real-time data pipelines with Kinesis Data Streams, process streaming data with "
@@ -535,6 +553,7 @@ def get_lessons():
             "description": "Manage application secrets and configuration securely",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "Store and retrieve secrets using AWS Secrets Manager with automatic rotation, manage "
@@ -564,6 +583,7 @@ def get_lessons():
             "description": "Design multi-region architectures for disaster recovery and global scale",
             "room_type": "boss",
             "difficulty": "boss",
+            "path": "sysops",
             "reward_type": "legendary_relic",
             "content": (
                 "Design multi-region architectures with Route 53 health checks and failover routing, "
@@ -593,6 +613,7 @@ def get_lessons():
             "description": "Build and deploy serverless applications with AWS SAM and Lambda",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "AWS Lambda runs code without provisioning servers — you pay per invocation. "
@@ -652,6 +673,7 @@ def get_lessons():
             "description": "Run containers without managing EC2 instances using AWS Fargate",
             "room_type": "elite",
             "difficulty": "hard",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "Amazon ECS (Elastic Container Service) orchestrates Docker containers. Two launch "
@@ -718,6 +740,7 @@ def get_lessons():
             "description": "Define cloud infrastructure using TypeScript, Python, or Go with the CDK",
             "room_type": "battle",
             "difficulty": "medium",
+            "path": "developer",
             "reward_type": "knowledge_card",
             "content": (
                 "The AWS Cloud Development Kit (CDK) lets you define infrastructure using familiar "
@@ -785,6 +808,7 @@ def get_lessons():
             "description": "Manage multiple AWS accounts with SCPs, OUs, and landing zones",
             "room_type": "boss",
             "difficulty": "hard",
+            "path": "sysops",
             "reward_type": "knowledge_card",
             "content": (
                 "AWS Organizations enables central governance of multiple accounts. Key features: "

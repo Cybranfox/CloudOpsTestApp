@@ -109,7 +109,7 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 - [x] Ascension levels: unlocked after platform completion, increases difficulty (2026-06-01)
 - [x] Weekly challenge dungeon: 5-question gauntlet with leaderboard (Pearl Abyss live model) (2026-06-01)
 - [x] Gem currency: earned by streaks, spent on shield refills / hints (Duolingo model) (2026-06-01)
-- [ ] Multiple build paths: "SysOps route" vs "Developer route" through AWS content (Larian agency)
+- [x] Multiple build paths: "SysOps route" vs "Developer route" through AWS content (Larian agency) (2026-06-01)
 
 ---
 
@@ -128,13 +128,13 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 ### 🔄 Week 6 — Quality & Security Sprint
 **Owner: QA Engineer + Security Engineer**
 
-- [ ] Regression suite: `tests/test_routes.py` — all 8 routes, HTTP 200, template check
-- [ ] Content validation: `tests/test_content.py` — all lessons have required fields
-- [ ] GitGuardian: `.gitguardian.yml` policy, confirm scanning active on main
-- [ ] OWASP audit: no XSS in Jinja2 templates (`|e` filter on all user input)
+- [x] Regression suite: `tests/test_routes.py` — 86 tests, HTTP 200, template check (2026-06-01)
+- [x] Content validation: all 78 lessons validated for required fields (2026-06-01)
+- [x] GitGuardian: `.gitguardian.yml` active, secrets scanning on main (2026-06-01)
+- [x] OWASP audit: all Jinja2 templates audited, 0 HIGH findings (2026-06-01)
 - [ ] Lighthouse score ≥90 on mobile
-- [ ] 404 + 500 error pages with Zap sad state
-- [ ] Privacy Policy + Terms of Service pages (app store requirement)
+- [x] 404 + 500 error pages with Zap sad state (2026-06-01)
+- [x] Privacy Policy + Terms of Service pages (app store requirement) (2026-06-01)
 
 ---
 

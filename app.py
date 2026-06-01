@@ -206,6 +206,11 @@ def home():
     lessons = get_lessons()
     platforms = get_platforms()
 
+    # Build path filter (SysOps vs Developer route — Larian agency model)
+    path_filter = request.args.get("path", "")
+    if path_filter in ("sysops", "developer"):
+        lessons = [l for l in lessons if l.get("path") == path_filter]
+
     # Build a lookup of lesson_id -> lesson for quick access
     lesson_map = {l["id"]: l for l in lessons}
 
@@ -216,7 +221,18 @@ def home():
         lessons=lessons,
         platforms=platforms,
         lesson_map=lesson_map,
+        path_filter=path_filter,
     )
+
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+
+@app.route("/terms")
+def terms():
+    return render_template("tos.html")
 
 
 @app.route("/lesson/<int:lesson_id>")
