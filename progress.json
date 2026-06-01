@@ -1,8 +1,8 @@
 {
-  "xp": 1560,
+  "xp": 1640,
   "streak": 5,
   "last_completed_date": "2025-09-09",
-  "energy": 3,
+  "energy": 1,
   "badges": [
     "Reliability Champion",
     "Security Sentinel",
@@ -92,11 +92,11 @@
     "cards": []
   },
   "stats": {
-    "battles_won": 20,
+    "battles_won": 22,
     "elites_defeated": 8,
-    "bosses_defeated": 1,
-    "total_questions": 51,
-    "correct_answers": 31,
+    "bosses_defeated": 2,
+    "total_questions": 58,
+    "correct_answers": 34,
     "streak_best": 5,
     "runs_completed": 0
   },
@@ -113,13 +113,6 @@
     "zap"
   ],
   "relic_uses": {
-    "lesson_11": {},
-    "lesson_12": {
-      "guardian_shield_used": true
-    },
-    "lesson_13": {
-      "guardian_shield_used": true
-    },
     "lesson_14": {},
     "lesson_15": {},
     "lesson_16": {},
@@ -128,6 +121,11 @@
     },
     "lesson_7": {},
     "lesson_6": {},
-    "lesson_17": {}
+    "lesson_17": {},
+    "lesson_9": {
+      "guardian_shield_used": true
+    },
+    "lesson_10": {},
+    "lesson_11": {}
   }
 }
