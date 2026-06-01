@@ -67,15 +67,17 @@
 
         <div class="platform-grid">
             {% for p in platforms %}
-            <a href="/lesson/{{ p.sectors[0].lesson_ids[0] if p.sectors[0].lesson_ids else '#' }}/"
-               class="platform-card {% if p.status != 'active' %}platform-soon{% endif %}"
-               {% if p.status != 'active' %}aria-disabled="true"{% endif %}>
+            <div class="platform-card {% if p.status != 'active' %}platform-soon{% endif %}"
+                 {% if p.status != 'active' %}aria-disabled="true"{% endif %}
+                 onclick="{% if p.status == 'active' and p.sectors[0].lesson_ids %}window.location.href='/lesson/{{ p.sectors[0].lesson_ids[0] }}/'{% endif %}"
+                 role="link" tabindex="0"
+                 onkeydown="if(event.key==='Enter'){this.onclick()}">
                 <span class="platform-icon">{{ p.icon }}</span>
                 <span class="platform-name">{{ p.short_name or p.name }}</span>
                 <span class="platform-count">
                     {% if p.status == 'active' %}{{ p.total_lessons }} challenges{% else %}Coming soon{% endif %}
                 </span>
-            </a>
+            </div>
             {% endfor %}
         </div>
     </div>
