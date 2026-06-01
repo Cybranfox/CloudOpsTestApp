@@ -104,11 +104,11 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 ### 🔄 Week 4 — Roguelite Depth (Phase 5)
 **Owner: Backend Developer + Frontend Developer**
 
-- [ ] Card system: earn technique cards between battles, play to modify challenge (StS)
-- [ ] Active relics: relics affect gameplay (CloudWatch Lens = hint on first wrong answer)
-- [ ] Ascension levels: unlocked after platform completion, increases difficulty
-- [ ] Weekly challenge dungeon: 5-question gauntlet with leaderboard (Pearl Abyss live model)
-- [ ] Gem currency: earned by streaks, spent on shield refills / hints (Duolingo model)
+- [x] Card system: earn technique cards between battles, play to modify challenge (StS) (2026-06-01)
+- [x] Active relics: relics affect gameplay (CloudWatch Lens = hint on first wrong answer) (2026-06-01)
+- [x] Ascension levels: unlocked after platform completion, increases difficulty (2026-06-01)
+- [x] Weekly challenge dungeon: 5-question gauntlet with leaderboard (Pearl Abyss live model) (2026-06-01)
+- [x] Gem currency: earned by streaks, spent on shield refills / hints (Duolingo model) (2026-06-01)
 - [ ] Multiple build paths: "SysOps route" vs "Developer route" through AWS content (Larian agency)
 
 ---

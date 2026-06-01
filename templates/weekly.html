@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Dungeon — Cloud Orbit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { overflow-x: hidden; }
+        .weekly-container {
+            max-width: 700px; margin: 0 auto; padding: 24px 16px;
+        }
+        .weekly-header { text-align: center; margin-bottom: 32px; }
+        .weekly-title {
+            font-family: "Fredoka", "Nunito", sans-serif;
+            font-size: 2.2rem; font-weight: 700;
+            color: var(--color-text, #fff);
+        }
+        .weekly-subtitle { color: var(--color-text-secondary, #aaa); margin-top: 4px; }
+        .boss-badge {
+            display: inline-block; padding: 4px 16px;
+            background: linear-gradient(135deg, #c0152f, #ff5459);
+            color: #fff; border-radius: 20px; font-weight: 700;
+            font-size: 0.85rem; margin-bottom: 12px;
+        }
+        .gauntlet-card {
+            background: var(--color-surface, rgba(38,40,40,0.95));
+            border: 2px solid rgba(255,84,89,0.3);
+            border-radius: 16px; padding: 24px; margin-bottom: 12px;
+        }
+        .gauntlet-card:hover { border-color: #ff5459; }
+        .gauntlet-number {
+            font-family: "Fredoka", sans-serif; font-size: 1.5rem;
+            font-weight: 700; color: #ff5459;
+        }
+        .gauntlet-title { font-weight: 600; margin: 4px 0; }
+        .start-btn {
+            display: inline-block; padding: 6px 18px;
+            background: linear-gradient(135deg, #c0152f, #ff5459); color: #fff;
+            border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 0.85rem;
+        }
+        .start-btn:hover { filter: brightness(1.1); }
+        .weekly-stats {
+            background: rgba(255,84,89,0.1); border-radius: 12px;
+            padding: 16px; text-align: center; margin: 20px 0;
+        }
+        .weekly-footer { text-align: center; margin-top: 32px; color: var(--color-text-secondary, #aaa); }
+    </style>
+</head>
+<body>
+    <div class="weekly-container">
+        <div class="weekly-header">
+            <div class="boss-badge">BOSS GAUNTLET</div>
+            <h1 class="weekly-title">Weekly Dungeon</h1>
+            <p class="weekly-subtitle">{{ week_key }}</p>
+            <p>Five questions. One run. Prove your mastery.</p>
+        </div>
+
+        {% if week_stats.completed %}
+        <div class="weekly-stats">
+            <p style="font-size:1.2rem;font-weight:700;">Personal Best: {{ week_stats.best_score }}/5</p>
+            <p style="color:var(--color-text-secondary, #aaa);">Come back next week for a new gauntlet!</p>
+        </div>
+        {% endif %}
+
+        {% for lesson in lessons %}
+        <div class="gauntlet-card">
+            <span class="gauntlet-number">#{{ loop.index }}</span>
+            <p class="gauntlet-title">{{ lesson.title }}</p>
+            <p style="color:var(--color-text-secondary, #aaa);font-size:0.85rem;">{{ lesson.description }}</p>
+            <a href="/quiz/{{ lesson.id }}" class="start-btn">Enter Battle</a>
+        </div>
+        {% endfor %}
+
+        <div class="weekly-footer">
+            <p>New dungeon every Monday. Same questions for everyone — compete with friends!</p>
+            <p><a href="/">Back to Map</a></p>
+        </div>
+    </div>
+</body>
+</html>

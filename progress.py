@@ -110,6 +110,9 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
             progress["inventory"].get("gems", 0) + gem_reward
         )
 
+        # Chance to earn a technique card (StS model)
+        earned_card = earn_card(progress, room_type)
+
         # Build success message
         message = f"🎉 Correct! You've earned {xp_gain_correct} XP, restored 1 shield, and gained {gem_reward} gem{'s' if gem_reward > 1 else ''}!"
 
@@ -130,6 +133,10 @@ def register_quiz_result(lesson_id, correct, xp_gain_correct=20, xp_gain_incorre
         if badge_name and badge_name not in progress.get("badges", []):
             progress["badges"].append(badge_name)
             message += f"\n🏆 You earned the {badge_name} badge!"
+
+        # Announce earned card
+        if earned_card:
+            message += f"\n\n🃏 Technique card earned: {earned_card['icon']} {earned_card['name']} — {earned_card['effect']}"
 
         # Determine next lesson
         next_lesson_id = lesson_id + 1 if lesson_id < len(lessons) else 1
@@ -262,6 +269,70 @@ def get_cloudwatch_hint(progress, lesson_id, question_key):
     # Mark as used for this question
     used[key] = True
     return "cloudwatch_lens_active"
+
+
+CARDS = [
+    {
+        "id": "double_xp",
+        "name": "Double XP",
+        "icon": "⚡",
+        "effect": "2x XP on next correct answer",
+        "xp_multiplier": 2,
+    },
+    {
+        "id": "extra_shield",
+        "name": "Iron Shield",
+        "icon": "🛡️",
+        "effect": "Gain 1 extra energy shield before next battle",
+        "shield_bonus": 1,
+    },
+    {
+        "id": "half_hint",
+        "name": "Wisdom Discount",
+        "icon": "🔮",
+        "effect": "Hints cost 2 gems instead of 5 on next quiz",
+        "hint_discount": 3,
+    },
+    {
+        "id": "reveal_one",
+        "name": "Oracle's Glimpse",
+        "icon": "👁️",
+        "effect": "Reveal 1 wrong answer before answering",
+        "reveal_count": 1,
+    },
+    {
+        "id": "bonus_gems",
+        "name": "Gem Magnet",
+        "icon": "💎",
+        "effect": "+3 bonus gems on next correct answer",
+        "gem_bonus": 3,
+    },
+]
+
+
+def earn_card(progress, room_type="battle"):
+    """Earn a random technique card after battle (StS model)."""
+    import random
+
+    chance = {"battle": 0.20, "elite": 0.50, "boss": 1.0}.get(room_type, 0.20)
+    if random.random() > chance:
+        return None
+
+    cards = progress["inventory"].setdefault("cards", [])
+    if len(cards) >= 5:
+        return None
+
+    card = random.choice(CARDS).copy()
+    cards.append(card)
+    return card
+
+
+def play_card(progress, card_index):
+    """Play a card from inventory, return its effect or None."""
+    cards = progress["inventory"].get("cards", [])
+    if card_index < 0 or card_index >= len(cards):
+        return None
+    return cards.pop(card_index)
 
 
 def get_ascension_multiplier(progress):

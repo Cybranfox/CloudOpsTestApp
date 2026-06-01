@@ -65,6 +65,7 @@ def get_lesson_by_id(lesson_id):
 from progress import (  # noqa: E402
     has_guardian_shield,
     load_progress,
+    play_card,
     register_quiz_result,
     save_progress,
 )
@@ -126,6 +127,36 @@ def daily_challenge():
         lessons=daily_lessons,
         progress=progress,
         today=today,
+    )
+
+
+@app.route("/weekly")
+def weekly_challenge():
+    """Weekly 5-question gauntlet with personal best tracking."""
+    import datetime
+
+    progress = load_progress()
+    lessons = get_lessons()
+    if not lessons:
+        return redirect(url_for("home"))
+
+    # Weekly seed from ISO week number — same questions all week
+    today = date.today()
+    week_key = f"{today.year}-W{today.isocalendar()[1]:02d}"
+    seed = int(hashlib.md5(week_key.encode()).hexdigest(), 16)
+    rng = __import__("random").Random(seed)
+    weekly_lessons = rng.sample(lessons, min(5, len(lessons)))
+
+    # Track weekly runs
+    weekly_stats = progress.setdefault("weekly_runs", {})
+    this_week = weekly_stats.get(week_key, {"completed": False, "best_score": 0})
+
+    return render_template(
+        "weekly.html",
+        lessons=weekly_lessons,
+        progress=progress,
+        week_key=week_key,
+        week_stats=this_week,
     )
 
 
@@ -595,6 +626,22 @@ def buy_shield():
             "gems": progress["inventory"]["gems"],
         }
     )
+
+
+@app.route("/api/play-card", methods=["POST"])
+def api_play_card():
+    """Play a technique card from inventory (StS model)."""
+    data = request.get_json()
+    card_index = data.get("card_index", 0)
+
+    progress = load_progress()
+    card = play_card(progress, card_index)
+
+    if not card:
+        return jsonify({"success": False, "error": "Card not found"})
+
+    save_progress(progress)
+    return jsonify({"success": True, "card": card})
 
 
 # Helper functions
