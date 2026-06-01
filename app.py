@@ -60,6 +60,18 @@ CORS(app, origins=[
     "http://localhost:5001",
 ])
 
+
+# ── Error handlers ─────────────────────────────────────────────────────────
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html"), 404
+
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template("500.html"), 500
+# ─────────────────────────────────────────────────────────────────────────────
+
 # Custom Jinja2 filters
 def intersect_filter(list1, list2):
     """Return intersection of two lists"""

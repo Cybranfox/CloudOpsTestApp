@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | Cloud Orbit</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            text-align: center;
+            padding: 2rem;
+        }
+        .error-code {
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--color-danger, #e74c3c);
+            text-shadow: 0 0 40px rgba(231, 76, 60, 0.4);
+            margin: 0;
+            line-height: 1;
+        }
+        .error-title {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: var(--color-text, #fff);
+        }
+        .error-message {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary, #aaa);
+            max-width: 400px;
+            margin-bottom: 2rem;
+        }
+        .zap-sad {
+            font-size: 5rem;
+            animation: zapShake 1s ease-in-out infinite;
+        }
+        @keyframes zapShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .btn-home {
+            display: inline-block;
+            padding: 12px 32px;
+            background: linear-gradient(135deg, var(--color-primary, #f7d51d), var(--color-primary-dark, #c9a818));
+            color: #000;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(247, 213, 29, 0.4);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .zap-sad { animation: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="zap-sad">💔</div>
+        <h1 class="error-code">500</h1>
+        <h2 class="error-title">Something Went Wrong</h2>
+        <p class="error-message">
+            Zap's circuits got crossed. The shields are down but our engineering team has been alerted. Try again in a moment.
+        </p>
+        <a href="/" class="btn-home">Return to Map</a>
+    </div>
+</body>
+</html>

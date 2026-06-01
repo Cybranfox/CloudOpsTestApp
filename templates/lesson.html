@@ -79,7 +79,7 @@
 
         // Show room entry animation
         window.addEventListener('load', () => {
-            const roomType = '{{ lesson.room_type }}';
+            const roomType = {{ lesson.room_type | tojson }};
             setTimeout(() => {
                 animator.playRoomEntry(roomType);
             }, 500);
