@@ -67,7 +67,7 @@ Drawing from the best in the industry:
 - [x] Phase 3d — Shield pip pop/crack animation on loss/gain (2026-06-01)
 - [x] Phase 3e — XP counter animates from 0 on progress dashboard load (2026-06-01)
 - [x] Accessibility: `prefers-reduced-motion` respected on all animations (2026-06-01)
-- [ ] Mobile audit: all pages 375px-clean, no horizontal overflow
+- [x] Mobile audit: all pages 375px-clean, no horizontal overflow (2026-06-01)
 
 **Acceptance criteria:** Zero console errors on page load. All animations ≤500ms.
 Reduced-motion degrades gracefully. All routes HTTP 200.
