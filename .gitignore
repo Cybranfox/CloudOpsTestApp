@@ -32,5 +32,10 @@ ios/
 .DS_Store
 Thumbs.db
 
+# Secrets -- never commit these
+.env
+.env.*
+!.env.example
+
 # Misc
 progress.json

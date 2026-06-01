@@ -295,6 +295,7 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+    overflow: hidden;
     z-index: 0;
 }
 
@@ -370,20 +371,37 @@
         gap: 30px;
         padding: 20px;
     }
-    
+
     .service-sector {
         min-height: 200px;
         padding: 20px;
     }
-    
+
     .lesson-beacon {
         width: 60px;
         height: 60px;
         font-size: 14px;
     }
-    
+
     .sector-title {
         font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .galaxy-sectors {
+        padding: 12px;
+        gap: 20px;
+    }
+
+    .service-sector {
+        padding: 16px;
+    }
+
+    .lesson-beacon {
+        width: 50px;
+        height: 50px;
+        font-size: 12px;
     }
 }
 </style>

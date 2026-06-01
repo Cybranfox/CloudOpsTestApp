@@ -330,6 +330,7 @@
     font-size: 11px;
     color: rgba(255,255,255,0.75);
     white-space: nowrap;
+    max-width: 280px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s, transform 0.15s;
@@ -581,6 +582,70 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => { el.style.width = target; }, 100);
         });
     });
+
+    // Phase 3e: XP counter count-up with ease-out, 1200ms
+    (function() {
+        var xpLabel = document.querySelector('.xp-label');
+        if (!xpLabel) return;
+
+        // Parse "CURRENT / NEXT XP" from the label text
+        var text = xpLabel.textContent.trim();
+        var match = text.match(/^(\d+)\s*\/\s*(\d+)/);
+        if (!match) return;
+        var targetXP  = parseInt(match[1], 10);
+        var nextLevel = parseInt(match[2], 10);
+
+        // Also get the SVG ring circle (second circle = the progress arc)
+        var ringCircle = document.querySelector('.avatar-ring svg circle:nth-child(2)');
+        var targetDasharray = ringCircle ? ringCircle.getAttribute('stroke-dasharray') : null;
+        var targetOffset    = 0; // stroke-dashoffset not explicitly set; dasharray drives it
+
+        // Parse the filled portion of stroke-dasharray e.g. "158.3 263.9"
+        var ringFilled = 0;
+        var ringTotal  = 263.9;
+        if (targetDasharray) {
+            var parts = targetDasharray.split(/[\s,]+/);
+            ringFilled = parseFloat(parts[0]) || 0;
+            ringTotal  = parseFloat(parts[1]) || 263.9;
+            // Start the ring at 0
+            ringCircle.setAttribute('stroke-dasharray', '0 ' + ringTotal);
+        }
+
+        var duration = 1200;
+        var startTime = null;
+
+        // Ease-out cubic
+        function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var elapsed = timestamp - startTime;
+            var progress = Math.min(elapsed / duration, 1);
+            var eased    = easeOut(progress);
+
+            // Count up XP number
+            var currentXP = Math.round(eased * targetXP);
+            xpLabel.textContent = currentXP + ' / ' + nextLevel + ' XP';
+
+            // Animate SVG ring
+            if (ringCircle && ringFilled > 0) {
+                var currentFill = eased * ringFilled;
+                ringCircle.setAttribute('stroke-dasharray', currentFill.toFixed(1) + ' ' + ringTotal);
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                // Ensure final values are exact
+                xpLabel.textContent = targetXP + ' / ' + nextLevel + ' XP';
+                if (ringCircle) {
+                    ringCircle.setAttribute('stroke-dasharray', ringFilled.toFixed(1) + ' ' + ringTotal);
+                }
+            }
+        }
+
+        requestAnimationFrame(step);
+    })();
 });
 </script>
 {% endblock %}

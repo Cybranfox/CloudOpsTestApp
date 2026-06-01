@@ -33,13 +33,13 @@ PLATFORMS = [
         "color_rgb": "50, 108, 229",
         "description": "Container orchestration at scale",
         "tagline": "The Orchestration Realm",
-        "status": "coming_soon",
-        "total_lessons": 0,
+        "status": "active",
+        "total_lessons": 20,
         "sectors": [
-            {"id": "core",       "name": "Core Concepts", "icon": "🧩", "lesson_ids": []},
-            {"id": "workloads",  "name": "Workloads",     "icon": "📦", "lesson_ids": []},
-            {"id": "networking", "name": "Networking",    "icon": "🕸️", "lesson_ids": []},
-            {"id": "security",   "name": "Security",      "icon": "🔐", "lesson_ids": []},
+            {"id": "core",       "name": "Core Concepts", "icon": "🧩", "lesson_ids": [101, 102, 103, 104, 105]},
+            {"id": "workloads",  "name": "Workloads",     "icon": "📦", "lesson_ids": [106, 107, 108, 109, 110]},
+            {"id": "networking", "name": "Networking",    "icon": "🕸️", "lesson_ids": [111, 112, 113, 114, 115]},
+            {"id": "security",   "name": "Security",      "icon": "🔐", "lesson_ids": [116, 117, 118, 119, 120]},
             {"id": "helm",       "name": "Helm & GitOps", "icon": "⛵", "lesson_ids": []},
         ],
     },
@@ -52,13 +52,14 @@ PLATFORMS = [
         "color_rgb": "36, 150, 237",
         "description": "Containerize everything — build, ship, run",
         "tagline": "The Container Seas",
-        "status": "coming_soon",
-        "total_lessons": 0,
+        "status": "active",
+        "total_lessons": 10,
         "sectors": [
-            {"id": "basics",     "name": "Basics",         "icon": "📦", "lesson_ids": []},
+            {"id": "basics",     "name": "Basics",         "icon": "📦", "lesson_ids": [201, 202, 203]},
             {"id": "images",     "name": "Images & Builds","icon": "🏗️", "lesson_ids": []},
-            {"id": "compose",    "name": "Compose",        "icon": "🔗", "lesson_ids": []},
+            {"id": "compose",    "name": "Compose",        "icon": "🔗", "lesson_ids": [204, 205, 206, 207]},
             {"id": "networking", "name": "Networking",     "icon": "🌐", "lesson_ids": []},
+            {"id": "registry",   "name": "Registry",       "icon": "📡", "lesson_ids": [208, 209, 210]},
         ],
     },
     {
@@ -113,6 +114,7 @@ def get_platform_progress(progress, platform_id):
     platform = get_platform(platform_id)
     if not platform:
         return 0, 0
+
     all_ids = [lid for s in platform["sectors"] for lid in s["lesson_ids"]]
     completed = len([lid for lid in all_ids if lid in progress.get("completed_lessons", [])])
     return completed, len(all_ids)

@@ -360,4 +360,39 @@
     </div>
 </div>
 
-<scr
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎮 Cloud Orbit Map - Phase 3b entrance animations');
+
+    // Stagger sector titles in
+    const titles = document.querySelectorAll('.sector-title');
+    titles.forEach((title, i) => {
+        setTimeout(() => title.classList.add('title-visible'), i * 240);
+    });
+
+    // Stagger node entrances
+    const circles = document.querySelectorAll('.lesson-circle');
+    circles.forEach((circle, i) => {
+        circle.style.animationDelay = (i * 60) + 'ms';
+        setTimeout(() => {
+            circle.classList.add('node-entering');
+        }, i * 60);
+
+        // After entrance ends, swap to node-visible so CSS pulse resumes on current nodes
+        circle.addEventListener('animationend', function onEnd() {
+            circle.removeEventListener('animationend', onEnd);
+            circle.classList.remove('node-entering');
+            circle.classList.add('node-visible');
+        });
+
+        // Click ripple
+        if (!circle.classList.contains('locked')) {
+            circle.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => { this.style.transform = ''; }, 150);
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
