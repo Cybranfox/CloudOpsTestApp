@@ -14,7 +14,7 @@ PLATFORMS = [
         "description": "Master cloud infrastructure and services on AWS",
         "tagline": "The Cloud Galaxy",
         "status": "active",
-        "total_lessons": 24,
+        "total_lessons": 20,
         "sectors": [
             {
                 "id": "compute",
@@ -50,7 +50,7 @@ PLATFORMS = [
                 "id": "devops",
                 "name": "DevOps",
                 "icon": "🚀",
-                "lesson_ids": [21, 22, 23, 24],
+                "lesson_ids": [],
             },
         ],
     },

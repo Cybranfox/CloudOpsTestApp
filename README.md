@@ -1,6 +1,6 @@
 # ☁️ Cloud Orbit — Learn DevOps Through Adventure
 
-> A gamified learning platform that turns cloud and DevOps mastery into an RPG. Battle through real-world scenarios, earn XP, collect relics, and unlock the full stack. **54 lessons across 3 live platforms.**
+> A gamified learning platform that turns cloud and DevOps mastery into an RPG. Battle through real-world scenarios, earn XP, collect relics, and unlock the full stack. **74 lessons across 5 live platforms.**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com)
@@ -63,7 +63,7 @@ Cloud Orbit is an RPG-style learning platform for cloud engineers, DevOps practi
 
 | Platform | Status | Lessons | Sectors |
 |---|---|---|---|
-| AWS | Active | 24 | Compute, Storage, Security, Network, Database, DevOps |
+| AWS | Active | 20 | Compute, Storage, Security, Network, Database, DevOps |
 | Kubernetes | Active | 20 | Core Concepts, Workloads, Networking, Security |
 | Docker | Active | 10 | Basics, Images & Builds, Compose, Registry & Security |
 | Ansible | Week 3 | 12 | Playbooks, Roles, Inventory, Vault |
