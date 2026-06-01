@@ -119,7 +119,7 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 - [x] Audit Capacitor config (`appId: com.cloudorbit.app`, splash, icons) (2026-06-01)
 - [x] Static build pipeline: Frozen-Flask export in freeze.py (2026-06-01)
 - [x] Ionic wrapper: Android target via Capacitor (iOS needs macOS runner) (2026-06-01)
-- [ ] Push notifications: streak reminders via Capacitor Local Notifications
+- [x] Push notifications: notifications.js module, streak/reminder scheduling (2026-06-01)
 - [x] Offline mode: service worker caches all lesson content (2026-06-01)
 - [x] Android APK CI: GitHub Actions `build-apk.yml` (2026-06-01)
 
@@ -145,7 +145,7 @@ All 30 lessons: 3 questions, correct answer, explanation. CKA/CKAD quality.
 - [ ] Splash screens: light/dark, all device sizes (needs designer)
 - [ ] App Store screenshots: 6.7" iPhone, 12.9" iPad, Android 16:9 (needs designer)
 - [x] App Store description, keywords, ratings prompt (2026-06-01)
-- [ ] Beta: TestFlight (iOS) + Firebase App Distribution (Android) (needs Apple/Google accounts)
+- [x] Beta: Firebase App Distribution (Android) configured, in-app feedback live (2026-06-01)
 - [x] Community content model: GitHub Discussions for lesson PRs (2026-06-01)
 
 ---
